@@ -1,0 +1,25 @@
+- name: Install Fish shell and set it as default
+  hosts: all
+  become: yes
+  tasks:
+    - name: Add the official Fish repository PPA
+      ansible.builtin.apt_repository:
+        repo: ppa:fish-shell/release-3
+        state: present
+
+    - name: Install Fish shell
+      ansible.builtin.apt:
+        name: fish
+        state: latest
+        update_cache: yes
+
+    - name: Get the path to the Fish executable
+      ansible.builtin.command: which fish
+      register: fish_path
+      changed_when: false
+
+    - name: Set Fish as the default shell for alex
+      ansible.builtin.user:
+        name: alex
+        shell: "{{ fish_path.stdout }}"
+      when: fish_path.stdout != ""
