@@ -32,4 +32,6 @@ scrape_configs:
   scrape_interval: 5s
   static_configs:
     - targets: 
-      - alex-office.tail8bfa2.ts.net:8080
+      - alex-office.tail8bfa2.ts.net:9091
+      - alex-office2.tail8bfa2.ts.net:9091
+      - alex-office5.tail8bfa2.ts.net:9091

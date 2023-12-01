@@ -43,7 +43,70 @@
           {
             "metrics-addr": "0.0.0.0:9323"
           }
-    - name: Restart Docker service
-      service:
-        name: docker
-        state: restarted
+      notify: restart docker
+
+
+    - name: install cadvisor
+      apt:
+        name: cadvisor
+        state: latest
+        update_cache: yes
+
+    - name: update cadvisor port
+      copy:
+        dest: /etc/default/cadvisor
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          CADVISOR_DOCKER_ENDPOINT="unix:///var/run/docker.sock"
+          CADVISOR_PORT="9091"
+
+          # Storage driver
+          # Default: none/blank
+          #
+          # Available Options:
+          #  - <empty>
+          #  - bigquery
+          #  - elasticsearch
+          #  - kafka
+          #  - redis
+          #  - statsd
+          #  - stdout
+          CADVISOR_STORAGE_DRIVER=""
+
+          # Storage driver host
+          # Default: localhost:8086"
+          CADVISOR_STORAGE_DRIVER_HOST="localhost:8086"
+
+          # Storage driver password
+          # Default: root
+          CADVISOR_STORAGE_DRIVER_PASSWORD="root"
+
+          # Storage driver secure connection
+          # Default: false
+          CADVISOR_STORAGE_DRIVER_SECURE="false"
+
+          # Storage driver user
+          # Default: root
+          CADVISOR_STORAGE_DRIVER_USER="root"
+
+          # Log to stderr ("true" logs to journal on systemd
+          # and "false" to "/var/log/cadvisor.log" on SysV)
+          # Default: true
+          CADVISOR_LOG_TO_STDERR="true"
+
+          # Other options:
+          #DAEMON_ARGS=""
+      notify: restart cadvisor
+
+  handlers:
+  - name: restart cadvisor
+    systemd:
+      name: cadvisor
+      state: restarted
+
+  - name: restart docker
+    service:
+      name: docker
+      state: restarted
