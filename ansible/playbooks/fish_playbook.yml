@@ -26,3 +26,31 @@
         name: alex
         shell: "{{ fish_path.stdout }}"
       when: fish_path.stdout != ""
+
+    - name: Create fish config file
+      blockinfile:
+        path: "/home/alex/.config/fish/conf.d/config.fish"
+        create: yes
+        owner: alex
+        group: alex
+        mode: '0644'
+        block: |
+          function commit
+            git add --all
+            git commit -m "$argv"
+            git push
+          end
+
+          # have ctrl+backspace delete previous word
+          bind \e\[3\;5~ kill-word
+          # have ctrl+delete delete following word
+          bind \b  backward-kill-word
+
+          set -U fish_user_paths ~/.local/bin $fish_user_paths
+          set -U fish_user_paths ~/.dotnet $fish_user_paths
+          set -U fish_user_paths ~/.dotnet/tools $fish_user_paths
+
+          export VISUAL=vim
+          export EDITOR="$VISUAL"
+          export DOTNET_WATCH_RESTART_ON_RUDE_EDIT=1
+          export DOTNET_CLI_TELEMETRY_OPTOUT=1
