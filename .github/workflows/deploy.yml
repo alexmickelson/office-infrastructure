@@ -1,0 +1,16 @@
+name: Deploy Monitoring Infrastructure
+on: [push, workflow_dispatch]
+jobs:
+  deploy-monitoring:
+    runs-on: [ self-hosted ]
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v2
+
+      - name: docker compose stuff
+        run: |
+          cd monitoring
+
+          docker compose pull
+          docker compose down
+          docker compose up -d
