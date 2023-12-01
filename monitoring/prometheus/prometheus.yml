@@ -19,6 +19,11 @@ scrape_configs:
   static_configs:
   - targets:
     - localhost:9090
+- job_name: node_exporter
+  honor_timestamps: true
+  scrape_interval: 5s
+  static_configs:
+  - targets:
     - alex-office.tail8bfa2.ts.net:9100
     - alex-office2.tail8bfa2.ts.net:9100
     - alex-office5.tail8bfa2.ts.net:9100
