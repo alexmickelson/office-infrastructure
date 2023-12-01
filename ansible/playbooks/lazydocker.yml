@@ -1,0 +1,28 @@
+---
+- name: Install lazydocker on a server
+  hosts: all
+  become: yes
+
+  vars_files:
+    - ../secrets.yml
+
+  vars:
+    lazydocker_version: 0.23.1
+
+  tasks:
+    - name: Download lazydocker
+      ansible.builtin.get_url:
+        url: "https://github.com/jesseduffield/lazydocker/releases/download/v{{ lazydocker_version }}/lazydocker_{{ lazydocker_version }}_Linux_x86_64.tar.gz"
+        dest: "/tmp/lazydocker.tar.gz"
+
+    - name: Extract lazydocker tar.gz
+      ansible.builtin.unarchive:
+        src: "/tmp/lazydocker.tar.gz"
+        dest: "/usr/local/bin"
+        remote_src: yes
+        # extra_opts: [--strip-components=1]
+
+    - name: Set executable permissions for lazydocker
+      ansible.builtin.file:
+        path: /usr/local/bin/lazydocker
+        mode: '0755'

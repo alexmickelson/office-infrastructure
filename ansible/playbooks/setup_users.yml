@@ -3,7 +3,7 @@
   become: yes
 
   vars_files:
-    - secrets.yml
+    - ../secrets.yml
 
   tasks:
     - name: setup usernames, passwords, and groups
@@ -14,3 +14,9 @@
         append: yes
       no_log: true
       loop: "{{ users }}"
+    - name: setup alex user
+      user:
+        name: alex
+        groups: docker,sudo
+        append: yes
+      no_log: true

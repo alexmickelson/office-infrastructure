@@ -4,7 +4,7 @@
   become: yes
 
   vars_files:
-    - secrets.yml
+    - ../secrets.yml
 
   vars:
     node_exporter_version: 1.7.0

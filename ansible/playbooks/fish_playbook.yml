@@ -3,7 +3,7 @@
   become: yes
 
   vars_files:
-    - secrets.yml
+    - ../secrets.yml
   tasks:
     - name: Add the official Fish repository PPA
       ansible.builtin.apt_repository:
