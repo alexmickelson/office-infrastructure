@@ -1,6 +1,6 @@
 - name: Docker Installation and User Setup Playbook
   hosts: all
-  become: yes
+  become: true
 
   vars_files:
     - ../secrets.yml
@@ -32,3 +32,18 @@
         name: docker-ce
         state: latest
         update_cache: yes
+
+    - name: expose docker metrics
+      copy:
+        dest: /etc/docker/daemon.json
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          {
+            "metrics-addr": "0.0.0.0:9323"
+          }
+    - name: Restart Docker service
+      service:
+        name: docker
+        state: restarted

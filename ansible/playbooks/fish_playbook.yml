@@ -1,6 +1,6 @@
 - name: Install Fish shell and set it as default
   hosts: all
-  become: yes
+  become: true
 
   vars_files:
     - ../secrets.yml
