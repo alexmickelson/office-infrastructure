@@ -1,8 +1,9 @@
+## Ansible
 
 run playbook
 
 ```bash
-ansible-playbook -i hosts.yml --ask-become-pass --ask-vault-pass main_playbook.yml
+ansible-playbook -i hosts.yml --ask-vault-pass main_playbook.yml
 ```
 
 edit secret file

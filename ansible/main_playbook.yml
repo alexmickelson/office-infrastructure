@@ -1,3 +1,6 @@
-- import_playbook: docker_install.yml
-- import_playbook: setup_users.yml
-- import_playbook: fish_playbook.yml
+
+
+# - import_playbook: docker_install.yml
+# - import_playbook: setup_users.yml
+# - import_playbook: fish_playbook.yml
+- import_playbook: node_exporter.yml

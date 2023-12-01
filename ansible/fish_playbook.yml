@@ -1,6 +1,9 @@
 - name: Install Fish shell and set it as default
   hosts: all
   become: yes
+
+  vars_files:
+    - secrets.yml
   tasks:
     - name: Add the official Fish repository PPA
       ansible.builtin.apt_repository:

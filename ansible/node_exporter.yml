@@ -1,0 +1,52 @@
+---
+- name: Install Node Exporter
+  hosts: all
+  become: yes
+
+  vars_files:
+    - secrets.yml
+
+  vars:
+    node_exporter_version: 1.7.0
+    node_exporter_os: linux
+    node_exporter_arch: amd64
+
+  tasks:
+    - name: Download Node Exporter
+      get_url: 
+        url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.{{node_exporter_os}}-{{ node_exporter_arch }}.tar.gz"
+        dest: /tmp/node_exporter.tar.gz
+        mode: '0755'
+
+    - name: Extract Node Exporter
+      unarchive:
+        src: /tmp/node_exporter.tar.gz
+        dest: /usr/local/bin
+        remote_src: yes
+        creates: /usr/local/bin/node_exporter
+
+    - name: Create Node Exporter Service
+      copy:
+        dest: /etc/systemd/system/node_exporter.service
+        content: |
+          [Unit]
+          Description=Node Exporter
+          
+          [Service]
+          ExecStart=/usr/local/bin/node_exporter-{{ node_exporter_version }}.{{node_exporter_os}}-{{ node_exporter_arch }}/node_exporter
+          
+          [Install]
+          WantedBy=default.target
+      notify: restart node_exporter
+
+    - name: Start Node Exporter
+      systemd:
+        name: node_exporter
+        enabled: yes
+        state: started
+
+  handlers:
+  - name: restart node_exporter
+    systemd:
+      name: node_exporter
+      state: restarted
