@@ -9,7 +9,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./prometheus:/etc/prometheus
-      - prom_data:/prometheus
+      - /home/alex/data/prometheus:/prometheus
       
   grafana:
     image: grafana/grafana
@@ -22,5 +22,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=grafana
     volumes:
       - ./grafana:/etc/grafana/provisioning/datasources
+      -  /home/alex/data/grafana:/var/lib/grafana
 volumes:
   prom_data:
+  grafana-storage:

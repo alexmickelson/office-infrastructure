@@ -19,3 +19,6 @@ scrape_configs:
   static_configs:
   - targets:
     - localhost:9090
+    - alex-office.tail8bfa2.ts.net:9100
+    - alex-office2.tail8bfa2.ts.net:9100
+    - alex-office5.tail8bfa2.ts.net:9100
