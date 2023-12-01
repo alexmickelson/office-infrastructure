@@ -29,7 +29,6 @@ scrape_configs:
       - alex-office2.tail8bfa2.ts.net:9323
       - alex-office5.tail8bfa2.ts.net:9323
 - job_name: cadvisor
-- job_name: cadvisor
   scrape_interval: 5s
   static_configs:
     - targets: 
