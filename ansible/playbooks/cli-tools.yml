@@ -1,5 +1,5 @@
 ---
-- name: Install lazydocker on a server
+- name: Install common cli tools
   hosts: all
   become: true
 
@@ -26,3 +26,9 @@
       ansible.builtin.file:
         path: /usr/local/bin/lazydocker
         mode: '0755'
+
+
+    - name: install btop
+      package:
+        name: btop
+        state: present

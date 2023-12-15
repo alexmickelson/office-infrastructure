@@ -27,6 +27,15 @@
         shell: "{{ fish_path.stdout }}"
       when: fish_path.stdout != ""
 
+    - name: Recursively change ownership of a directory
+      ansible.builtin.file:
+        path: /home/alex/.config/fish
+        state: directory
+        mode: '0755'
+        recurse: yes
+        owner: alex
+        group: alex
+  
     - name: Create fish config file
       blockinfile:
         path: "/home/alex/.config/fish/conf.d/config.fish"

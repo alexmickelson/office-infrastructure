@@ -1,0 +1,21 @@
+- name: Setup hypervisor config
+  hosts: all
+  become: true
+
+  vars_files:
+    - ../secrets.yml
+
+  tasks:
+    - name: install packages
+      package:
+        name:
+          - qemu-kvm
+          - libvirt-daemon-system
+          - virtinst
+          - bridge-utils
+          - zfsutils-linux
+          - libguestfs-tools
+          # - openvswitch-switch
+        state: latest
+        update_cache: yes
+

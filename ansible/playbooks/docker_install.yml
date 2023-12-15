@@ -17,10 +17,12 @@
         state: present
       loop: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'gnupg-agent']
 
-    - name: Add Docker's official GPG key
-      apt_key:
+    - name: Add docker apt repository key.
+      ansible.builtin.get_url:
         url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
+        dest: /etc/apt/trusted.gpg.d/docker.asc
+        mode: '0644'
+        force: true
 
     - name: Add Docker repository
       apt_repository:
