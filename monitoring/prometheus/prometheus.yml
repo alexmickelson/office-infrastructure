@@ -24,19 +24,25 @@ scrape_configs:
   scrape_interval: 5s
   static_configs:
   - targets:
-    - alex-office.tail8bfa2.ts.net:9100
+    - alex-office1.tail8bfa2.ts.net:9100
     - alex-office2.tail8bfa2.ts.net:9100
+    - alex-office3.tail8bfa2.ts.net:9100
+    - alex-office4.tail8bfa2.ts.net:9100
     - alex-office5.tail8bfa2.ts.net:9100
 - job_name: docker
   static_configs:
     - targets: 
-      - alex-office.tail8bfa2.ts.net:9323
+      - alex-office1.tail8bfa2.ts.net:9323
       - alex-office2.tail8bfa2.ts.net:9323
+      - alex-office3.tail8bfa2.ts.net:9323
+      - alex-office4.tail8bfa2.ts.net:9323
       - alex-office5.tail8bfa2.ts.net:9323
 - job_name: cadvisor
   scrape_interval: 5s
   static_configs:
     - targets: 
-      - alex-office.tail8bfa2.ts.net:9091
+      - alex-office1.tail8bfa2.ts.net:9091
       - alex-office2.tail8bfa2.ts.net:9091
+      - alex-office3.tail8bfa2.ts.net:9323
+      - alex-office4.tail8bfa2.ts.net:9323
       - alex-office5.tail8bfa2.ts.net:9091
