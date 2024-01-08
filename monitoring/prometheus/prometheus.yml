@@ -43,6 +43,6 @@ scrape_configs:
     - targets: 
       - alex-office1.tail8bfa2.ts.net:9091
       - alex-office2.tail8bfa2.ts.net:9091
-      - alex-office3.tail8bfa2.ts.net:9323
-      - alex-office4.tail8bfa2.ts.net:9323
+      - alex-office3.tail8bfa2.ts.net:9091
+      - alex-office4.tail8bfa2.ts.net:9091
       - alex-office5.tail8bfa2.ts.net:9091

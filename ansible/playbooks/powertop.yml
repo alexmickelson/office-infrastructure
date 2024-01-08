@@ -1,0 +1,19 @@
+---
+- name: Install powertop and enable its service
+  hosts: all
+  become: true
+
+  vars_files:
+    - ../secrets.yml
+
+  tasks:
+    - name: install packages
+      package:
+        name:
+          - powertop
+        state: present
+
+    - name: start powertop for auto optimization
+      ansible.builtin.service:
+        name: powertop
+        state: started

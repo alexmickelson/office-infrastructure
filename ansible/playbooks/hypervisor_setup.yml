@@ -16,6 +16,6 @@
           - zfsutils-linux
           - libguestfs-tools
           # - openvswitch-switch
-        state: latest
+        state: absent
         update_cache: yes
 

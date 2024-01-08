@@ -5,4 +5,5 @@
 - import_playbook: playbooks/fish_playbook.yml
 - import_playbook: playbooks/cli-tools.yml
 - import_playbook: playbooks/node_exporter.yml
+- import_playbook: playbooks/powertop.yml
 # - import_playbook: playbooks/hypervisor_setup.yml
