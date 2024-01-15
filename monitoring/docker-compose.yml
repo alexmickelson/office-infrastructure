@@ -4,7 +4,7 @@ services:
     container_name: prometheus
     user: 1000:1000
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--config.file=/etc/prometheus/prometheus.yml --enable-feature=promql-experimental-functions'
     ports:
       - 9090:9090
     restart: unless-stopped
