@@ -26,6 +26,19 @@ services:
     volumes:
       - ./grafana:/etc/grafana/provisioning/datasources
       -  /home/alex/data/grafana:/var/lib/grafana
+
+  heimdall:
+    image: lscr.io/linuxserver/heimdall:latest
+    container_name: heimdall
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /data/heimdall:/config
+    ports:
+      - 3080:80
+    restart: unless-stopped
 volumes:
   prom_data:
   grafana-storage:
