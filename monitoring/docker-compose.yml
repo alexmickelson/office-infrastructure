@@ -1,7 +1,7 @@
 services:
   prometheus:
     image: prom/prometheus
-    container_name: prometheus
+    container_name: alex-prometheus
     user: 1000:1000
     command:
       - '--enable-feature=promql-experimental-functions'
@@ -12,10 +12,10 @@ services:
     volumes:
       - ./prometheus:/etc/prometheus
       - /home/alex/data/prometheus:/prometheus
-      
+
   grafana:
     image: grafana/grafana
-    container_name: grafana
+    container_name: alex-grafana
     user: 1000:1000
     ports:
       - 3000:3000
@@ -39,6 +39,7 @@ services:
     ports:
       - 3080:80
     restart: unless-stopped
+
 volumes:
   prom_data:
   grafana-storage:
