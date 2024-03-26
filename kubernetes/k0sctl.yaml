@@ -1,0 +1,38 @@
+apiVersion: k0sctl.k0sproject.io/v1beta1
+kind: Cluster
+metadata:
+  name: k0s-cluster
+spec:
+  hosts:
+  - openSSH:
+      address: 144.17.92.12
+      user: root
+    role: controller+worker
+    privateInterface: tailscale0
+    installFlags: 
+    - --kubelet-extra-args="--node-ip=144.17.92.12"
+  - openSSH:
+      address: 144.17.92.13
+      user: root
+    role: controller+worker
+    privateInterface: tailscale0
+    installFlags: 
+    - --kubelet-extra-args="--node-ip=144.17.92.13"
+  - openSSH:
+      address: 144.17.92.14
+      user: root
+    role: controller+worker
+    privateInterface: tailscale0
+    installFlags: 
+    - --kubelet-extra-args="--node-ip=144.17.92.14"
+  k0s:
+    version: v1.29.2+k0s.0
+    dynamicConfig: false
+    config: 
+      apiVersion: k0s.k0sproject.io/v1beta1
+      kind: ClusterConfig
+      metadata:
+        name: my-k0s-cluster
+      spec:
+        api:
+          address: 144.17.92.12

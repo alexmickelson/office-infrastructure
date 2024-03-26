@@ -7,3 +7,4 @@
 - import_playbook: playbooks/node_exporter.yml
 - import_playbook: playbooks/powertop.yml
 # - import_playbook: playbooks/hypervisor_setup.yml
+  k0s:
