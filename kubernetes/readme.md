@@ -2,10 +2,7 @@
 
 
 ```
-
-
 sudo k0s install controller --enable-metrics-scraper
-
 ```
 
 
@@ -21,6 +18,18 @@ untaint all nodes: `kubectl taint nodes --all node-role.kubernetes.io/master-`
 `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/baremetal/deploy.yaml`
 
 ## nfs storage
+
+nfs server /etc/exports
+
+```
+/data 144.17.92.0/24(rw,no_subtree_check,no_root_squash)
+```
+- `sudo apt install -y nfs-server`
+- `sudo apt install -y nfs-common` for clients
+- `sudo systemctl enable --now nfs-server`
+- `exportfs -ra`
+
+
 
 <https://kubedemy.io/kubernetes-storage-part-1-nfs-complete-tutorial>
 
