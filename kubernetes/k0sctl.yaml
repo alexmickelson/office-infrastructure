@@ -8,6 +8,7 @@ spec:
       address: 144.17.92.12
       user: root
     role: controller+worker
+    noTaints: true
     privateInterface: tailscale0
     installFlags: 
     - --kubelet-extra-args="--node-ip=144.17.92.12"
@@ -15,6 +16,7 @@ spec:
       address: 144.17.92.13
       user: root
     role: controller+worker
+    noTaints: true
     privateInterface: tailscale0
     installFlags: 
     - --kubelet-extra-args="--node-ip=144.17.92.13"
@@ -25,6 +27,20 @@ spec:
     privateInterface: tailscale0
     installFlags: 
     - --kubelet-extra-args="--node-ip=144.17.92.14"
+  - openSSH:
+      address: 144.17.92.11
+      user: root
+    role: worker
+    privateInterface: tailscale0
+    installFlags: 
+    - --kubelet-extra-args="--node-ip=144.17.92.11"
+  - openSSH:
+      address: 144.17.92.15
+      user: root
+    role: worker
+    privateInterface: tailscale0
+    installFlags: 
+    - --kubelet-extra-args="--node-ip=144.17.92.15"
   k0s:
     version: v1.29.2+k0s.0
     dynamicConfig: false
