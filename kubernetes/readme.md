@@ -11,6 +11,7 @@ sudo k0s install controller --enable-metrics-scraper
 `kubectl create namespace alex`
 
 untaint all nodes: `kubectl taint nodes --all node-role.kubernetes.io/master-`
+`kubectl taint node alex-office2 node-role.kubernetes.io/master-`
 
 <https://github.com/kubernetes/ingress-nginx/blob/main/docs/deploy/index.md#bare-metal-clusters>
 

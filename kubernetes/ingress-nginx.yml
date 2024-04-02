@@ -386,7 +386,7 @@ spec:
     app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/name: ingress-nginx
   type: ClusterIP
----
+# ---
 # apiVersion: apps/v1
 # kind: Deployment
 # metadata:

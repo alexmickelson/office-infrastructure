@@ -4,51 +4,58 @@ metadata:
   name: k0s-cluster
 spec:
   hosts:
+  # 2
   - openSSH:
       address: 144.17.92.12
       user: root
     role: controller+worker
     noTaints: true
-    privateInterface: tailscale0
-    installFlags: 
+    privateInterface: eno1
+    installFlags:
     - --kubelet-extra-args="--node-ip=144.17.92.12"
+  # 3
   - openSSH:
       address: 144.17.92.13
       user: root
     role: controller+worker
     noTaints: true
-    privateInterface: tailscale0
-    installFlags: 
+    privateInterface: eno1
+    installFlags:
     - --kubelet-extra-args="--node-ip=144.17.92.13"
-  - openSSH:
-      address: 144.17.92.14
-      user: root
-    role: controller+worker
-    privateInterface: tailscale0
-    installFlags: 
-    - --kubelet-extra-args="--node-ip=144.17.92.14"
-  - openSSH:
-      address: 144.17.92.11
-      user: root
-    role: worker
-    privateInterface: tailscale0
-    installFlags: 
-    - --kubelet-extra-args="--node-ip=144.17.92.11"
+  # 5
   - openSSH:
       address: 144.17.92.15
       user: root
-    role: worker
-    privateInterface: tailscale0
-    installFlags: 
+    role: controller+worker
+    noTaints: true
+    privateInterface: eno1
+    installFlags:
     - --kubelet-extra-args="--node-ip=144.17.92.15"
-  k0s:
-    version: v1.29.2+k0s.0
-    dynamicConfig: false
-    config: 
-      apiVersion: k0s.k0sproject.io/v1beta1
-      kind: ClusterConfig
-      metadata:
-        name: my-k0s-cluster
-      spec:
-        api:
-          address: 144.17.92.12
+  # - openSSH:
+  #     address: 144.17.92.14
+  #     user: root
+  #   role: controller
+    # privateInterface: tailscale0
+    # installFlags: 
+    # - --kubelet-extra-args="--node-ip=144.17.92.14"
+  # - openSSH:
+  #     address: 144.17.92.11
+  #     user: root
+  #   role: worker
+  #   privateInterface: tailscale0
+  #   installFlags: 
+  #   - --kubelet-extra-args="--node-ip=144.17.92.11"
+  # k0s:
+  #   version: v1.29.2+k0s.0
+    # dynamicConfig: false
+    # config: 
+    #   apiVersion: k0s.k0sproject.io/v1beta1
+    #   kind: ClusterConfig
+    #   metadata:
+    #     name: class-cluster
+      # spec:
+      #   network:
+      #     iptables:
+      #       masqueradeAll: false
+    #     api:
+    #       address: 144.17.92.12
