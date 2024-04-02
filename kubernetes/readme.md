@@ -45,3 +45,37 @@ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs
 
 kubectl patch storageclass nfs-client -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ```
+
+## Image Registry
+
+https://hub.docker.com/_/registry
+
+
+<!-- in office 2 -->
+
+```bash
+docker run -d -p 0.0.0.0:5000:5000 --restart always --name image_registry registry:2
+```
+
+<https://docs.k0sproject.io/stable/runtime/?h=runtime#using-docker-as-the-container-runtime>
+
+/etc/k0s/containerd.toml
+
+```
+version = 2
+root = "/var/lib/k0s/containerd"
+state = "/run/k0s/containerd"
+
+[grpc]
+  address = "/run/k0s/containerd.sock"
+[plugins."io.containerd.grpc.v1.cri".registry]
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+          endpoint = ["https://registry-1.docker.io"]
+        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."144.17.92.12:5000"]
+          endpoint = ["http://144.17.92.12:5000"]
+      [plugins."io.containerd.grpc.v1.cri".registry.configs]
+        [plugins."io.containerd.grpc.v1.cri".registry.configs."144.17.92.12:5000".tls]
+          insecure_skip_verify = true
+
+```

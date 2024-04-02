@@ -11,8 +11,8 @@ spec:
     role: controller+worker
     noTaints: true
     privateInterface: eno1
-    installFlags:
-    - --kubelet-extra-args="--node-ip=144.17.92.12"
+    # installFlags:
+    # - --kubelet-extra-args="--node-ip=144.17.92.12"
   # 3
   - openSSH:
       address: 144.17.92.13
@@ -20,8 +20,8 @@ spec:
     role: controller+worker
     noTaints: true
     privateInterface: eno1
-    installFlags:
-    - --kubelet-extra-args="--node-ip=144.17.92.13"
+    # installFlags:
+    # - --kubelet-extra-args="--node-ip=144.17.92.13"
   # 5
   - openSSH:
       address: 144.17.92.15
@@ -29,8 +29,8 @@ spec:
     role: controller+worker
     noTaints: true
     privateInterface: eno1
-    installFlags:
-    - --kubelet-extra-args="--node-ip=144.17.92.15"
+    # installFlags:
+    # - --kubelet-extra-args="--node-ip=144.17.92.15"
   # - openSSH:
   #     address: 144.17.92.14
   #     user: root
@@ -45,17 +45,17 @@ spec:
   #   privateInterface: tailscale0
   #   installFlags: 
   #   - --kubelet-extra-args="--node-ip=144.17.92.11"
-  # k0s:
+  k0s:
   #   version: v1.29.2+k0s.0
     # dynamicConfig: false
-    # config: 
+    config: 
     #   apiVersion: k0s.k0sproject.io/v1beta1
     #   kind: ClusterConfig
     #   metadata:
     #     name: class-cluster
-      # spec:
+      spec:
       #   network:
       #     iptables:
       #       masqueradeAll: false
-    #     api:
-    #       address: 144.17.92.12
+        api:
+          address: 144.17.92.12
