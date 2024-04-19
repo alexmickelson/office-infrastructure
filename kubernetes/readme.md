@@ -79,3 +79,10 @@ state = "/run/k0s/containerd"
           insecure_skip_verify = true
 
 ```
+
+
+## k3s is my new friend
+
+<https://blog.dsb.dev/posts/accessing-my-k3s-cluster-from-anywhere-with-tailscale/>
+
+curl -sfL https://get.k3s.io | sh -s - --bind-address <TAILSCALE_IP>
