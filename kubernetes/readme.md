@@ -18,6 +18,22 @@ untaint all nodes: `kubectl taint nodes --all node-role.kubernetes.io/master-`
 
 `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/baremetal/deploy.yaml`
 
+### cert manager
+
+<https://dev.to/javiermarasco/https-with-ingress-controller-cert-manager-and-duckdns-in-akskubernetes-2jd1>
+
+```bash
+git clone https://github.com/ebrianne/cert-manager-webhook-duckdns.git
+cd cert-manager-webhook-duckdns
+
+DUCKDNS_TOKEN=4757b829-88a4-428f-94a4-8f549406ce82
+MY_NAME=alex
+
+helm install cert-manager-webhook-duckdns-$MY_NAME --namespace cert-manager --set duckdns.token=$DUCKDNS_TOKEN --set clusterIssuer.production.create=true --set clusterIssuer.staging.create=true --set logLevel=2 ./deploy/cert-manager-webhook-duckdns
+
+kubectl get clusterissuer
+```
+
 ## nfs storage
 
 nfs server /etc/exports
@@ -45,6 +61,7 @@ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs
 
 kubectl patch storageclass nfs-client -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ```
+
 
 ## Image Registry
 
