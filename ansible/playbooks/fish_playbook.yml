@@ -5,10 +5,10 @@
   vars_files:
     - ../secrets.yml
   tasks:
-    - name: Add the official Fish repository PPA
-      ansible.builtin.apt_repository:
-        repo: ppa:fish-shell/release-3
-        state: present
+    # - name: Add the official Fish repository PPA
+    #   ansible.builtin.apt_repository:
+    #     repo: ppa:fish-shell/release-3
+    #     state: present
 
     - name: Install Fish shell
       ansible.builtin.apt:
