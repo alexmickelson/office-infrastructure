@@ -18,5 +18,6 @@ deb http://deb.debian.org/debian/ bookworm contrib non-free non-free-firmware ma
 deb http://deb.debian.org/debian/ bookworm-updates contrib non-free non-free-firmware main 
 deb http://deb.debian.org/debian/ bookworm-backports contrib non-free non-free-firmware main
 ```
-7. install curl, sudo (add user to group), and vim
-8. install tailscale, stop service, copy old keys, restart service.
+7. `apt install curl sudo vim`
+8. `usermod -aG sudo alex`
+9. install tailscale, stop service, copy old keys, restart service.
