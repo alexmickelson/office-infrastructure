@@ -15,6 +15,14 @@
         shell: /usr/bin/bash # try to only run first time in case students want to change their shell
       no_log: true
       loop: "{{ users }}"
+
+    - name: remove other users
+      user:
+        name: "{{ item.name }}"
+        state: absent
+        remove: yes
+      loop: "{{ users_to_remove }}"
+
     - name: setup alex user
       user:
         name: alex

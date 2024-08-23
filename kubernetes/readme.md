@@ -5,7 +5,6 @@
 sudo k0s install controller --enable-metrics-scraper
 ```
 
-
 ## ingress
 
 `kubectl create namespace alex`

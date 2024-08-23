@@ -633,7 +633,7 @@ spec:
         - containerPort: 443
           name: https
           protocol: TCP
-        - containerPort: 8443
+        -   
           name: webhook
           protocol: TCP
         readinessProbe:
@@ -666,8 +666,8 @@ spec:
           readOnly: true
       dnsPolicy: ClusterFirst
       nodeSelector:
-        kubernetes.io/hostname: alex-office2
-        # kubernetes.io/os: linux
+        # kubernetes.io/hostname: alex-office2
+        kubernetes.io/os: linux
       serviceAccountName: ingress-nginx
       terminationGracePeriodSeconds: 300
       volumes:
