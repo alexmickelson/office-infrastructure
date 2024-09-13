@@ -130,7 +130,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.10.0
-  name: ingress-nginx-admission
+  name: ingress-nginx-admissioncontainerPort: 80
   namespace: ingress-nginx
 rules:
 - apiGroups:
@@ -633,7 +633,7 @@ spec:
         - containerPort: 443
           name: https
           protocol: TCP
-        -   
+        - containerPort: 8443
           name: webhook
           protocol: TCP
         readinessProbe:
