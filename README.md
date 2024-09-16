@@ -114,3 +114,8 @@ forward rules
 sudo iptables -t nat -A  PREROUTING -d 144.17.92.20 -j DNAT --to 192.168.122.191
 sudo iptables -t nat -A POSTROUTING -s 192.168.122.191 -j SNAT --to 144.17.92.20
 ```
+
+
+## Office networking
+
+use the top right port for machines to get an IP.

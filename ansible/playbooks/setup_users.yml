@@ -12,7 +12,7 @@
         password: "{{ item.password }}"
         groups: docker,sudo
         append: yes
-        shell: /usr/bin/bash # try to only run first time in case students want to change their shell
+        # shell: /usr/bin/bash # try to only run first time in case students want to change their shell
       no_log: true
       loop: "{{ users }}"
 
