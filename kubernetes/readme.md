@@ -7,9 +7,7 @@ k0sctl apply --config k0sctl.yaml
 get up to date starting config with `k0sctl init`
 
 
-enable metrics (run on box...)
-
-```
+```bash
 sudo k0s install controller --enable-metrics-scraper
 ```
 
@@ -63,7 +61,7 @@ helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/
 helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
   --create-namespace \
   --namespace nfs-provisioner \
-  --set nfs.server=144.17.92.12 \
+  --set nfs.server=144.17.92.14 \
   --set nfs.path=/data
 
 kubectl patch storageclass nfs-client -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
@@ -105,8 +103,11 @@ state = "/run/k0s/containerd"
 ```
 
 
-## k3s is my new friend
+## metrics
 
-<https://blog.dsb.dev/posts/accessing-my-k3s-cluster-from-anywhere-with-tailscale/>
 
-curl -sfL https://get.k3s.io | sh -s - --bind-address <TAILSCALE_IP>
+```
+kubectl create namespace metrics-server
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/high-availability.yaml
+(downloaded as high-availability.yml)
+```
