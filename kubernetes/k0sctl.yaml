@@ -4,6 +4,15 @@ metadata:
   name: k0s-cluster
 spec:
   hosts:
+  # 1
+  - openSSH:
+      address: 144.17.92.11
+      user: root
+    role: controller+worker
+    noTaints: true
+    privateInterface: eno1
+    # installFlags:
+    # - --kubelet-extra-args="--node-ip=144.17.92.11"
   # 2
   - openSSH:
       address: 144.17.92.12
