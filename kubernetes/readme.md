@@ -1,5 +1,13 @@
 
+## install cluster
+```bash
+k0sctl apply --config k0sctl.yaml
+```
 
+get up to date starting config with `k0sctl init`
+
+
+enable metrics (run on box...)
 
 ```
 sudo k0s install controller --enable-metrics-scraper

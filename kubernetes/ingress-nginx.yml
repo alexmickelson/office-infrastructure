@@ -130,7 +130,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
     app.kubernetes.io/version: 1.10.0
-  name: ingress-nginx-admissioncontainerPort: 80
+  name: ingress-nginx-admission
   namespace: ingress-nginx
 rules:
 - apiGroups:
