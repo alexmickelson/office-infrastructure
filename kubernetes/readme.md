@@ -23,6 +23,11 @@ untaint all nodes: `kubectl taint nodes --all node-role.kubernetes.io/master-`
 
 `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/baremetal/deploy.yaml`
 
+```
+kubectl patch ingressclass nginx \
+  --patch '{"metadata": {"annotations": {"ingressclass.kubernetes.io/is-default-class": "true"}}}'
+```
+
 ### cert manager
 
 <https://dev.to/javiermarasco/https-with-ingress-controller-cert-manager-and-duckdns-in-akskubernetes-2jd1>
