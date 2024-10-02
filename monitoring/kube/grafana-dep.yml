@@ -20,6 +20,18 @@ spec:
         image: grafana/grafana
         ports:
         - containerPort: 3000
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
         env:
         - name: GF_SECURITY_ADMIN_USER
           value: admin
@@ -30,11 +42,11 @@ spec:
           mountPath: /etc/grafana/provisioning/datasources/datasource.yml
           subPath: grafana-datasource.yml
         - name: storage
-          mountPath: /data/grafana
+          mountPath: /var/lib/grafana
       volumes:
       - name: datasources
         configMap:
-          name: grafana-datasource-config
+          name: grafana-configmap
       - name: storage
         persistentVolumeClaim:
           claimName: grafana-pvc
