@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        image: bitnami/prometheus:2
+        ports:
+          - containerPort: 9090
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 9090
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 9090
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        volumeMounts:
+        - name: storage
+          mountPath: /prometheus
+        - name: config
+          mountPath: /opt/bitnami/prometheus/conf/prometheus.yml
+          subPath: prometheus.yml
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: prometheus-pvc
+      - name: config
+        configMap:
+          name: prometheus-configmap
