@@ -55,12 +55,3 @@ spec:
         telemetry:
           enabled: true
     version: v1.31.1+k0s.1
-    # dynamicConfig: false
-    # config: 
-    #   apiVersion: k0s.k0sproject.io/v1beta1
-    #   kind: ClusterConfig
-    #   metadata:
-    #     name: class-cluster
-      # spec:
-        # api:
-        #   address: 144.17.92.12
