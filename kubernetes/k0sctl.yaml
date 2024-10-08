@@ -52,12 +52,9 @@ spec:
   k0s:
     config:
       spec:
-        api:
-          extraArgs:
-            - "--enable-metrics-scraper"
         telemetry:
           enabled: true
-    # version: v1.29.3+k0s.0
+    version: v1.31.1+k0s.1
     # dynamicConfig: false
     # config: 
     #   apiVersion: k0s.k0sproject.io/v1beta1
