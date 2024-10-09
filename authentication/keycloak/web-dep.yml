@@ -18,7 +18,7 @@ spec:
           image: quay.io/keycloak/keycloak:26.0.0
           command:
             - /opt/keycloak/bin/kc.sh
-            - start
+            - start-dev
           ports:
             - containerPort: 8080
           env:
@@ -36,10 +36,12 @@ spec:
               value: admin
             - name: KEYCLOAK_ADMIN_PASSWORD
               value: admin
-            - name: KC_PROXY
-              value: edge
+            # - name: KC_PROXY
+            #   value: edge
             - name: KC_HOSTNAME
-              value: auth.alex-react.duckdns.org
+              value: https://auth.snowse.duckdns.org
+            - name: KC_PROXY_HEADERS
+              value: xforwarded
           readinessProbe:
             httpGet:
               path: /realms/master

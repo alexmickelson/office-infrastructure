@@ -85,12 +85,14 @@ cd cert-manager-webhook-duckdns
 
 DUCKDNS_TOKEN=<duckdns token>
 MY_NAME=alex
+EMAIL=alexmickelson96@gmail.com
 
 helm install cert-manager-webhook-duckdns-$MY_NAME \
      --namespace cert-manager \
      --set duckdns.token=$DUCKDNS_TOKEN \
      --set clusterIssuer.production.create=true \
      --set clusterIssuer.staging.create=true \
+     --set clusterIssuer.email=$EMAIL \
      --set logLevel=2 \
      ./deploy/cert-manager-webhook-duckdns
 
