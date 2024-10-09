@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak-web-dep
+  namespace: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak-web
+  template:
+    metadata:
+      labels:
+        app: keycloak-web
+    spec:
+      containers:
+        - name: keycloak-web
+          image: quay.io/keycloak/keycloak:26.0.0
+          command:
+            - /opt/keycloak/bin/kc.sh
+            - start
+          ports:
+            - containerPort: 8080
+          env:
+            - name: KC_DB
+              value: postgres
+            - name: KC_DB_USERNAME
+              value: keycloak
+            - name: KC_DB_PASSWORD
+              value: thisisthelongpaesrabseerbserbsfbssowrd
+            - name: KC_DB_URL
+              value: jdbc:postgresql://keycloak-db-service:5432/keycloak
+            - name: KC_METRICS_ENABLED
+              value: "true"
+            - name: KEYCLOAK_ADMIN
+              value: admin
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: admin
+            - name: KC_PROXY
+              value: edge
+            - name: KC_HOSTNAME
+              value: auth.alex-react.duckdns.org
+          readinessProbe:
+            httpGet:
+              path: /realms/master
+              port: 8080

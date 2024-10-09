@@ -62,19 +62,41 @@ kubectl patch ingressclass nginx \
 
 ### cert manager
 
+first: <https://github.com/cert-manager/cert-manager>
+
 <https://dev.to/javiermarasco/https-with-ingress-controller-cert-manager-and-duckdns-in-akskubernetes-2jd1>
 
+
 ```bash
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.16.1 \
+  --set crds.enabled=true
+
+kubectl get pods --namespace cert-manager --watch
+
+
 git clone https://github.com/ebrianne/cert-manager-webhook-duckdns.git
 cd cert-manager-webhook-duckdns
 
-DUCKDNS_TOKEN=4757b829-88a4-428f-94a4-8f549406ce82
+DUCKDNS_TOKEN=<duckdns token>
 MY_NAME=alex
 
-helm install cert-manager-webhook-duckdns-$MY_NAME --namespace cert-manager --set duckdns.token=$DUCKDNS_TOKEN --set clusterIssuer.production.create=true --set clusterIssuer.staging.create=true --set logLevel=2 ./deploy/cert-manager-webhook-duckdns
+helm install cert-manager-webhook-duckdns-$MY_NAME \
+     --namespace cert-manager \
+     --set duckdns.token=$DUCKDNS_TOKEN \
+     --set clusterIssuer.production.create=true \
+     --set clusterIssuer.staging.create=true \
+     --set logLevel=2 \
+     ./deploy/cert-manager-webhook-duckdns
 
 kubectl get clusterissuer
 ```
+
 
 ## nfs storage
 

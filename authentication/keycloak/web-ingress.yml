@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycloak-web-ingress
+  namespace: keycloak
+spec:
+  rules:
+  - host: auth.snowse.duckdns.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: keycloak-web-svc
+            port:
+              number: 8080
