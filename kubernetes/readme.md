@@ -148,3 +148,11 @@ kubectl create namespace metrics-server
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/high-availability.yaml
 (downloaded as high-availability.yml)
 ```
+
+
+
+## update all kubeconfigs after reinstall
+
+```bash
+find /home -type f -path '*/.kube/config' -exec sh -c 'cat /root/kubeconfig > "$1"' _ {} \;
+```
