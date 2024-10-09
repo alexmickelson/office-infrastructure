@@ -1,5 +1,37 @@
 
-## install cluster
+## k3s 
+
+`curl -sfL https://get.k3s.io | sh -`
+
+
+first node:
+
+`curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" sh -s - --cluster-init --disable=traefik --node-taint "" `
+
+token in `/var/lib/rancher/k3s/server/token`
+
+
+uninstall with `/usr/local/bin/k3s-uninstall.sh`
+
+kubeconfig in `/etc/rancher/k3s/k3s.yaml`
+
+
+add server node
+```bash
+curl -sfL https://get.k3s.io | K3S_TOKEN=K101f2d607d80a37e0056012293361b7cd5516d65f7519678a642c7b256dc7477a8::server:29c9fcc2ef70c34ef84c8f6e256274b9 K3S_URL=https://144.17.92.11:6443 sh -s - server  --disable=traefik --node-taint ""
+```
+
+
+add worker node
+```bash
+curl -sfL https://get.k3s.io | K3S_TOKEN=K101f2d607d80a37e0056012293361b7cd5516d65f7519678a642c7b256dc7477a8::server:29c9fcc2ef70c34ef84c8f6e256274b9 K3S_URL=https://144.17.92.11:6443 sh -s - 
+```
+
+
+<https://docs.k3s.io/quick-start>
+
+<!-- k0s has betrayed me -->
+<!-- ## install cluster
 ```bash
 k0sctl apply --config k0sctl.yaml
 ```
@@ -9,7 +41,7 @@ get up to date starting config with `k0sctl init`
 
 ```bash
 sudo k0s install controller --enable-metrics-scraper
-```
+``` -->
 
 ## ingress
 

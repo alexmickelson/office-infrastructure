@@ -48,7 +48,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: telemetry-demo.duckdns.org
+  - host: alex-kube.duckdns.org
     http:
       paths:
       - path: /
