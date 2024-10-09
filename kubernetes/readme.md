@@ -150,8 +150,9 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/late
 ```
 
 
-
 ## update all kubeconfigs after reinstall
+
+scp source file to `/root/kubeconfig`
 
 ```bash
 find /home -type f -path '*/.kube/config' -exec sh -c 'cat /root/kubeconfig > "$1"' _ {} \;
