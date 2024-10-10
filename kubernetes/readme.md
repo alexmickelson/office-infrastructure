@@ -6,7 +6,10 @@
 
 first node:
 
-`curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" sh -s - --cluster-init --disable=traefik --node-taint "" `
+`curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" sh -s - --cluster-init --disable=traefik --node-taint ""  --tls-san 100.96.241.36`
+
+
+`--tls-san` is to generate certificate with additional valid ip's
 
 token in `/var/lib/rancher/k3s/server/token`
 
