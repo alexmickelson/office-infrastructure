@@ -13,7 +13,6 @@ first node:
 
 token in `/var/lib/rancher/k3s/server/token`
 
-
 uninstall with `/usr/local/bin/k3s-uninstall.sh`
 
 kubeconfig in `/etc/rancher/k3s/k3s.yaml`
@@ -21,7 +20,7 @@ kubeconfig in `/etc/rancher/k3s/k3s.yaml`
 
 add server node
 ```bash
-curl -sfL https://get.k3s.io | K3S_TOKEN=K101f2d607d80a37e0056012293361b7cd5516d65f7519678a642c7b256dc7477a8::server:29c9fcc2ef70c34ef84c8f6e256274b9 K3S_URL=https://144.17.92.11:6443 sh -s - server  --disable=traefik --node-taint ""
+curl -sfL https://get.k3s.io | K3S_TOKEN=<token> K3S_URL=https://144.17.92.11:6443 sh -s - server  --disable=traefik --node-taint ""
 ```
 
 
