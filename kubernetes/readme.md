@@ -18,13 +18,19 @@ kubeconfig in `/etc/rancher/k3s/k3s.yaml`
 
 add server node
 ```bash
-curl -sfL https://get.k3s.io | K3S_TOKEN=K101f2d607d80a37e0056012293361b7cd5516d65f7519678a642c7b256dc7477a8::server:29c9fcc2ef70c34ef84c8f6e256274b9 K3S_URL=https://144.17.92.11:6443 sh -s - server  --disable=traefik --node-taint ""
+curl -sfL https://get.k3s.io | K3S_TOKEN=<token> K3S_URL=https://144.17.92.11:6443 sh -s - server  --disable=traefik --node-taint ""
+```
+
+when removing a node to re-add it, clean up etcd stuff:
+```bash
+sudo rm -rf /var/lib/rancher/k3s/server/db/etcd
+sudo rm -rf /var/lib/rancher/k3s/server/tls
 ```
 
 
 add worker node
 ```bash
-curl -sfL https://get.k3s.io | K3S_TOKEN=K101f2d607d80a37e0056012293361b7cd5516d65f7519678a642c7b256dc7477a8::server:29c9fcc2ef70c34ef84c8f6e256274b9 K3S_URL=https://144.17.92.11:6443 sh -s - 
+curl -sfL https://get.k3s.io | K3S_TOKEN=<token> K3S_URL=https://144.17.92.11:6443 sh -s - 
 ```
 
 
@@ -77,6 +83,13 @@ helm install \
   --version v1.16.1 \
   --set crds.enabled=true
 
+# helm install \
+#                             cert-manager jetstack/cert-manager \
+#                             --namespace cert-manager \
+#                             --version v1.2.0 \
+#                             --set 'extraArgs={--dns01-recursive-nameservers=8.8.8.8:53\,1.1.1.1:53}' \
+#                             --create-namespace \
+#                             --set installCRDs=true
 kubectl get pods --namespace cert-manager --watch
 
 
