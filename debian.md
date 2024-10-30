@@ -20,3 +20,5 @@ deb http://deb.debian.org/debian/ bookworm-backports contrib non-free non-free-f
 ```
 7. `apt update && apt install -y curl sudo vim && usermod -aG sudo alex`
 8. install tailscale, stop service, copy old keys, restart service.
+
+network subnet mask: `255.255.255.192`
