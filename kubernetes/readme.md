@@ -182,12 +182,24 @@ state = "/run/k0s/containerd"
 ## metrics
 
 
-```
+```bash
 kubectl create namespace metrics-server
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/high-availability.yaml
-(downloaded as high-availability.yml)
 ```
+(downloaded as high-availability.yml)
 
+
+https://artifacthub.io/packages/helm/prometheus-community/kube-state-metrics/
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+# helm install [RELEASE_NAME] prometheus-community/kube-state-metrics [flags]
+helm install \
+  --namespace monitoring \
+  kube-state-metrics \
+  prometheus-community/kube-state-metrics
+```
+<!-- metrics endpoint: kube-state-metrics.monitoring.svc.cluster.local:8080/metrics -->
 
 ## update all kubeconfigs after reinstall
 

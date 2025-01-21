@@ -44,12 +44,8 @@ data:
           - alex-office3.tail8bfa2.ts.net:9323
           - alex-office4.tail8bfa2.ts.net:9323
           - alex-office5.tail8bfa2.ts.net:9323
-    # - job_name: cadvisor
-    #   scrape_interval: 5s
-    #   static_configs:
-    #     - targets: 
-    #       - alex-office1.tail8bfa2.ts.net:9091
-    #       - alex-office2.tail8bfa2.ts.net:9091
-    #       - alex-office3.tail8bfa2.ts.net:9091
-    #       - alex-office4.tail8bfa2.ts.net:9091
-    #       - alex-office5.tail8bfa2.ts.net:9091
+    - job_name: kubernetes
+      scrape_interval: 5s
+      static_configs:
+        - targets: 
+          - kube-state-metrics.monitoring.svc.cluster.local:8080
