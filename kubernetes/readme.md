@@ -20,8 +20,17 @@ kubeconfig in `/etc/rancher/k3s/k3s.yaml`
 
 add server node
 ```bash
-curl -sfL https://get.k3s.io | K3S_TOKEN=<token> K3S_URL=https://144.17.92.11:6443 sh -s - server  --disable=traefik --node-taint ""
+curl -sfL https://get.k3s.io | K3S_TOKEN=<token> K3S_URL=https://144.17.92.11:6443 sh -s - server  \
+  --disable=traefik \
+  --node-taint "" \
+  --tls-san 100.96.241.36 \
+  --tls-san alex-office1.tail8bfa2.ts.net \
+  --tls-san alex-office2.tail8bfa2.ts.net \
+  --tls-san alex-office3.tail8bfa2.ts.net \
+  --tls-san alex-office4.tail8bfa2.ts.net \
+  --tls-san alex-office5.tail8bfa2.ts.net 
 ```
+
 
 when removing a node to re-add it, clean up etcd stuff:
 ```bash
@@ -35,6 +44,21 @@ add worker node
 curl -sfL https://get.k3s.io | K3S_TOKEN=<token> K3S_URL=https://144.17.92.11:6443 sh -s - 
 ```
 
+upgrade nodes in place
+```bash
+curl -sfL https://get.k3s.io | sh -s - server  \
+  --disable=traefik \
+  --node-taint "" \
+  --tls-san 100.96.241.36 \
+  --tls-san alex-office1.tail8bfa2.ts.net \
+  --tls-san alex-office2.tail8bfa2.ts.net \
+  --tls-san alex-office3.tail8bfa2.ts.net \
+  --tls-san alex-office4.tail8bfa2.ts.net \
+  --tls-san alex-office5.tail8bfa2.ts.net
+# worker (same as adding)
+curl -sfL https://get.k3s.io | K3S_TOKEN=<token> K3S_URL=https://144.17.92.11:6443 sh -s - 
+
+```
 
 <https://docs.k3s.io/quick-start>
 
