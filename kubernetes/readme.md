@@ -49,6 +49,8 @@ upgrade nodes in place
 curl -sfL https://get.k3s.io | sh -s - server  \
   --disable=traefik \
   --node-taint "" \
+  --kube-apiserver-arg="feature-gates=MaxUnavailableStatefulSet=true" \
+  --kube-controller-manager-arg="feature-gates=MaxUnavailableStatefulSet=true" \
   --tls-san 100.96.241.36 \
   --tls-san alex-office1.tail8bfa2.ts.net \
   --tls-san alex-office2.tail8bfa2.ts.net \
