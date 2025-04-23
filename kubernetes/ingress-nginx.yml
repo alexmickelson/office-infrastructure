@@ -319,8 +319,6 @@ subjects:
   namespace: ingress-nginx
 ---
 apiVersion: v1
-data:
-  allow-snippet-annotations: "false"
 kind: ConfigMap
 metadata:
   labels:
@@ -333,6 +331,7 @@ metadata:
   namespace: ingress-nginx
 data:
   allow-snippet-annotations: "true"
+  enable-underscores-in-headers: "true"
 #   http-snippet: |
 #     proxy_cache_path /tmp/nginx-cache levels=1:2 keys_zone=static-cache:2m max_size=100m inactive=7d use_temp_path=off;
 #     proxy_cache_key $scheme$proxy_host$request_uri;
