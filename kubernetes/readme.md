@@ -46,9 +46,9 @@ curl -sfL https://get.k3s.io | K3S_TOKEN=<token> K3S_URL=https://144.17.92.11:64
 
 upgrade nodes in place
 ```bash
+  # --node-taint "" \ # breaks updates
 curl -sfL https://get.k3s.io | sh -s - server  \
   --disable=traefik \
-  --node-taint "" \
   --kube-apiserver-arg="feature-gates=MaxUnavailableStatefulSet=true" \
   --kube-controller-manager-arg="feature-gates=MaxUnavailableStatefulSet=true" \
   --tls-san 100.96.241.36 \
