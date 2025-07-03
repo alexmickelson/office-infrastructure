@@ -233,7 +233,8 @@ state = "/run/k0s/containerd"
 
 ```bash
 kubectl create namespace metrics-server
-kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/high-availability.yaml
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/high-availability-1.21+.yaml
 ```
 (downloaded as high-availability.yml)
 
