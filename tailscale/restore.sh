@@ -2,34 +2,38 @@
 #! nix-shell -i bash -p bash
 
 HOSTS=(
-  "144.17.92.11" 
-  "144.17.92.12" 
+  # "144.17.92.11" 
+  # "144.17.92.12" 
   "144.17.92.13" 
-  "144.17.92.14" 
-  "144.17.92.15"
+  # "144.17.92.14" 
+  # "144.17.92.15"
 )
 
 LOCAL_BACKUP_DIR="./backups"
 
 for HOST in "${HOSTS[@]}"; do
-    TARGET="alex@$HOST"
-    BACKUP_DIR="$LOCAL_BACKUP_DIR/$HOST"
-    REMOTE_DIR="/var/lib/tailscale"
+  USER="alex"
+  TARGET="$USER@$HOST"
+  BACKUP_DIR="$LOCAL_BACKUP_DIR/$HOST"
+  REMOTE_DIR="/var/lib/tailscale"
 
-    echo "Restoring Tailscale backup to $TARGET..."
+  echo "[INFO] Restoring Tailscale backup to $TARGET..."
 
-    # 1. SSH onto the target, stop tailscale, then start it (to ensure it's running, then stopped cleanly)
-    ssh "$TARGET" "sudo -S systemctl start tailscaled && sudo systemctl stop tailscaled"
+  echo "[INFO] Stopping and starting tailscaled on $TARGET..."
+  ssh "$TARGET" "sudo -S systemctl start tailscaled && sudo -S systemctl stop tailscaled"
 
-    # 2. Move the backup directory onto the machine with admin access
-    scp -r "$BACKUP_DIR/" "$HOST:~/tailscale_restore/"
-    ssh "$TARGET" "sudo -S rm -rf $REMOTE_DIR && \
-        sudo-S mv ~/tailscale_restore $REMOTE_DIR && \
-        sudo -S chown -R _tailscale:_tailscale $REMOTE_DIR"
+  echo "[INFO] Copying backup to $TARGET..."
 
-    # 3. Restart tailscale on the destination
-    ssh "$TARGET" "sudo -S systemctl start tailscaled"
+  ssh "$TARGET" "rm -rf ~/tailscale_restore && mkdir -p ~/tailscale_restore"
+  scp -r "$BACKUP_DIR/tailscale_backup/." "$TARGET:~/tailscale_restore/"
 
-    echo "Restore to $HOST completed."
+  echo "[INFO] Restoring backup to $REMOTE_DIR on $TARGET..."
+  ssh "$TARGET" "sudo -S rm -rf $REMOTE_DIR && \
+      sudo -S mv ~/tailscale_restore $REMOTE_DIR && \
+      sudo -S chown -R _tailscale:_tailscale $REMOTE_DIR"
 
+  echo "[INFO] Restarting tailscaled on $TARGET..."
+  ssh "$TARGET" "sudo -S systemctl start tailscaled"
+
+  echo "[SUCCESS] Restore to $HOST completed."
 done
