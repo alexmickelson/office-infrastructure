@@ -79,6 +79,10 @@ sudo k0s install controller --enable-metrics-scraper
 
 ## ingress
 
+<!-- 
+
+## reuse pod IP's
+
 `kubectl create namespace alex`
 
 untaint all nodes: `kubectl taint nodes --all node-role.kubernetes.io/master-`
@@ -92,6 +96,25 @@ untaint all nodes: `kubectl taint nodes --all node-role.kubernetes.io/master-`
 ```
 kubectl patch ingressclass nginx \
   --patch '{"metadata": {"annotations": {"ingressclass.kubernetes.io/is-default-class": "true"}}}'
+``` -->
+
+
+```bash
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx \
+  --create-namespace
+```
+
+### metallb
+
+```bash
+helm repo add metallb https://metallb.github.io/metallb
+helm install metallb metallb/metallb \
+  --namespace metallb \
+  --create-namespace
+kubectl apply -f metallb.yml
 ```
 
 ### cert manager

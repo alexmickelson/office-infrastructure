@@ -1,0 +1,50 @@
+---
+- name: Setup NFS server
+  hosts: office-server4
+  become: true
+
+  vars_files:
+    - ../secrets.yml
+
+  vars:
+    nfs_export_dir: /data
+    nfs_network: 144.17.92.0/24
+
+  tasks:
+    - name: Install nfs-server
+      ansible.builtin.apt:
+        name: nfs-server
+        state: present
+        update_cache: yes
+
+    - name: Ensure export directory exists
+      ansible.builtin.file:
+        path: "{{ nfs_export_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0777"
+
+    - name: Configure /etc/exports
+      ansible.builtin.lineinfile:
+        path: /etc/exports
+        line: "{{ nfs_export_dir }} {{ nfs_network }}(rw,no_subtree_check,no_root_squash)"
+        create: yes
+        state: present
+        insertafter: EOF
+
+    - name: Export NFS shares
+      ansible.builtin.command: exportfs -ra
+      notify: Restart nfs-server
+
+    - name: Enable and start nfs-server
+      ansible.builtin.systemd:
+        name: nfs-server
+        enabled: yes
+        state: started
+
+  handlers:
+    - name: Restart nfs-server
+      ansible.builtin.systemd:
+        name: nfs-server
+        state: restarted

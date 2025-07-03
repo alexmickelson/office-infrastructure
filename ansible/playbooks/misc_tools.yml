@@ -25,10 +25,14 @@
     - name: Set executable permissions for lazydocker
       ansible.builtin.file:
         path: /usr/local/bin/lazydocker
-        mode: '0755'
-
+        mode: "0755"
 
     - name: install btop
       package:
         name: btop
+        state: present
+
+    - name: install nfs-common
+      package:
+        name: nfs-common
         state: present

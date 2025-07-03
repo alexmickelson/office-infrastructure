@@ -1,9 +1,9 @@
 
-
 - import_playbook: playbooks/docker_install.yml
 - import_playbook: playbooks/setup_users.yml
 - import_playbook: playbooks/fish_playbook.yml
-- import_playbook: playbooks/cli-tools.yml
+- import_playbook: playbooks/misc_tools.yml
 - import_playbook: playbooks/node_exporter.yml
 - import_playbook: playbooks/powertop.yml
 - import_playbook: playbooks/hypervisor_setup.yml
+- import_playbook: playbooks/nfs_server.yml
