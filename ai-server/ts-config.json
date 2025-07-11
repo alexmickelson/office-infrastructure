@@ -12,7 +12,7 @@
         }
       }
     },
-    "${TS_CERT_DOMAIN}:9090": {
+    "${TS_CERT_DOMAIN}:9091": {
       "Handlers": {
         "/": {
           "Proxy": "http://127.0.0.1:9090"
