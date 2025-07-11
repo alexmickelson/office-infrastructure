@@ -56,9 +56,8 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
     volumes:
       - /data/grafana:/var/lib/grafana
-    network_mode: service:tailscale-ingress
-    # ports:
-    #   - 3000:3000
+    ports:
+      - 3000:3000
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/robots.txt"]
       interval: 10s
