@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: openwebui
+    ports:
+      - "8080:8080"
+    environment:
+      - WEBUI_PORT=8080
+      - OLLAMA_API_BASE_URL=http://ollama:11434
+    volumes:
+      - /data/openwebui:/app/data
+    restart: unless-stopped
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    # ports:
+    #   - "11434:11434"
+    volumes:
+      - /data/ollama:/root/.ollama
+    restart: unless-stopped
+    
+  swag:
+    image: linuxserver/swag:latest
+    container_name: swag
+    env_file:
+      - .env
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Denver
+      - URL=snow-ai.duckdns.org
+      - SUBDOMAINS=wildcard
+      - VALIDATION=duckdns
+      # - DUCKDNSTOKEN=from .env file
+    volumes:
+      - /data/swag:/config
+    ports:
+      - "443:443"
+      # - "80:80"
+    restart: unless-stopped
