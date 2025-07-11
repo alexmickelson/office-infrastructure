@@ -124,7 +124,7 @@ services:
     environment:
       - OPENWEBUI_DB_USER=openwebui
       - OPENWEBUI_DB_PASSWORD=9hb02121-9br
-      - OPENWEBUI_DB_DB=openwebui_db
+      - OPENWEBUI_DB_NAME=openwebui_db
       - OPENWEBUI_DB_HOST=openwebui-db
 
   pipelines:
