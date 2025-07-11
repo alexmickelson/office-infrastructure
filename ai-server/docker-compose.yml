@@ -35,6 +35,7 @@ services:
       - TZ=America/Denver
       - URL=snow-ai.duckdns.org
       - SUBDOMAINS=wildcard
+      - ONLY_SUBDOMAINS=false
       - VALIDATION=duckdns
       # - DUCKDNSTOKEN=from .env file
     volumes:
