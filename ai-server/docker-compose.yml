@@ -21,6 +21,14 @@ services:
     volumes:
       - /data/ollama:/root/.ollama
     restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
 
   swag:
     image: linuxserver/swag:latest
