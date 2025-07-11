@@ -43,6 +43,7 @@ services:
     # network_mode: service:tailscale-ingress # port 9090
     ports:
       - 127.0.0.1:9090:9090
+      - 9090:9090
     volumes:
       - ./prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
       - /data/prometheus:/opt/bitnami/prometheus/data
