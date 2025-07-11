@@ -48,7 +48,7 @@ services:
   grafana:
     image: grafana/grafana:main
     container_name: grafana
-    restart: always
+    restart: unless-stopped
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
