@@ -36,8 +36,6 @@ services:
     volumes:
       - /data/openwebui:/app/backend/data
     restart: unless-stopped
-    extra_hosts:
-      - host.docker.internal:host-gateway
     depends_on:
       - ollama
 
@@ -62,6 +60,7 @@ services:
 
   tailscale-ingress:
     image: tailscale/tailscale:latest
+    pull_policy: always
     hostname: ai-snow
     env_file:
       - .env
@@ -72,6 +71,8 @@ services:
     volumes:
       - /data/tailscale-ingress:/var/lib/tailscale
       - ./ts-config.json:/config/ts-config.json
+    extra_hosts:
+      - host.docker.internal:host-gateway
     devices:
       - /dev/net/tun:/dev/net/tun
     cap_add:
