@@ -15,10 +15,10 @@ scrape_configs:
     scrape_interval: 10s
     static_configs:
       - targets: 
-        - 100.72.221.110:9400
+        - host.docker.internal:9400
 
   - job_name: "openwebui"
     scrape_interval: 10s
     static_configs:
       - targets: 
-        - openwebui.bison-python.ts.net:8889
+        - https://ai-snow.reindeer-pinecone.ts.net/

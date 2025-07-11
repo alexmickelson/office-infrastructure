@@ -36,15 +36,15 @@ services:
               capabilities:
                 - gpu
 
-  # prometheus:
-  #   image: bitnami/prometheus:2
-  #   container_name: prometheus
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
-  #     - /data/prometheus:/opt/bitnami/prometheus/data
-  #   # ports:
-  #   #   - 9091:9090
+  prometheus:
+    image: bitnami/prometheus:2
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
+      - /data/prometheus:/opt/bitnami/prometheus/data
+    # ports:
+    #   - 9091:9090
 
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest
@@ -61,7 +61,7 @@ services:
   dcgm-exporter:
     image: nvidia/dcgm-exporter:4.2.3-4.1.3-ubuntu22.04
     container_name: dcgm-exporter
-    network_mode: host
+    network_mode: host # port 9400
     restart: unless-stopped
     deploy:
       resources:
@@ -69,8 +69,6 @@ services:
           devices:
             - driver: nvidia
               capabilities: [gpu]
-    # ports:
-    #   - "9400:9400"
     cap_add:
       - SYS_ADMIN
     environment:
