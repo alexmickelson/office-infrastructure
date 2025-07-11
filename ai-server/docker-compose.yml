@@ -40,11 +40,10 @@ services:
     image: bitnami/prometheus:2
     container_name: prometheus
     restart: unless-stopped
+    network_mode: service:tailscale-ingress # port 9090
     volumes:
       - ./prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
       - /data/prometheus:/opt/bitnami/prometheus/data
-    # ports:
-    #   - 9091:9090
 
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest

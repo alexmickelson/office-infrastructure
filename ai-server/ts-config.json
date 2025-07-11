@@ -11,6 +11,13 @@
           "Proxy": "http://127.0.0.1:8080"
         }
       }
+    },
+    "${TS_CERT_DOMAIN}:9090": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://127.0.0.1:9090"
+        }
+      }
     }
   },
   "AllowFunnel": {
