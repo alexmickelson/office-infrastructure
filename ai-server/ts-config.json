@@ -3,7 +3,7 @@
     "443": {
       "HTTPS": true
     },
-    "9091": {
+    "9090": {
       "HTTPS": true
     }
   },
@@ -15,10 +15,10 @@
         }
       }
     },
-    "${TS_CERT_DOMAIN}:9091": {
+    "${TS_CERT_DOMAIN}:9090": {
       "Handlers": {
         "/": {
-          "Proxy": "http://127.0.0.1:9090"
+          "Proxy": "http://host.docker.internal:9090"
         }
       }
     }
