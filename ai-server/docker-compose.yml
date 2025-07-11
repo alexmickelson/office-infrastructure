@@ -51,9 +51,12 @@ services:
     image: grafana/grafana:main
     container_name: grafana
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      # - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
     volumes:
       - /data/grafana:/var/lib/grafana
     ports:
