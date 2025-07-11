@@ -1,26 +1,4 @@
 services:
-  # swag:
-  #   image: linuxserver/swag:latest
-  #   container_name: swag
-  #   pull_policy: always
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=America/Denver
-  #     - URL=snow-ai.duckdns.org
-  #     # - SUBDOMAINS=wildcard
-  #     # - ONLY_SUBDOMAINS=false
-  #     - VALIDATION=duckdns
-  #     # - DUCKDNSTOKEN=from .env file
-  #   volumes:
-  #     - /data/swag:/config
-  #     - ./openwebui.subdomain.conf:/config/nginx/site-confs/default.conf:ro
-  #   ports:
-  #     - "443:443"
-  #     # - "80:80"
-  #   restart: unless-stopped
 
   openwebui:
     image: ghcr.io/open-webui/open-webui:latest
