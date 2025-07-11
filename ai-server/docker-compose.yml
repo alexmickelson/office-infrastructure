@@ -4,8 +4,8 @@ services:
   openwebui:
     image: ghcr.io/open-webui/open-webui:latest
     container_name: openwebui
-    ports:
-      - "8080:8080"
+    # ports:
+    #   - "8080:8080"
     environment:
       - WEBUI_PORT=8080
       - OLLAMA_API_BASE_URL=http://ollama:11434
@@ -23,7 +23,7 @@ services:
     volumes:
       - /data/ollama:/root/.ollama
     restart: unless-stopped
-    
+
   swag:
     image: linuxserver/swag:latest
     container_name: swag
@@ -39,6 +39,7 @@ services:
       # - DUCKDNSTOKEN=from .env file
     volumes:
       - /data/swag:/config
+      - ./openwebui.subdomain.conf:/config/nginx/site-confs/default.conf:ro
     ports:
       - "443:443"
       # - "80:80"
