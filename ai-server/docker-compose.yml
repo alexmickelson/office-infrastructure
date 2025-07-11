@@ -117,6 +117,14 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
 
+  openwebui-exporter:
+    image: nicholascecere/exporter-openwebui:latest
+    # ports:
+    #   - "9091:9090"
+    environment:
+      - OPENWEBUI_DB_PASSWORD=9hb02121-9br
+      - OPENWEBUI_DB_HOST=openwebui-db
+
   pipelines:
     image: ghcr.io/open-webui/pipelines:main
     container_name: pipelines

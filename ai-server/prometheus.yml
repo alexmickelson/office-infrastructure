@@ -17,6 +17,12 @@ scrape_configs:
       - targets: 
         - host.docker.internal:9400
 
+  - job_name: "openwebui"
+    scrape_interval: 10s
+    static_configs:
+      - targets: 
+        - openwebui-exporter:9090
+
   # - job_name: "openwebui"
   #   scrape_interval: 10s
   #   static_configs:
