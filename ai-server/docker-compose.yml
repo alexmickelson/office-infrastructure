@@ -45,6 +45,25 @@ services:
       - ./prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
       - /data/prometheus:/opt/bitnami/prometheus/data
 
+  grafana:
+    image: grafana/grafana:main
+    container_name: grafana
+    restart: always
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    volumes:
+      - /data/grafana:/var/lib/grafana
+    network_mode: service:tailscale-ingress # port 3000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/robots.txt"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 3s
+    # ports:
+    #   - 3000:3000
+
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest
     pull_policy: always
