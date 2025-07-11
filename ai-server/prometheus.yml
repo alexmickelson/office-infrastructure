@@ -17,8 +17,8 @@ scrape_configs:
       - targets: 
         - host.docker.internal:9400
 
-  - job_name: "openwebui"
-    scrape_interval: 10s
-    static_configs:
-      - targets: 
-        - ai-snow.reindeer-pinecone.ts.net
+  # - job_name: "openwebui"
+  #   scrape_interval: 10s
+  #   static_configs:
+  #     - targets: 
+  #       - ai-snow.reindeer-pinecone.ts.net
