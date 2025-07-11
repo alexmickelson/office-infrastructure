@@ -37,7 +37,7 @@ services:
                 - gpu
 
   prometheus:
-    image: bitnami/prometheus:2
+    image: bitnami/prometheus:3
     container_name: prometheus
     restart: unless-stopped
     network_mode: service:tailscale-ingress # port 9090
