@@ -122,8 +122,8 @@ services:
     # ports:
     #   - "9091:9090"
     environment:
-      - OPENWEBUI_DB_PASSWORD=openwebui
-      - OPENWEBUI_DB_USER=9hb02121-9br
+      - OPENWEBUI_DB_USER=openwebui
+      - OPENWEBUI_DB_PASSWORD=9hb02121-9br
       - OPENWEBUI_DB_DB=openwebui_db
       - OPENWEBUI_DB_HOST=openwebui-db
 
