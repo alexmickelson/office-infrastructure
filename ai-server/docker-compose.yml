@@ -44,6 +44,7 @@ services:
     # ports:
     #   - "11434:11434"
     environment:
+      - OLLAMA_NUM_PARALLEL=4
       - OLLAMA_NUM_PARALLEL=10
       - OLLAMA_MAX_QUEUE=5000
     volumes:
