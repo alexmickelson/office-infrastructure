@@ -45,6 +45,7 @@ services:
     #   - "11434:11434"
     environment:
       - OLLAMA_NUM_PARALLEL=10
+      - OLLAMA_MAX_QUEUE=5000
     volumes:
       - /data/ollama:/root/.ollama
     restart: unless-stopped
