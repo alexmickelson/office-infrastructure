@@ -142,6 +142,30 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
 
+  swag:
+    image: lscr.io/linuxserver/swag:latest
+    container_name: swag
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file:
+      - .env
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - URL=snow-ai.duckdns.org # Set this in your .env file
+      # - SUBDOMAINS=wildcard
+      - VALIDATION=duckdns
+      # - DUCKDNSTOKEN= # from .env file
+      # - EMAIL=your-email@domain.com # Set this in your .env file
+    volumes:
+      - /data/swag:/config
+      - ./default.conf:/config/nginx/site-confs/default.conf:ro
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: unless-stopped
+
   tailscale-ingress:
     image: tailscale/tailscale:latest
     hostname: ai-snow
