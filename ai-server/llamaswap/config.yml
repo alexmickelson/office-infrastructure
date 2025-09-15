@@ -3,8 +3,8 @@ models:
     cmd: |
       ./llama-server \
       --port ${PORT} \
-      -m models/gpt-oss-120b-Q4_K_M.gguf \
+      -m models/gpt-oss-120b-Q4_K_M-00001-of-00002.gguf \
       --ctx-size 32768 --jinja -ub 4096 -b 4096
-     # --jinja --ctx-size 16384
+    # --jinja --ctx-size 16384
     aliases:
       - "gpt-oss:20b"
