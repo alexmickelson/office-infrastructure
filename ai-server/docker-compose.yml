@@ -68,7 +68,7 @@ services:
     #  - "9292:8080"
     volumes:
       - ./llamaswap/config.yml:/app/config.yaml
-      - ./llamaswap/models:/app/models
+      - /data/llamaswap/models:/app/models
     command: --listen :9292
     deploy:
       resources:
