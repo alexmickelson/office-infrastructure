@@ -1,0 +1,10 @@
+models:
+  "gpt-oss-20b":
+    cmd: |
+      ./llama-server \
+      --port ${PORT} \
+      -m models/gpt-oss-20b-Q4_K_M.gguf \
+      --ctx-size 32768 --jinja -ub 4096 -b 4096
+     # --jinja --ctx-size 16384
+    aliases:
+      - "gpt-oss:20b"

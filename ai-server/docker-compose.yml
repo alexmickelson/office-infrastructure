@@ -60,6 +60,26 @@ services:
               capabilities:
                 - gpu
 
+  llama-swap:
+    image: ghcr.io/mostlygeek/llama-swap:cuda
+    container_name: llama-swap
+    restart: unless-stopped
+    #ports:
+    #  - "9292:8080"
+    volumes:
+      - ./llamaswap/config.yml:/app/config.yaml
+      - ./llamaswap/models:/app/models
+    command: --listen :9292
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
+    network_mode: service:tailscale-ingress
+
   prometheus:
     image: bitnami/prometheus:3
     container_name: prometheus
