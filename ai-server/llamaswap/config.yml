@@ -4,7 +4,7 @@ models:
       ./llama-server \
       --port ${PORT} \
       -m models/gpt-oss-120b-F16.gguf \
-      --jinja -ngl 99 --threads -1 --ctx-size 16384
+      --jinja --ctx-size 16384
     # --ctx-size 32768 --jinja -ub 4096 -b 4096
     # --jinja --ctx-size 16384
     aliases:
