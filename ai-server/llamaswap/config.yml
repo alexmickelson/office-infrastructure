@@ -15,6 +15,7 @@ models:
       ./llama-server \
       --port ${PORT} \
       -m models/gemma-3-27b-it-UD-Q4_K_XL.gguf \
+      --mmproj models/gemma-mmproj-F16.gguf \
       --ctx-size 0 
     aliases:
       - "gemma3:27b"
