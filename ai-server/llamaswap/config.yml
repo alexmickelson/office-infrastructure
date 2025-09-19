@@ -9,3 +9,13 @@ models:
     # --jinja --ctx-size 16384
     aliases:
       - "gpt-oss:120b"
+
+  "gemma3-27b":
+    cmd: |
+      ./llama-server \
+      --port ${PORT} \
+      -m models/gemma-3-27b-it-UD-Q4_K_XL.gguf \
+      --ctx-size 0 
+    aliases:
+      - "gemma3:27b"
+    ttl: 300
