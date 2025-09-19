@@ -21,3 +21,21 @@ models:
     aliases:
       - "gemma3:27b"
     ttl: 300
+
+# Groups configuration to run both models simultaneously
+groups:
+  "concurrent-models":
+    # swap: false allows all models in this group to run at the same time
+    swap: false
+    # exclusive: false prevents this group from unloading other groups
+    exclusive: false
+    members:
+      - "gpt-oss-120b"
+      - "gemma3-27b"
+
+# Hooks to preload both models on startup
+hooks:
+  on_startup:
+    preload:
+      - "gpt-oss-120b"
+      - "gemma3-27b"
