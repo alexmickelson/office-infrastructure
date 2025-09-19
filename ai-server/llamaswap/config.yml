@@ -14,7 +14,7 @@ models:
     cmd: |
       ./llama-server \
       --port ${PORT} \
-      -m models/gemma-3-27b-it-UD-Q4_K_XL.gguf \
+      -m models/gemma-3-27b-it-Q2_K_L.gguf \
       --mmproj models/gemma-mmproj-F16.gguf \
       --ctx-size 0
     # -m models/gemma-3-27b-it-UD-Q4_K_XL.gguf \
