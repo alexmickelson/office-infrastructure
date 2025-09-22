@@ -16,7 +16,7 @@ models:
       --port ${PORT} \
       -m models/gemma-3-27b-it-Q2_K_L.gguf \
       --mmproj models/gemma-mmproj-F16.gguf \
-      --ctx-size 0
+      --ctx-size 0 --jinja
     # -m models/gemma-3-27b-it-UD-Q4_K_XL.gguf \
     aliases:
       - "gemma3:27b"
