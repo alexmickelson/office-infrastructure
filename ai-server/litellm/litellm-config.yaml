@@ -5,6 +5,6 @@
 model_list:
   - model_name: gpt-oss-120b
     litellm_params:
-      model: gpt-oss-120b
+      model: openai/gpt-oss-120b # Added openai/ prefix for OpenAI-compatible endpoint
       api_base: http://host.docker.internal:9292
-      api_key: doesntmatter
+      api_key: "none" # Required for OpenAI-compatible endpoints, use "none" if no key needed
