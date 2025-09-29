@@ -1,17 +1,26 @@
 services:
   litellm:
-    image: ghcr.io/berriai/litellm:main-latest
+    image: ghcr.io/berriai/litellm:main-stable
     env_file:
       - .env
     ports:
-      - 127.0.0.1:4000:4000 
+      - 127.0.0.1:4000:4000
     environment:
       - DATABASE_URL=postgres://siteuser:postgresewvraer@localhost/my_db
       - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY}
       - STORE_MODEL_IN_DB='True'
     volumes:
       - ./litellm-config.yaml:/app/config.yaml
-    command: [ "--config", "/app/config.yaml", "--port", "4000", "--num_workers", "8" ]
+    args: ["--config", "/app/config.yaml"]
+    healthcheck:
+      test: [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 http://localhost:4000/health/liveliness || exit 1",
+        ] # Command to execute for health check
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
 
   litellm_db:
     container_name: litellm_db
@@ -21,8 +30,7 @@ services:
       - POSTGRES_PASSWORD=postgresewvraer
       - POSTGRES_DB=my_db
     volumes:
-        - /data/litellm_db:/var/lib/postgresql/data
-
+      - /data/litellm_db:/var/lib/postgresql/data
 
   # cloudflare-tunnel:
   #   image: cloudflare/cloudflared
