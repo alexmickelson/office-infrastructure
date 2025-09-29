@@ -13,8 +13,6 @@ services:
 
   litellm-db:
     image: postgres:16-alpine
-    networks:
-      - traefik-net
     healthcheck:
       test:
         - CMD-SHELL
