@@ -7,3 +7,4 @@ model_list:
     litellm_params:
       model: gpt-oss-120b
       api_base: http://host.docker.internal:9292
+      api_key: doesntmatter
