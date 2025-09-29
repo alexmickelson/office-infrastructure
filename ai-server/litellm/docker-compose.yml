@@ -11,7 +11,7 @@ services:
       UI_PASSWORD: ${UI_PASSWORD}
       STORE_MODEL_IN_DB: "True"
     ports:
-      - 127.0.0.1:4000:4000
+      - 4000:4000
 
   litellm-db:
     image: postgres:16-alpine
