@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     depends_on:
       - litellm-db
-    command: [ "--config", "/app/config.yaml"]
+    command: [ "--config", "/app/config.yaml", "--detailed_debug"]
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@litellm-db:5432/${POSTGRES_DB}
       LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY}
