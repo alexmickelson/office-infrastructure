@@ -4,13 +4,13 @@ services:
     env_file:
       - .env
     ports:
-      - "4000:4000" # Map the container port to the host, change the host port if necessary
+      - 127.0.0.1:4000:4000 
     environment:
       - DATABASE_URL=postgres://siteuser:postgresewvraer@localhost/my_db
       - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY}
       - STORE_MODEL_IN_DB='True'
     volumes:
-      - ./litellm-config.yaml:/app/config.yaml # Mount the local configuration file
+      - ./litellm-config.yaml:/app/config.yaml
     command: [ "--config", "/app/config.yaml", "--port", "4000", "--num_workers", "8" ]
 
   litellm_db:
