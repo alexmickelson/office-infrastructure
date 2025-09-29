@@ -1,10 +1,9 @@
 # not using currently because config stored in DB rn
-
-general_settings:
-    user_header_name: X-OpenWebUI-User-Email
-    store_model_in_db: True
+# general_settings:
+#     user_header_name: X-OpenWebUI-User-Email
+#     store_model_in_db: True
 model_list:
-  - model_name: ollama llama
+  - model_name: gpt-oss-120b
     litellm_params:
-      model: ollama/llama3.2
-      api_base: http://localhost:11434
+      model: gpt-oss-120b
+      api_base: http://host.docker.internal:9292

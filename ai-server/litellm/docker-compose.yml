@@ -4,14 +4,17 @@ services:
     restart: unless-stopped
     depends_on:
       - litellm-db
+    command: [ "--config", "/app/config.yaml"]
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@litellm-db:5432/${POSTGRES_DB}
       LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY}
       UI_USERNAME: ${UI_USERNAME}
       UI_PASSWORD: ${UI_PASSWORD}
-      STORE_MODEL_IN_DB: "True"
+      # STORE_MODEL_IN_DB: "True"
     # ports:
     #   - 4000:4000
+    volumes:
+     - ./litellm-config.yaml:/app/config.yaml
     networks:
       - tunnels
       - db
