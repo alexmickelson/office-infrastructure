@@ -14,6 +14,7 @@ services:
       # - WEBUI_SECRET_KEY= # from .env file
       - DATABASE_URL=postgresql://openwebui:9hb02121-9br@openwebui-db:5432/openwebui_db
       - ENABLE_OAUTH_SIGNUP=true
+      - MCP_ENABLED=true
       # - WEBUI_AUTH_TRUSTED_EMAIL_HEADER=Cf-Access-Authenticated-User-Email
       # - OAUTH_CLIENT_ID= # from .env file
       # - OAUTH_CLIENT_SECRET= # from .env file
@@ -151,7 +152,6 @@ services:
       - OPENWEBUI_DB_PASSWORD=9hb02121-9br
       - OPENWEBUI_DB_NAME=openwebui_db
       - OPENWEBUI_DB_HOST=openwebui-db
-      - MCP_ENABLED=true
 
   pipelines:
     image: ghcr.io/open-webui/pipelines:main
