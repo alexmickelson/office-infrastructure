@@ -1,3 +1,5 @@
+# not using currently because config stored in DB rn
+
 general_settings:
     user_header_name: X-OpenWebUI-User-Email
     store_model_in_db: True
