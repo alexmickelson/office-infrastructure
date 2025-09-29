@@ -10,8 +10,11 @@ services:
       UI_USERNAME: ${UI_USERNAME}
       UI_PASSWORD: ${UI_PASSWORD}
       STORE_MODEL_IN_DB: "True"
-    ports:
-      - 4000:4000
+    # ports:
+    #   - 4000:4000
+    networks:
+      - tunnels
+      - db
 
   litellm-db:
     image: postgres:16-alpine
@@ -29,3 +32,27 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     restart: on-failure:5
+    networks:
+      - db
+
+  cloudflare-tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: litellm-cloudflare-tunnel
+    restart: unless-stopped
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    command: tunnel run
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - tunnels
+    healthcheck:
+      test: ["CMD", "cloudflared", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  tunnels:
+  db:
