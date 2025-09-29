@@ -11,7 +11,7 @@ services:
       UI_USERNAME: ${UI_USERNAME}
       UI_PASSWORD: ${UI_PASSWORD}
       LITELLM_HOSTED_UI: https://ai-api.snowse.io
-      # STORE_MODEL_IN_DB: "True"
+      STORE_MODEL_IN_DB: "True"
       TZ: America/Denver
     # ports:
     #   - 4000:4000
