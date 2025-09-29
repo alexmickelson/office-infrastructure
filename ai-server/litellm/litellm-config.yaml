@@ -1,0 +1,8 @@
+general_settings:
+    user_header_name: X-OpenWebUI-User-Email
+    store_model_in_db: True
+model_list:
+  - model_name: ollama llama
+    litellm_params:
+      model: ollama/llama3.2
+      api_base: http://localhost:11434
