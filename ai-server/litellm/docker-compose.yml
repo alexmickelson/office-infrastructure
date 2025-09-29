@@ -11,7 +11,7 @@ services:
       - STORE_MODEL_IN_DB='True'
     volumes:
       - ./litellm-config.yaml:/app/config.yaml
-    args: ["--config", "/app/config.yaml"]
+    command:: ["--config", "/app/config.yaml"]
     healthcheck:
       test: [
           "CMD-SHELL",
