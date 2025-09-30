@@ -20,7 +20,6 @@ services:
     image: quay.io/keycloak/keycloak:26.4
     container_name: keycloak-web
     command:
-      - /opt/keycloak/bin/kc.sh
       - start-dev
     environment:
       KC_DB: postgres
