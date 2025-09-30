@@ -16,7 +16,7 @@ services:
       start_period: 30s
 
   keycloak-web:
-    image: quay.io/keycloak/keycloak:26
+    image: quay.io/keycloak/keycloak:26.4
     container_name: keycloak-web
     command:
       - /opt/keycloak/bin/kc.sh
