@@ -51,8 +51,6 @@ services:
     command: tunnel run
     volumes:
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - tunnels
     healthcheck:
       test: ["CMD", "cloudflared", "--version"]
       interval: 30s
