@@ -46,7 +46,7 @@ services:
 
   cloudflare-tunnel:
     image: cloudflare/cloudflared:latest
-    container_name: litellm-cloudflare-tunnel
+    container_name: keycloak-cloudflare-tunnel
     restart: always
     environment:
       - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
