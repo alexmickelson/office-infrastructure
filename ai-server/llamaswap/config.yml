@@ -21,16 +21,16 @@ models:
     aliases:
       - "gemma3:27b"
     ttl: 300
-  "granite-4":
-    cmd: |
-      ./llama-server \
-      --port ${PORT} \
-      -m models/granite-4.0-h-small-Q4_K_M.gguf \
-      --ctx-size 0 --jinja
-    aliases:
-      - "granite-4-small"
-      - "granite-4.0"
-    ttl: 300
+  # "granite-4":
+  #   cmd: |
+  #     ./llama-server \
+  #     --port ${PORT} \
+  #     -m models/granite-4.0-h-small-Q4_K_M.gguf \
+  #     --ctx-size 0 --jinja
+  #   aliases:
+  #     - "granite-4-small"
+  #     - "granite-4.0"
+  #   ttl: 300
 
 # Groups configuration to run both models simultaneously
 groups:
@@ -42,7 +42,7 @@ groups:
     members:
       - "gpt-oss-120b"
       - "gemma3-27b"
-      - "grannite-4"
+      # - "grannite-4"
 
 # Hooks to preload both models on startup
 hooks:
