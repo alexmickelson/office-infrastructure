@@ -82,15 +82,15 @@ services:
     network_mode: service:tailscale-ingress
 
   prometheus:
-    image: bitnami/prometheus:3
+    image: prom/prometheus
     container_name: prometheus
     restart: unless-stopped
     # network_mode: service:tailscale-ingress # port 9090
     ports:
       - 9090:9090
     volumes:
-      - ./prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
-      - /data/prometheus:/opt/bitnami/prometheus/data
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - /data/prometheus:/prometheus
     extra_hosts:
       - host.docker.internal:host-gateway
 
