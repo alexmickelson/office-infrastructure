@@ -46,3 +46,5 @@ services:
       - /data/llamaswap/models:/app/models
       - /home/alex/.lmstudio/models/lmstudio-community:/app/lmstudio-models:ro
     command: --listen :9292
+    devices:
+      - /dev/dri:/dev/dri
