@@ -6,9 +6,7 @@ services:
       - "8080:8080"
     environment:
       - WEBUI_PORT=8080
-      - OLLAMA_BASE_URL=http://localhost:11434
       - DATABASE_URL=postgresql://openwebui:9hb02121-9br@openwebui-db:5432/openwebui_db
-      - ENABLE_OAUTH_SIGNUP=true
       - MCP_ENABLED=true
     volumes:
       - /data/openwebui:/app/backend/data
@@ -41,5 +39,5 @@ services:
     #   - SYS_ADMIN
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128
-    group_add:
-      - 303
+    # group_add:
+    #   - 303 # render group in nixos?
