@@ -24,7 +24,9 @@ services:
     restart: always
 
   llama-swap:
-    image: ghcr.io/mostlygeek/llama-swap:vulkan
+    build:
+      context: ./llamaswap
+    image: llama-swap-vllm
     container_name: llama-swap
     restart: unless-stopped
     ports:
