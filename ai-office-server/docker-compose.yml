@@ -36,7 +36,7 @@ services:
     restart: always
 
   llama-swap:
-    image: ghcr.io/mostlygeek/llama-swap:cuda
+    image: ghcr.io/mostlygeek/llama-swap:vulkan
     container_name: llama-swap
     restart: unless-stopped
     ports:
@@ -46,11 +46,3 @@ services:
       - /data/llamaswap/models:/app/models
       - /home/alex/.lmstudio/models/lmstudio-community:/app/lmstudio-models:ro
     command: --listen :9292
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities:
-                - gpu
