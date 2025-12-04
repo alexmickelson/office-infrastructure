@@ -3,7 +3,7 @@ models:
     cmd: |
       ./llama-server \
       --port ${PORT} \
-      -m lmstudio-community/gpt-oss-120b/gpt-oss-120b-F16.gguf \
+      -m lmstudio-models/gpt-oss-120b/gpt-oss-120b-F16.gguf \
       --ctx-size 0 --jinja -ub 2048 -b 2048
     aliases:
       - "gpt-oss:120b"
