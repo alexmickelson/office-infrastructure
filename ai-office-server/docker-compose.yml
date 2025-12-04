@@ -36,8 +36,10 @@ services:
       - /data/llamaswap/models:/app/models
       - /home/alex/.lmstudio/models/lmstudio-community:/app/lmstudio-models:ro
     command: --listen :9292
-    privileged: true
-    cap_add:
-      - SYS_ADMIN
-    # devices:
-    #   - /dev/dri:/dev/dri
+    # privileged: true
+    # cap_add:
+    #   - SYS_ADMIN
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+    group_add:
+      - render
