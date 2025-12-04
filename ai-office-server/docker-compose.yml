@@ -5,8 +5,6 @@ services:
     container_name: openwebui
     ports:
       - "8080:8080"
-    env_file:
-      - .env
     environment:
       - WEBUI_PORT=8080
       - OLLAMA_BASE_URL=http://localhost:11434
