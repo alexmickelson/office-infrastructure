@@ -1,0 +1,58 @@
+services:
+
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: openwebui
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - WEBUI_PORT=8080
+      - OLLAMA_BASE_URL=http://localhost:11434
+      # - WEBUI_SECRET_KEY= # from .env file
+      - DATABASE_URL=postgresql://openwebui:9hb02121-9br@openwebui-db:5432/openwebui_db
+      - ENABLE_OAUTH_SIGNUP=true
+      - MCP_ENABLED=true
+      # - WEBUI_AUTH_TRUSTED_EMAIL_HEADER=Cf-Access-Authenticated-User-Email
+      # - OAUTH_CLIENT_ID= # from .env file
+      # - OAUTH_CLIENT_SECRET= # from .env file
+      # - OPENID_PROVIDER_URL= # from .env file
+      # - OAUTH_PROVIDER_NAME= # from .env file
+      # - OAUTH_SCOPES= # from .env file
+      # - OPENID_REDIRECT_URI= # from .env file
+
+    volumes:
+      - /data/openwebui:/app/backend/data
+    restart: unless-stopped
+
+  openwebui-db:
+    image: postgres:17
+    container_name: openwebui-db
+    environment:
+      POSTGRES_USER: openwebui
+      POSTGRES_PASSWORD: 9hb02121-9br
+      POSTGRES_DB: openwebui_db
+    volumes:
+      - /data/openwebui-pg:/var/lib/postgresql/data
+    restart: always
+
+  llama-swap:
+    image: ghcr.io/mostlygeek/llama-swap:cuda
+    container_name: llama-swap
+    restart: unless-stopped
+    ports:
+     - "9292:9292"
+    volumes:
+      - ./llamaswap/config.yml:/app/config.yaml
+      - /data/llamaswap/models:/app/models
+      - /home/alex/.lmstudio/models/lmstudio-community:/app/lmstudio-models:ro
+    command: --listen :9292
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu

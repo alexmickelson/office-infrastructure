@@ -1,0 +1,51 @@
+models:
+  "gpt-oss-120b":
+    cmd: |
+      ./llama-server \
+      --port ${PORT} \
+      -m lmstudio-community/gpt-oss-120b/gpt-oss-120b-F16.gguf \
+      --ctx-size 0 --jinja -ub 2048 -b 2048
+    aliases:
+      - "gpt-oss:120b"
+
+  # "gemma3-27b":
+  #   cmd: |
+  #     ./llama-server \
+  #     --port ${PORT} \
+  #     -m models/gemma-3-27b-it-Q2_K_L.gguf \
+  #     --mmproj models/gemma-mmproj-F16.gguf \
+  #     --ctx-size 0 --jinja
+  #   # -m models/gemma-3-27b-it-UD-Q4_K_XL.gguf \
+  #   aliases:
+  #     - "gemma3:27b"
+  #   ttl: 300
+
+  # "granite-4":
+  #   cmd: |
+  #     ./llama-server \
+  #     --port ${PORT} \
+  #     -m models/granite-4.0-h-small-Q4_K_M.gguf \
+  #     --ctx-size 0 --jinja
+  #   aliases:
+  #     - "granite-4-small"
+  #     - "granite-4.0"
+  #   ttl: 300
+
+# Groups configuration to run both models simultaneously
+groups:
+  "concurrent-models":
+    # swap: false allows all models in this group to run at the same time
+    swap: false
+    # exclusive: false prevents this group from unloading other groups
+    exclusive: false
+    members:
+      - "gpt-oss-120b"
+      # - "gemma3-27b"
+      # - "grannite-4"
+
+# Hooks to preload both models on startup
+hooks:
+  on_startup:
+    preload:
+      - "gpt-oss-120b"
+      # - "gemma3-27b"
