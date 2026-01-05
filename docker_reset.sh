@@ -1,7 +1,4 @@
 #! /usr/bin/env bash
-# docker_reset.sh
-# Usage: ./docker_reset.sh
-# Edit SSH_USER and NODES arrays as needed.
 
 SSH_USER="root"
 
