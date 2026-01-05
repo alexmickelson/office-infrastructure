@@ -1,1 +1,3 @@
 backups/
+.env
+removeEmails.yml

@@ -1,0 +1,43 @@
+---
+- name: Install and Configure Tailscale
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Add Tailscale GPG key
+      ansible.builtin.apt_key:
+        url: https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg
+        keyring: /usr/share/keyrings/tailscale-archive-keyring.gpg
+        state: present
+
+    - name: Add Tailscale repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/debian bookworm main"
+        state: present
+        filename: tailscale
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install Tailscale
+      ansible.builtin.apt:
+        name: tailscale
+        state: present
+
+    - name: Enable Tailscale service
+      ansible.builtin.systemd:
+        name: tailscaled
+        enabled: yes
+        state: started
+
+    - name: Enable Tailscale auto-updates
+      ansible.builtin.command:
+        cmd: tailscale set --auto-update
+      register: auto_update_result
+      changed_when: auto_update_result.rc == 0
+      failed_when: false
+
+    - name: Display auto-update status
+      ansible.builtin.debug:
+        msg: "Tailscale auto-update enabled"

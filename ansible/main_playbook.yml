@@ -1,4 +1,3 @@
-
 - import_playbook: playbooks/docker_install.yml
 - import_playbook: playbooks/setup_users.yml
 - import_playbook: playbooks/fish_playbook.yml
@@ -7,3 +6,4 @@
 - import_playbook: playbooks/powertop.yml
 - import_playbook: playbooks/hypervisor_setup.yml
 - import_playbook: playbooks/nfs_server.yml
+- import_playbook: playbooks/tailscale_install.yml
