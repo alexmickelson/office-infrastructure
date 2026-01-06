@@ -21,16 +21,17 @@ models:
     aliases:
       - "gemma3:27b"
     ttl: 300
-  # "granite-4":
-  #   cmd: |
-  #     ./llama-server \
-  #     --port ${PORT} \
-  #     -m models/granite-4.0-h-small-Q4_K_M.gguf \
-  #     --ctx-size 0 --jinja
-  #   aliases:
-  #     - "granite-4-small"
-  #     - "granite-4.0"
-  #   ttl: 300
+
+  "devstral-123b":
+    cmd: |
+      ./llama-server \
+      --port ${PORT} \
+      -m models//Q4_k_M/Devstral-2-123B-Instruct-2512-Q4_K_M-00001-of-00002.gguf \
+      --ctx-size 0 --jinja
+    # -m models/gemma-3-27b-it-UD-Q4_K_XL.gguf \
+    aliases:
+      - "devstral:123b"
+    ttl: 300
 
 # Groups configuration to run both models simultaneously
 groups:
