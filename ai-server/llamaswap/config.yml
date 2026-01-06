@@ -26,7 +26,7 @@ models:
     cmd: |
       ./llama-server \
       --port ${PORT} \
-      -m models//Q4_k_M/Devstral-2-123B-Instruct-2512-Q4_K_M-00001-of-00002.gguf \
+      -m models/Q4_k_M/Devstral-2-123B-Instruct-2512-Q4_K_M-00001-of-00002.gguf \
       --ctx-size 0 --jinja
     # -m models/gemma-3-27b-it-UD-Q4_K_XL.gguf \
     aliases:
