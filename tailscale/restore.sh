@@ -1,21 +1,25 @@
 #! /usr/bin/env nix-shell
-#! nix-shell -i bash -p bash
+#! nix-shell -i bash -p bash yq
 
-HOSTS=(
-  # "144.17.92.11"
-  # "144.17.92.12"
-  # "144.17.92.13"
-  # "144.17.92.14"
-  # "144.17.92.15"
-)
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_FILE="$SCRIPT_DIR/config.yml"
 
-LOCAL_BACKUP_DIR="./backups"
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Error: Config file not found at $CONFIG_FILE"
+    exit 1
+fi
+
+# Read configuration from YAML file
+mapfile -t HOSTS < <(yq -r '.hosts[]' "$CONFIG_FILE")
+SSH_USER=$(yq -r '.ssh_user' "$CONFIG_FILE")
+REMOTE_DIR=$(yq -r '.remote_dir' "$CONFIG_FILE")
+LOCAL_BACKUP_DIR=$(yq -r '.local_backup_dir' "$CONFIG_FILE")
 
 for HOST in "${HOSTS[@]}"; do
-  USER="alex"
-  TARGET="$USER@$HOST"
+  TARGET="$SSH_USER@$HOST"
   BACKUP_DIR="$LOCAL_BACKUP_DIR/$HOST"
-  REMOTE_DIR="/var/lib/tailscale"
+  REMOTE_DIR="$REMOTE_DIR"
 
   echo "[INFO] Restoring Tailscale backup to $TARGET..."
 
@@ -35,7 +39,7 @@ for HOST in "${HOSTS[@]}"; do
   ssh "$TARGET" \
     "sudo -S bash -c '\
       rm -rf $REMOTE_DIR && \
-      mv /home/alex/tailscale_restore $REMOTE_DIR && \
+      mv /home/$SSH_USER/tailscale_restore $REMOTE_DIR && \
       chown -R root:root $REMOTE_DIR && \
       systemctl start tailscaled\
     '"
