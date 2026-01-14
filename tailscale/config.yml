@@ -1,0 +1,10 @@
+hosts:
+  # - 192.168.1.101
+  - 144.17.92.11
+  - 144.17.92.12
+  - 144.17.92.13
+  - 144.17.92.14
+  - 144.17.92.15
+ssh_user: root
+remote_dir: /var/lib/tailscale
+local_backup_dir: ./backups
