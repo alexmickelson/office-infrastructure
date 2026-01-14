@@ -22,16 +22,16 @@ models:
       - "gemma3:27b"
     ttl: 300
 
-  "devstral-123b":
-    cmd: |
-      ./llama-server \
-      --port ${PORT} \
-      -m models/Q4_K_M/Devstral-2-123B-Instruct-2512-Q4_K_M-00001-of-00002.gguf \
-      --ctx-size 30000 --jinja
-    # -m models/gemma-3-27b-it-UD-Q4_K_XL.gguf \
-    aliases:
-      - "devstral:123b"
-    ttl: 300
+  # "devstral-123b":
+  #   cmd: |
+  #     ./llama-server \
+  #     --port ${PORT} \
+  #     -m models/Q4_K_M/Devstral-2-123B-Instruct-2512-Q4_K_M-00001-of-00002.gguf \
+  #     --ctx-size 30000 --jinja
+  #   # -m models/gemma-3-27b-it-UD-Q4_K_XL.gguf \
+  #   aliases:
+  #     - "devstral:123b"
+  #   ttl: 300
 
 # Groups configuration to run both models simultaneously
 groups:
