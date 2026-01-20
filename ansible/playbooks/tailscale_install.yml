@@ -3,12 +3,15 @@
   hosts: all
   become: yes
 
+  vars_files:
+    - ../secrets.yml
+
   tasks:
     - name: Add Tailscale GPG key
       ansible.builtin.apt_key:
         url: https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg
         keyring: /usr/share/keyrings/tailscale-archive-keyring.gpg
-        state: present
+        state: presents
 
     - name: Add Tailscale repository
       ansible.builtin.apt_repository:
