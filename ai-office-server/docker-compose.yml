@@ -55,9 +55,9 @@ services:
     container_name: llama-server
     command: >
       --port 8081
+      --embedding
       -hf aiteza/Qwen3-VL-Embedding-8B-GGUF
       -c 2048
-    # --embedding
     # --pooling mean
 
 
