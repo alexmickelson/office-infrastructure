@@ -5,6 +5,7 @@ import argparse
 import os
 import sys
 from typing import List, Tuple
+import shutil
 
 from huggingface_hub import HfApi, hf_hub_download
 from huggingface_hub.utils import EntryNotFoundError, HfHubHTTPError
@@ -12,13 +13,14 @@ from huggingface_hub.utils import EntryNotFoundError, HfHubHTTPError
 
 output_directory = "/data/llamaswap/models"
 
+
 def human_size(size: int | None) -> str:
     if not size:
         return "unknown"
-    gb = size / (1024 ** 3)
+    gb = size / (1024**3)
     if gb >= 1:
         return f"{gb:.2f} GB"
-    mb = size / (1024 ** 2)
+    mb = size / (1024**2)
     return f"{mb:.2f} MB"
 
 
@@ -69,8 +71,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Download a .gguf file from a Hugging Face repo."
     )
-    parser.add_argument("model_id", help="Hugging Face repo id (e.g. unsloth/gemma-3-27b-it-GGUF)")
-    parser.add_argument("dest", nargs="?", default=output_directory, help=f"Destination directory (default: {output_directory})")
+    parser.add_argument(
+        "model_id", help="Hugging Face repo id (e.g. unsloth/gemma-3-27b-it-GGUF)"
+    )
+    parser.add_argument(
+        "dest",
+        nargs="?",
+        default=output_directory,
+        help=f"Destination directory (default: {output_directory})",
+    )
     args = parser.parse_args()
 
     repo_id = args.model_id
@@ -96,13 +105,18 @@ def main() -> None:
     print(f"You selected: {chosen_path}  {chosen_hsize}")
 
     try:
-        # Download *exact path* into dest. Returns local file path.
+        # Download file to destination directory
         local_path = hf_hub_download(
             repo_id=repo_id,
             filename=chosen_path,
-            local_dir=dest,
-            local_dir_use_symlinks=False,  # put real file under dest
+            cache_dir=dest,
+            local_files_only=False,
         )
+
+        filename_only = os.path.basename(chosen_path)
+        final_path = os.path.join(dest, filename_only)
+        shutil.move(local_path, final_path)
+        local_path = final_path
     except EntryNotFoundError as e:
         print(
             f"\n404 Not Found for: {chosen_path}\n"
