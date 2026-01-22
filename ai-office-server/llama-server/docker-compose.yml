@@ -1,6 +1,6 @@
 services:
   llama-server:
-    image: ghcr.io/ggml-org/llama.cpp:latest
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
     container_name: llama-server
     command: >
       llama-server
