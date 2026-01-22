@@ -67,6 +67,7 @@ services:
         --presence-penalty 1.5 
         --ctx-size 8192
       --embedding
+      --pooling mean
     # --hf-repo philip-weyer/Qwen3-VL-Embedding-8B-Q4_K_M-GGUF --hf-file qwen3-vl-embedding-8b-q4_k_m.gguf -c 2048
     volumes:
       - /data/models:/models:ro
