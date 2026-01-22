@@ -11,6 +11,11 @@ services:
     volumes:
       - /data/openwebui:/app/backend/data
     restart: unless-stopped
+    depends_on:
+      openwebui-db:
+        condition: service_started
+    networks:
+      - openwebui-network
 
   openwebui-db:
     image: postgres:17
@@ -22,6 +27,11 @@ services:
     volumes:
       - /data/openwebui-pg:/var/lib/postgresql/data
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U openwebui"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # llama-swap:
   #   image: ghcr.io/mostlygeek/llama-swap:vulkan
