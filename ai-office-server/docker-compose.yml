@@ -59,7 +59,7 @@ services:
       -hf aiteza/Qwen3-VL-Embedding-8B-GGUF
       --mmproj /models/mmproj-Qwen3VL-8B-Instruct-Q8_0.gguf
       -c 2048
-    # --pooling mean
+      --pooling mean
 
 
     # -hf unsloth/Qwen3-VL-30B-A3B-Instruct-GGUF:Q8_K_XL
