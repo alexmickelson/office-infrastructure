@@ -1,6 +1,6 @@
 services:
   llama-server:
-    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    image: ghcr.io/ggml-org/llama.cpp:server-vulkan
     container_name: llama-server
     command: >
       llama-server
@@ -16,3 +16,5 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
