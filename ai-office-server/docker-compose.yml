@@ -56,7 +56,7 @@ services:
     command: >
       --host 0.0.0.0
       --port 8081
-      -hf unsloth/Qwen3-VL-8B-Instruct-GGUF:UD-Q4_K_XL 
+      -hf unsloth/Qwen3-VL-30B-A3B-Instruct-GGUF:Q8_K_XL
         --n-gpu-layers 99 
         --jinja 
         --top-p 0.8 
