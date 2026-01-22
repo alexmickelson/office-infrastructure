@@ -58,7 +58,6 @@ services:
       --embedding
       --pooling mean
       -hf aiteza/Qwen3-VL-Embedding-8B-GGUF:Q8_0 \
-      --mmproj-hf aiteza/Qwen3-VL-Embedding-8B-GGUF:mmproj-qwen3-vl-embedding-8b.gguf \
 
 
     # -hf unsloth/Qwen3-VL-30B-A3B-Instruct-GGUF:Q8_K_XL
