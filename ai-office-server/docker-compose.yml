@@ -54,12 +54,20 @@ services:
     image: ghcr.io/ggml-org/llama.cpp:server-vulkan
     container_name: llama-server
     command: >
-      --hf-repo philip-weyer/Qwen3-VL-Embedding-8B-Q4_K_M-GGUF --hf-file qwen3-vl-embedding-8b-q4_k_m.gguf -c 2048
       --host 0.0.0.0
       --port 8081
-      --embedding
-    # -m /models/qwen3-vl-embedding-8b-q4_k_m.gguf
-    # --mmproj /models/mmproj-qwen3-vl-embedding-8b.gguf
+      -hf unsloth/Qwen3-VL-8B-Instruct-GGUF:UD-Q4_K_XL \
+        --n-gpu-layers 99 \
+        --jinja \
+        --top-p 0.8 \
+        --top-k 20 \
+        --temp 0.7 \
+        --min-p 0.0 \
+        --flash-attn on \
+        --presence-penalty 1.5 \
+        --ctx-size 8192
+    # --embedding
+    # --hf-repo philip-weyer/Qwen3-VL-Embedding-8B-Q4_K_M-GGUF --hf-file qwen3-vl-embedding-8b-q4_k_m.gguf -c 2048
     volumes:
       - /data/models:/models:ro
       - /data/huggingface-cache:/root/.cache/llama.cpp
