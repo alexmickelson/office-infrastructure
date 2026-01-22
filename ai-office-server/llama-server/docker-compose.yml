@@ -9,9 +9,11 @@ services:
       --embedding
     # -m /models/qwen3-vl-embedding-8b-q4_k_m.gguf
     # --mmproj /models/mmproj-qwen3-vl-embedding-8b.gguf
+    environment:
+      - HF_HOME=/hf-cache
     volumes:
       - /data/models:/models:ro
-      - /data/huggingface-cache:/cache
+      - /data/huggingface-cache:/hf-cache
     ports:
       - "8080:8080"
     restart: unless-stopped
