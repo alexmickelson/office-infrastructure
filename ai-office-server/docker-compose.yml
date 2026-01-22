@@ -57,7 +57,7 @@ services:
       --port 8081
       --embedding
       -hf aiteza/Qwen3-VL-Embedding-8B-GGUF
-      --mmproj /models/mmproj-qwen3-vl-embedding-8b.gguf
+      --mmproj /models/mmproj-Qwen3VL-8B-Instruct-Q8_0.gguf
       -c 2048
     # --pooling mean
 
