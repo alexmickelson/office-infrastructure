@@ -57,15 +57,12 @@ services:
       --hf-repo philip-weyer/Qwen3-VL-Embedding-8B-Q4_K_M-GGUF --hf-file qwen3-vl-embedding-8b-q4_k_m.gguf -c 2048
       --host 0.0.0.0
       --port 8081
-      --pooling mean
-      --embedding
+    # --embedding
     # -m /models/qwen3-vl-embedding-8b-q4_k_m.gguf
     # --mmproj /models/mmproj-qwen3-vl-embedding-8b.gguf
-    environment:
-      - HF_HOME=/hf-cache
     volumes:
       - /data/models:/models:ro
-      - /data/huggingface-cache:/hf-cache
+      - /data/huggingface-cache:/root/.cache/llama.cpp
     ports:
       - "8081:8081"
     restart: unless-stopped
