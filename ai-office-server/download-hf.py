@@ -115,7 +115,8 @@ def main() -> None:
 
         filename_only = os.path.basename(chosen_path)
         final_path = os.path.join(dest, filename_only)
-        shutil.move(local_path, final_path)
+        shutil.copy2(local_path, final_path)
+        os.remove(local_path)
         local_path = final_path
     except EntryNotFoundError as e:
         print(
