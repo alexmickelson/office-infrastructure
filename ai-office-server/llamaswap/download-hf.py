@@ -11,7 +11,7 @@ from huggingface_hub import HfApi, hf_hub_download
 from huggingface_hub.utils import EntryNotFoundError, HfHubHTTPError
 
 
-output_directory = "/data/llamaswap/models"
+output_directory = "/data/models"
 
 
 def human_size(size: int | None) -> str:
