@@ -109,9 +109,10 @@ def main() -> None:
         local_path = hf_hub_download(
             repo_id=repo_id,
             filename=chosen_path,
-            cache_dir=dest,
-            local_files_only=False,
+            local_dir=dest,
+            local_dir_use_symlinks=False,
         )
+
 
         filename_only = os.path.basename(chosen_path)
         final_path = os.path.join(dest, filename_only)
