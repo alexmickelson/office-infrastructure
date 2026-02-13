@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: keycloak-db-ts
-          image: postgres
+          image: postgres:18
           ports:
             - containerPort: 5432
           env:
@@ -37,7 +37,7 @@ spec:
             periodSeconds: 5
           volumeMounts:
             - name: postgres-data
-              mountPath: /var/lib/postgresql/data
+              mountPath: /var/lib/postgresql
       volumes:
         - name: postgres-data
           persistentVolumeClaim:

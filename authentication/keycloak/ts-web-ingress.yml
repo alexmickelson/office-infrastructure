@@ -4,13 +4,13 @@ kind: Ingress
 metadata:
   name: keycloak-web-ingress-ts
   namespace: keycloak
-  annotations:
-    cert-manager.io/cluster-issuer: cert-manager-webhook-duckdns-alex-production 
+  # annotations:
+  #   cert-manager.io/cluster-issuer: cert-manager-webhook-duckdns-alex-production 
 spec:
-  tls:
-  - hosts:
-    - auth.snowse-ts.duckdns.org
-    secretName: keycloak-tls-ts-2-secret-prod
+  # tls:
+  # - hosts:
+  #   - auth.snowse-ts.duckdns.org
+  #   secretName: keycloak-tls-ts-2-secret-prod
   rules:
   - host: auth.snowse-ts.duckdns.org
     http:
