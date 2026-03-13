@@ -70,6 +70,7 @@ services:
   whisper:
     image: ghcr.io/ggml-org/whisper.cpp:main-vulkan
     container_name: whisper
+    command: whisper-server --host 0.0.0.0 --port 8080 -m /models/ggml-medium.bin --convert
     ports:
       - "8082:8080"
     volumes:
