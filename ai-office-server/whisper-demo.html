@@ -439,11 +439,21 @@
           const blob = new Blob(chunks, {
             type: recorder.mimeType || "audio/webm",
           });
-          // Only bother sending if there's meaningful audio (>5KB)
-          if (blob.size > 5000) {
+          // On the final segment (isRecording already false) send regardless of size
+          const isFinal = !isRecording;
+          if (isFinal || blob.size > 5000) {
             await sendSegment(blob);
           }
-          if (isRecording) startSegment();
+          if (isRecording) {
+            startSegment();
+          } else {
+            // Now safe to stop mic tracks after final segment is sent
+            if (mediaStream) mediaStream.getTracks().forEach((t) => t.stop());
+            stopViz();
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            setStatus("Stopped", "idle");
+          }
         };
 
         recorder.start(100);
@@ -491,12 +501,10 @@
       stopBtn.addEventListener("click", () => {
         isRecording = false;
         clearTimeout(segmentTimer);
-        if (recorder && recorder.state === "recording") recorder.stop();
-        if (mediaStream) mediaStream.getTracks().forEach((t) => t.stop());
-        stopViz();
-        startBtn.disabled = false;
+        setStatus("Flushing final segment…", "sending");
         stopBtn.disabled = true;
-        setStatus("Stopped", "idle");
+        // recorder.onstop will handle cleanup once the final segment is sent
+        if (recorder && recorder.state === "recording") recorder.stop();
       });
 
       clearBtn.addEventListener("click", () => {
