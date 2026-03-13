@@ -1,4 +1,4 @@
-#!/usr/bin/env -S nix-shell -i bash -p openssl
+#!/usr/bin/env -S nix-shell -p openssl --run bash
 set -e
 
 OUT_DIR="/data/whisper-certs"
