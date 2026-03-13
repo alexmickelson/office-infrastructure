@@ -66,3 +66,14 @@ services:
     restart: unless-stopped
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128
+
+  whisper:
+    image: ghcr.io/ggml-org/whisper.cpp:main-vulkan
+    container_name: whisper
+    ports:
+      - "8082:8080"
+    volumes:
+      - /data/models:/models
+    restart: unless-stopped
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
