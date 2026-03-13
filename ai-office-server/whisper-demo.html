@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Whisper Live Transcription</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: system-ui, sans-serif;
+        background: #0f0f0f;
+        color: #e0e0e0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+      }
+      h1 {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: #fff;
+      }
+      .controls {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .controls label {
+        font-size: 0.85rem;
+        color: #aaa;
+      }
+      .controls input[type="text"] {
+        background: #1e1e1e;
+        border: 1px solid #333;
+        color: #e0e0e0;
+        padding: 0.4rem 0.6rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        width: 220px;
+      }
+      .controls select {
+        background: #1e1e1e;
+        border: 1px solid #333;
+        color: #e0e0e0;
+        padding: 0.4rem 0.6rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+      }
+      button {
+        padding: 0.5rem 1.2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.15s;
+      }
+      button:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+      #startBtn {
+        background: #2d7d46;
+        color: #fff;
+      }
+      #stopBtn {
+        background: #7d2d2d;
+        color: #fff;
+      }
+      #clearBtn {
+        background: #333;
+        color: #ccc;
+      }
+      .status {
+        font-size: 0.8rem;
+        color: #888;
+        margin-bottom: 1rem;
+        min-height: 1.2em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #555;
+        flex-shrink: 0;
+      }
+      .dot.recording {
+        background: #e05;
+        animation: pulse 1s infinite;
+      }
+      .dot.sending {
+        background: #fa0;
+      }
+      .dot.idle {
+        background: #2d7;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+      #transcript {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 10px;
+        padding: 1.25rem 1.5rem;
+        width: 100%;
+        max-width: 860px;
+        min-height: 200px;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: #e8e8e8;
+      }
+      #transcript .pending {
+        color: #888;
+        font-style: italic;
+      }
+      .meta {
+        font-size: 0.75rem;
+        color: #555;
+        margin-top: 0.5rem;
+        width: 100%;
+        max-width: 860px;
+        display: flex;
+        gap: 1rem;
+      }
+      .error-box {
+        background: #2a1010;
+        border: 1px solid #5a2020;
+        color: #f88;
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+        width: 100%;
+        max-width: 860px;
+        margin-bottom: 0.75rem;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Whisper Live Transcription</h1>
+
+    <div class="controls">
+      <label
+        >Server
+        <input
+          type="text"
+          id="serverUrl"
+          value="http://ai-office-server:8083"
+        />
+      </label>
+
+      <label
+        >Segment (s)
+        <select id="segmentDuration">
+          <option value="3000">3</option>
+          <option value="5000" selected>5</option>
+          <option value="8000">8</option>
+          <option value="10000">10</option>
+        </select>
+      </label>
+
+      <label
+        >Language
+        <select id="language">
+          <option value="auto">auto</option>
+          <option value="en" selected>en</option>
+          <option value="de">de</option>
+          <option value="fr">fr</option>
+          <option value="es">es</option>
+          <option value="ja">ja</option>
+          <option value="zh">zh</option>
+        </select>
+      </label>
+
+      <button id="startBtn">⏺ Start</button>
+      <button id="stopBtn" disabled>⏹ Stop</button>
+      <button id="clearBtn">✕ Clear</button>
+    </div>
+
+    <div class="status">
+      <span class="dot idle" id="dot"></span>
+      <span id="statusText">Ready</span>
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <div id="transcript">
+      <span class="pending">Transcript will appear here...</span>
+    </div>
+
+    <div class="meta">
+      <span id="wordCount">0 words</span>
+      <span id="segmentCount">0 segments</span>
+      <span id="lastLatency"></span>
+    </div>
+
+    <script>
+      const startBtn = document.getElementById("startBtn");
+      const stopBtn = document.getElementById("stopBtn");
+      const clearBtn = document.getElementById("clearBtn");
+      const transcriptEl = document.getElementById("transcript");
+      const statusText = document.getElementById("statusText");
+      const dot = document.getElementById("dot");
+      const errorBox = document.getElementById("errorBox");
+      const wordCountEl = document.getElementById("wordCount");
+      const segmentCountEl = document.getElementById("segmentCount");
+      const lastLatencyEl = document.getElementById("lastLatency");
+
+      let mediaStream = null;
+      let recorder = null;
+      let chunks = [];
+      let confirmedText = ""; // stable, displayed text
+      let isRecording = false;
+      let segmentIndex = 0;
+      let segmentTimer = null;
+
+      // How many words to feed back as prompt to Whisper to maintain word continuity
+      const PROMPT_WORDS = 20;
+
+      function setStatus(msg, state) {
+        statusText.textContent = msg;
+        dot.className = "dot " + (state || "idle");
+      }
+
+      function showError(msg) {
+        errorBox.textContent = msg;
+        errorBox.style.display = "block";
+        setTimeout(() => {
+          errorBox.style.display = "none";
+        }, 6000);
+      }
+
+      function renderTranscript(pendingText) {
+        transcriptEl.innerHTML = "";
+        if (!confirmedText && !pendingText) {
+          transcriptEl.innerHTML =
+            '<span class="pending">Transcript will appear here...</span>';
+          return;
+        }
+        if (confirmedText) {
+          transcriptEl.appendChild(document.createTextNode(confirmedText));
+        }
+        if (pendingText) {
+          const span = document.createElement("span");
+          span.className = "pending";
+          span.textContent = (confirmedText ? " " : "") + pendingText;
+          transcriptEl.appendChild(span);
+        }
+      }
+
+      function updateMeta() {
+        const words = confirmedText.trim().split(/\s+/).filter(Boolean).length;
+        wordCountEl.textContent = `${words} words`;
+      }
+
+      // Build the whisper context prompt from the last N words of confirmed text
+      function buildPrompt() {
+        const words = confirmedText.trim().split(/\s+/).filter(Boolean);
+        return words.slice(-PROMPT_WORDS).join(" ");
+      }
+
+      // Strip any leading words that duplicate the tail of confirmedText
+      // (whisper sometimes echoes back part of the prompt at the start)
+      function deduplicateLeading(newText) {
+        newText = newText.trim();
+        if (!confirmedText || !newText) return newText;
+
+        const prevWords = confirmedText.trim().split(/\s+/).filter(Boolean);
+        const newWords = newText.split(/\s+/).filter(Boolean);
+
+        // Try increasingly long suffix overlaps (up to 8 words)
+        for (
+          let overlap = Math.min(8, prevWords.length, newWords.length);
+          overlap >= 2;
+          overlap--
+        ) {
+          const prevTail = prevWords.slice(-overlap).join(" ").toLowerCase();
+          const newHead = newWords.slice(0, overlap).join(" ").toLowerCase();
+          if (prevTail === newHead) {
+            return newWords.slice(overlap).join(" ");
+          }
+        }
+        return newText;
+      }
+
+      async function sendSegment(blob) {
+        const server = document
+          .getElementById("serverUrl")
+          .value.replace(/\/$/, "");
+        const language = document.getElementById("language").value;
+        const t0 = Date.now();
+
+        const formData = new FormData();
+        formData.append("file", blob, "audio.webm");
+        formData.append("response_format", "json");
+        formData.append("language", language === "auto" ? "" : language);
+
+        const prompt = buildPrompt();
+        if (prompt) formData.append("prompt", prompt);
+
+        setStatus("Transcribing segment " + segmentIndex + "…", "sending");
+
+        try {
+          const res = await fetch(`${server}/inference`, {
+            method: "POST",
+            body: formData,
+          });
+          if (!res.ok)
+            throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+
+          const data = await res.json();
+          const elapsed = Date.now() - t0;
+          lastLatencyEl.textContent = `last: ${elapsed}ms`;
+          segmentCountEl.textContent = `${segmentIndex} segments`;
+
+          let text = (data.text || "").trim();
+          if (text) {
+            text = deduplicateLeading(text);
+            if (text) {
+              confirmedText = confirmedText ? confirmedText + " " + text : text;
+            }
+          }
+          renderTranscript("");
+          updateMeta();
+        } catch (err) {
+          showError("Error: " + err.message);
+        }
+
+        if (isRecording) setStatus("Recording…", "recording");
+      }
+
+      function startSegment() {
+        if (!isRecording) return;
+
+        chunks = [];
+        const mimeType = getSupportedMimeType();
+        recorder = new MediaRecorder(
+          mediaStream,
+          mimeType ? { mimeType } : undefined,
+        );
+
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) chunks.push(e.data);
+        };
+
+        recorder.onstop = async () => {
+          segmentIndex++;
+          const blob = new Blob(chunks, {
+            type: recorder.mimeType || "audio/webm",
+          });
+          // Only bother sending if there's meaningful audio (>5KB)
+          if (blob.size > 5000) {
+            await sendSegment(blob);
+          }
+          if (isRecording) startSegment();
+        };
+
+        recorder.start(100);
+
+        const duration = parseInt(
+          document.getElementById("segmentDuration").value,
+          10,
+        );
+        segmentTimer = setTimeout(() => {
+          if (recorder && recorder.state === "recording") recorder.stop();
+        }, duration);
+      }
+
+      function getSupportedMimeType() {
+        const types = [
+          "audio/webm;codecs=opus",
+          "audio/webm",
+          "audio/ogg;codecs=opus",
+          "audio/ogg",
+        ];
+        return types.find((t) => MediaRecorder.isTypeSupported(t)) || "";
+      }
+
+      startBtn.addEventListener("click", async () => {
+        errorBox.style.display = "none";
+        try {
+          mediaStream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: false,
+          });
+        } catch (err) {
+          showError("Microphone access denied: " + err.message);
+          return;
+        }
+
+        isRecording = true;
+        segmentIndex = 0;
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        setStatus("Recording…", "recording");
+        startSegment();
+      });
+
+      stopBtn.addEventListener("click", () => {
+        isRecording = false;
+        clearTimeout(segmentTimer);
+        if (recorder && recorder.state === "recording") recorder.stop();
+        if (mediaStream) mediaStream.getTracks().forEach((t) => t.stop());
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        setStatus("Stopped", "idle");
+      });
+
+      clearBtn.addEventListener("click", () => {
+        confirmedText = "";
+        segmentIndex = 0;
+        renderTranscript("");
+        updateMeta();
+        segmentCountEl.textContent = "0 segments";
+        lastLatencyEl.textContent = "";
+      });
+    </script>
+  </body>
+</html>
