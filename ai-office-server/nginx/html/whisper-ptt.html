@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Whisper Push-to-Talk</title>
+    <link rel="stylesheet" href="whisper-ptt.css" />
+  </head>
+  <body>
+    <h1>Whisper Push-to-Talk</h1>
+
+    <div class="controls">
+      <label
+        >Server
+        <input
+          type="text"
+          id="serverUrl"
+          value="https://ai-office-server:8443"
+        />
+      </label>
+      <label
+        >Language
+        <select id="language">
+          <option value="auto">auto</option>
+          <option value="en" selected>en</option>
+          <option value="de">de</option>
+          <option value="fr">fr</option>
+          <option value="es">es</option>
+          <option value="ja">ja</option>
+          <option value="zh">zh</option>
+        </select>
+      </label>
+    </div>
+
+    <button id="pttBtn">
+      <span>Hold to<br />Record</span>
+    </button>
+
+    <div class="status">
+      <span class="dot idle" id="dot"></span>
+      <span id="statusText">Ready — hold button or Space to record</span>
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <canvas id="volumeCanvas"></canvas>
+
+    <div id="transcript">
+      <span class="pending">Transcript will appear here...</span>
+    </div>
+
+    <div class="meta">
+      <span id="wordCount">0 words</span>
+      <span id="lastLatency"></span>
+    </div>
+
+    <button id="clearBtn">✕ Clear transcript</button>
+
+    <script type="module" src="whisper-ptt.js"></script>
+  </body>
+</html>

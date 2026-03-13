@@ -94,9 +94,8 @@ services:
     ports:
       - "8443:443"
     volumes:
-      - ./whisper-nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./whisper-demo.html:/usr/share/nginx/html/index.html:ro
-      - ./whisper-ptt.html:/usr/share/nginx/html/ptt.html:ro
+      - ./nginx/whisper-nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/html:/usr/share/nginx/html:ro
       - /data/whisper-certs:/etc/nginx/certs:ro
     depends_on:
       - whisper
