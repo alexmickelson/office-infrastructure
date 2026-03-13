@@ -78,7 +78,7 @@ services:
         "--port",
         "8080",
         "-m",
-        "/models/ggml-medium.bin",
+        "/models/ggml-large-v3.bin",
         "--convert",
       ]
     command: []

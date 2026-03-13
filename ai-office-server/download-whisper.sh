@@ -23,11 +23,11 @@ echo "Downloading small model (466 MB)..."
 curl -L -o ggml-small.bin "$BASE_URL/ggml-small.bin"
 
 # Uncomment to download larger models
-echo "Downloading medium model (1.5 GB)..."
-curl -L -o ggml-medium.bin "$BASE_URL/ggml-medium.bin"
+# echo "Downloading medium model (1.5 GB)..."
+# curl -L -o ggml-medium.bin "$BASE_URL/ggml-medium.bin"
 
-# echo "Downloading large-v3 model (3.1 GB)..."
-# curl -L -o ggml-large-v3.bin "$BASE_URL/ggml-large-v3.bin"
+echo "Downloading large-v3 model (3.1 GB)..."
+curl -L -o ggml-large-v3.bin "$BASE_URL/ggml-large-v3.bin"
 
 echo "Download complete!"
 echo "Models available in: $MODEL_DIR"
