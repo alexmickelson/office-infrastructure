@@ -92,8 +92,8 @@ services:
       - "8443:443"
     volumes:
       - /data/whisper-swag:/config
-      - ./whisper-nginx.conf:/config/nginx/site-confs/whisper.conf:ro
-      - ./whisper-demo.html:/config/www/whisper-demo.html:ro
+      - ./whisper-nginx.conf:/config/nginx/site-confs/default.conf:ro
+      - ./whisper-demo.html:/config/www/index.html:ro
     depends_on:
       - whisper
     restart: unless-stopped
