@@ -77,14 +77,23 @@ services:
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128
 
-  whisper-proxy:
-    image: nginx:alpine
-    container_name: whisper-proxy
+  whisper-swag:
+    image: lscr.io/linuxserver/swag:latest
+    container_name: whisper-swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - URL=ai-office-server
+      - VALIDATION=selfsigned
     ports:
-      - "8083:8083"
+      - "8443:443"
     volumes:
-      - ./whisper-nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./whisper-demo.html:/usr/share/nginx/html/whisper-demo.html:ro
+      - /data/whisper-swag:/config
+      - ./whisper-nginx.conf:/config/nginx/site-confs/whisper.conf:ro
+      - ./whisper-demo.html:/config/www/whisper-demo.html:ro
     depends_on:
       - whisper
     restart: unless-stopped
