@@ -70,7 +70,18 @@ services:
   whisper:
     image: ghcr.io/ggml-org/whisper.cpp:main-vulkan
     container_name: whisper
-    command: "whisper-server --host 0.0.0.0 --port 8080 -m /models/ggml-medium.bin --convert"
+    entrypoint:
+      [
+        "whisper-server",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8080",
+        "-m",
+        "/models/ggml-medium.bin",
+        "--convert",
+      ]
+    command: []
     volumes:
       - /data/models:/models
     restart: unless-stopped
