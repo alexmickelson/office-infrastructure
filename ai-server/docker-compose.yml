@@ -82,7 +82,7 @@ services:
 
 
   whisper:
-    image: ghcr.io/ggml-org/whisper.cpp:main-vulkan
+    image: ghcr.io/ggml-org/whisper.cpp:main-cuda
     container_name: whisper
     entrypoint:
       [
