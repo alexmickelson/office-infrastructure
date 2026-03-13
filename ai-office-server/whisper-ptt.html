@@ -4,7 +4,11 @@
     <meta charset="UTF-8" />
     <title>Whisper Push-to-Talk</title>
     <style>
-      * { box-sizing: border-box; margin: 0; padding: 0; }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
       body {
         font-family: system-ui, sans-serif;
         background: #0f0f0f;
@@ -15,7 +19,12 @@
         align-items: center;
         padding: 2rem;
       }
-      h1 { font-size: 1.4rem; font-weight: 600; margin-bottom: 1.5rem; color: #fff; }
+      h1 {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: #fff;
+      }
 
       .controls {
         display: flex;
@@ -25,7 +34,10 @@
         flex-wrap: wrap;
         justify-content: center;
       }
-      .controls label { font-size: 0.85rem; color: #aaa; }
+      .controls label {
+        font-size: 0.85rem;
+        color: #aaa;
+      }
       .controls input[type="text"] {
         background: #1e1e1e;
         border: 1px solid #333;
@@ -57,8 +69,12 @@
         cursor: pointer;
         user-select: none;
         touch-action: none;
-        transition: background 0.1s, border-color 0.1s, transform 0.08s, box-shadow 0.1s;
-        box-shadow: 0 0 0 0 rgba(45,125,70,0);
+        transition:
+          background 0.1s,
+          border-color 0.1s,
+          transform 0.08s,
+          box-shadow 0.1s;
+        box-shadow: 0 0 0 0 rgba(45, 125, 70, 0);
         margin: 1rem 0;
         outline: none;
       }
@@ -67,7 +83,7 @@
         border-color: #6fcf89;
         color: #fff;
         transform: scale(0.94);
-        box-shadow: 0 0 0 12px rgba(45,125,70,0.25);
+        box-shadow: 0 0 0 12px rgba(45, 125, 70, 0.25);
       }
       #pttBtn.flushing {
         background: #7d6a1a;
@@ -75,7 +91,11 @@
         color: #fff;
         cursor: not-allowed;
       }
-      #pttBtn span { pointer-events: none; display: block; line-height: 1.3; }
+      #pttBtn span {
+        pointer-events: none;
+        display: block;
+        line-height: 1.3;
+      }
 
       .status {
         font-size: 0.8rem;
@@ -87,17 +107,30 @@
         gap: 0.5rem;
       }
       .dot {
-        width: 8px; height: 8px;
+        width: 8px;
+        height: 8px;
         border-radius: 50%;
         background: #555;
         flex-shrink: 0;
       }
-      .dot.recording { background: #e05; animation: pulse 1s infinite; }
-      .dot.sending   { background: #fa0; }
-      .dot.idle      { background: #2d7; }
+      .dot.recording {
+        background: #e05;
+        animation: pulse 1s infinite;
+      }
+      .dot.sending {
+        background: #fa0;
+      }
+      .dot.idle {
+        background: #2d7;
+      }
       @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50%       { opacity: 0.3; }
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
       }
 
       #volumeCanvas {
@@ -108,6 +141,9 @@
         border: 1px solid #2a2a2a;
         border-radius: 8px;
         margin-bottom: 0.75rem;
+        display: none;
+      }
+      #volumeCanvas.visible {
         display: block;
       }
 
@@ -138,7 +174,10 @@
         word-break: break-word;
         color: #e8e8e8;
       }
-      #transcript .pending { color: #888; font-style: italic; }
+      #transcript .pending {
+        color: #888;
+        font-style: italic;
+      }
 
       .meta {
         font-size: 0.75rem;
@@ -161,17 +200,25 @@
         font-weight: 600;
         cursor: pointer;
       }
-      #clearBtn:hover { background: #444; }
+      #clearBtn:hover {
+        background: #444;
+      }
     </style>
   </head>
   <body>
     <h1>Whisper Push-to-Talk</h1>
 
     <div class="controls">
-      <label>Server
-        <input type="text" id="serverUrl" value="https://ai-office-server:8443" />
+      <label
+        >Server
+        <input
+          type="text"
+          id="serverUrl"
+          value="https://ai-office-server:8443"
+        />
       </label>
-      <label>Language
+      <label
+        >Language
         <select id="language">
           <option value="auto">auto</option>
           <option value="en" selected>en</option>
@@ -184,18 +231,22 @@
       </label>
     </div>
 
-    <button id="pttBtn"><span>Hold to<br>Record</span></button>
+    <button id="pttBtn">
+      <span>Hold to<br />Record</span>
+    </button>
 
     <div class="status">
       <span class="dot idle" id="dot"></span>
-      <span id="statusText">Ready — hold the button to record</span>
+      <span id="statusText">Ready — hold button or Space to record</span>
     </div>
 
     <div class="error-box" id="errorBox"></div>
 
     <canvas id="volumeCanvas"></canvas>
 
-    <div id="transcript"><span class="pending">Transcript will appear here...</span></div>
+    <div id="transcript">
+      <span class="pending">Transcript will appear here...</span>
+    </div>
 
     <div class="meta">
       <span id="wordCount">0 words</span>
@@ -205,56 +256,60 @@
     <button id="clearBtn">✕ Clear transcript</button>
 
     <script>
-      const pttBtn      = document.getElementById('pttBtn');
-      const clearBtn    = document.getElementById('clearBtn');
-      const transcriptEl = document.getElementById('transcript');
-      const statusText  = document.getElementById('statusText');
-      const dot         = document.getElementById('dot');
-      const errorBox    = document.getElementById('errorBox');
-      const wordCountEl = document.getElementById('wordCount');
-      const lastLatencyEl = document.getElementById('lastLatency');
+      const pttBtn = document.getElementById("pttBtn");
+      const clearBtn = document.getElementById("clearBtn");
+      const transcriptEl = document.getElementById("transcript");
+      const statusText = document.getElementById("statusText");
+      const dot = document.getElementById("dot");
+      const errorBox = document.getElementById("errorBox");
+      const wordCountEl = document.getElementById("wordCount");
+      const lastLatencyEl = document.getElementById("lastLatency");
 
-      const canvas = document.getElementById('volumeCanvas');
-      const ctx2d  = canvas.getContext('2d');
+      const canvas = document.getElementById("volumeCanvas");
+      const ctx2d = canvas.getContext("2d");
 
-      let mediaStream   = null;
-      let recorder      = null;
-      let chunks        = [];
-      let confirmedText = '';
-      let isRecording   = false;
+      let mediaStream = null;
+      let recorder = null;
+      let chunks = [];
+      let confirmedText = "";
+      let isRecording = false;
 
       const PROMPT_WORDS = 20;
-      const HISTORY_S    = 6;
-      const SAMPLE_RATE  = 30;
-      const MAX_BARS     = HISTORY_S * SAMPLE_RATE;
-      const volHistory   = [];
-      let analyserNode   = null;
-      let vizRaf         = null;
+      const HISTORY_S = 6;
+      const SAMPLE_RATE = 30;
+      const MAX_BARS = HISTORY_S * SAMPLE_RATE;
+      const volHistory = [];
+      let analyserNode = null;
+      let vizRaf = null;
 
       // ── Status ────────────────────────────────────────────────────────────
       function setStatus(msg, state) {
         statusText.textContent = msg;
-        dot.className = 'dot ' + (state || 'idle');
+        dot.className = "dot " + (state || "idle");
       }
 
       function showError(msg) {
         errorBox.textContent = msg;
-        errorBox.style.display = 'block';
-        setTimeout(() => { errorBox.style.display = 'none'; }, 6000);
+        errorBox.style.display = "block";
+        setTimeout(() => {
+          errorBox.style.display = "none";
+        }, 6000);
       }
 
       // ── Transcript ────────────────────────────────────────────────────────
       function renderTranscript(pendingText) {
-        transcriptEl.innerHTML = '';
+        transcriptEl.innerHTML = "";
         if (!confirmedText && !pendingText) {
-          transcriptEl.innerHTML = '<span class="pending">Transcript will appear here...</span>';
+          transcriptEl.innerHTML =
+            '<span class="pending">Transcript will appear here...</span>';
           return;
         }
-        if (confirmedText) transcriptEl.appendChild(document.createTextNode(confirmedText));
+        if (confirmedText)
+          transcriptEl.appendChild(document.createTextNode(confirmedText));
         if (pendingText) {
-          const span = document.createElement('span');
-          span.className = 'pending';
-          span.textContent = (confirmedText ? ' ' : '') + pendingText;
+          const span = document.createElement("span");
+          span.className = "pending";
+          span.textContent = (confirmedText ? " " : "") + pendingText;
           transcriptEl.appendChild(span);
         }
       }
@@ -265,18 +320,29 @@
       }
 
       function buildPrompt() {
-        return confirmedText.trim().split(/\s+/).filter(Boolean).slice(-PROMPT_WORDS).join(' ');
+        return confirmedText
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean)
+          .slice(-PROMPT_WORDS)
+          .join(" ");
       }
 
       function deduplicateLeading(newText) {
         newText = newText.trim();
         if (!confirmedText || !newText) return newText;
         const prevWords = confirmedText.trim().split(/\s+/).filter(Boolean);
-        const newWords  = newText.split(/\s+/).filter(Boolean);
-        for (let overlap = Math.min(8, prevWords.length, newWords.length); overlap >= 2; overlap--) {
-          if (prevWords.slice(-overlap).join(' ').toLowerCase() ===
-              newWords.slice(0, overlap).join(' ').toLowerCase()) {
-            return newWords.slice(overlap).join(' ');
+        const newWords = newText.split(/\s+/).filter(Boolean);
+        for (
+          let overlap = Math.min(8, prevWords.length, newWords.length);
+          overlap >= 2;
+          overlap--
+        ) {
+          if (
+            prevWords.slice(-overlap).join(" ").toLowerCase() ===
+            newWords.slice(0, overlap).join(" ").toLowerCase()
+          ) {
+            return newWords.slice(overlap).join(" ");
           }
         }
         return newText;
@@ -293,7 +359,8 @@
         function tick() {
           vizRaf = requestAnimationFrame(tick);
           analyserNode.getByteFrequencyData(buf);
-          const rms = Math.sqrt(buf.reduce((s, v) => s + v * v, 0) / buf.length) / 255;
+          const rms =
+            Math.sqrt(buf.reduce((s, v) => s + v * v, 0) / buf.length) / 255;
           volHistory.push(rms);
           if (volHistory.length > MAX_BARS) volHistory.shift();
           drawViz();
@@ -302,14 +369,20 @@
       }
 
       function stopViz() {
-        if (vizRaf) { cancelAnimationFrame(vizRaf); vizRaf = null; }
+        if (vizRaf) {
+          cancelAnimationFrame(vizRaf);
+          vizRaf = null;
+        }
         drawViz();
       }
 
       function drawViz() {
-        const W = canvas.offsetWidth  * devicePixelRatio;
+        const W = canvas.offsetWidth * devicePixelRatio;
         const H = canvas.offsetHeight * devicePixelRatio;
-        if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+        if (canvas.width !== W || canvas.height !== H) {
+          canvas.width = W;
+          canvas.height = H;
+        }
         ctx2d.clearRect(0, 0, W, H);
         const barW = W / MAX_BARS;
         for (let i = 0; i < volHistory.length; i++) {
@@ -322,99 +395,145 @@
 
       // ── Inference ─────────────────────────────────────────────────────────
       async function sendBlob(blob) {
-        const server   = document.getElementById('serverUrl').value.replace(/\/$/, '');
-        const language = document.getElementById('language').value;
+        const server = document
+          .getElementById("serverUrl")
+          .value.replace(/\/$/, "");
+        const language = document.getElementById("language").value;
         const t0 = Date.now();
 
         const formData = new FormData();
-        formData.append('file', blob, 'audio.webm');
-        formData.append('response_format', 'json');
-        formData.append('language', language === 'auto' ? '' : language);
+        formData.append("file", blob, "audio.webm");
+        formData.append("response_format", "json");
+        formData.append("language", language === "auto" ? "" : language);
         const prompt = buildPrompt();
-        if (prompt) formData.append('prompt', prompt);
+        if (prompt) formData.append("prompt", prompt);
 
-        setStatus('Transcribing…', 'sending');
+        setStatus("Transcribing…", "sending");
         try {
-          const res = await fetch(`${server}/inference`, { method: 'POST', body: formData });
-          if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+          const res = await fetch(`${server}/inference`, {
+            method: "POST",
+            body: formData,
+          });
+          if (!res.ok)
+            throw new Error(`HTTP ${res.status}: ${await res.text()}`);
           const data = await res.json();
           lastLatencyEl.textContent = `last: ${Date.now() - t0}ms`;
-          let text = (data.text || '').trim();
+          let text = (data.text || "").trim();
           if (text) {
             text = deduplicateLeading(text);
-            if (text) confirmedText = confirmedText ? confirmedText + ' ' + text : text;
+            if (text)
+              confirmedText = confirmedText ? confirmedText + " " + text : text;
           }
-          renderTranscript('');
+          renderTranscript("");
           updateMeta();
         } catch (err) {
-          showError('Error: ' + err.message);
+          showError("Error: " + err.message);
         }
       }
 
       // ── PTT core ──────────────────────────────────────────────────────────
       async function pressStart() {
-        if (isRecording || pttBtn.classList.contains('flushing')) return;
+        if (isRecording || pttBtn.classList.contains("flushing")) return;
 
         // Acquire mic on first press, reuse afterwards
         if (!mediaStream) {
           try {
-            mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-            startViz(mediaStream);
+            mediaStream = await navigator.mediaDevices.getUserMedia({
+              audio: true,
+              video: false,
+            });
           } catch (err) {
-            showError('Microphone access denied: ' + err.message);
+            showError("Microphone access denied: " + err.message);
             return;
           }
         }
 
+        startViz(mediaStream);
         chunks = [];
         const mimeType = getSupportedMimeType();
-        recorder = new MediaRecorder(mediaStream, mimeType ? { mimeType } : undefined);
-        recorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+        recorder = new MediaRecorder(
+          mediaStream,
+          mimeType ? { mimeType } : undefined,
+        );
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) chunks.push(e.data);
+        };
         recorder.onstop = async () => {
-          const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
-          pttBtn.classList.add('flushing');
-          pttBtn.querySelector('span').textContent = 'Transcribing…';
+          const blob = new Blob(chunks, {
+            type: recorder.mimeType || "audio/webm",
+          });
+          canvas.classList.remove("visible");
+          volHistory.length = 0;
+          stopViz();
+          pttBtn.classList.add("flushing");
+          pttBtn.querySelector("span").textContent = "Transcribing…";
           await sendBlob(blob);
-          pttBtn.classList.remove('flushing');
-          pttBtn.querySelector('span').innerHTML = 'Hold to<br>Record';
-          setStatus('Ready — hold the button to record', 'idle');
+          pttBtn.classList.remove("flushing");
+          pttBtn.querySelector("span").innerHTML = "Hold to<br>Record";
+          setStatus("Ready — hold button or Space to record", "idle");
         };
         recorder.start(100);
         isRecording = true;
-        pttBtn.classList.add('active');
-        setStatus('Recording…', 'recording');
+        canvas.classList.add("visible");
+        pttBtn.classList.add("active");
+        pttBtn.querySelector("span").innerHTML =
+          "Recording…<br>Release to send";
+        setStatus("Recording…", "recording");
       }
 
       function pressEnd() {
         if (!isRecording) return;
         isRecording = false;
-        pttBtn.classList.remove('active');
-        if (recorder && recorder.state === 'recording') recorder.stop();
+        pttBtn.classList.remove("active");
+        if (recorder && recorder.state === "recording") recorder.stop();
       }
 
       function getSupportedMimeType() {
-        return ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/ogg']
-          .find(t => MediaRecorder.isTypeSupported(t)) || '';
+        return (
+          [
+            "audio/webm;codecs=opus",
+            "audio/webm",
+            "audio/ogg;codecs=opus",
+            "audio/ogg",
+          ].find((t) => MediaRecorder.isTypeSupported(t)) || ""
+        );
       }
 
       // Mouse
-      pttBtn.addEventListener('mousedown', (e) => { e.preventDefault(); pressStart(); });
-      window.addEventListener('mouseup',  () => pressEnd());
+      pttBtn.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        pressStart();
+      });
+      window.addEventListener("mouseup", () => pressEnd());
 
       // Touch (mobile)
-      pttBtn.addEventListener('touchstart', (e) => { e.preventDefault(); pressStart(); }, { passive: false });
-      window.addEventListener('touchend',   () => pressEnd());
-      window.addEventListener('touchcancel',() => pressEnd());
+      pttBtn.addEventListener(
+        "touchstart",
+        (e) => {
+          e.preventDefault();
+          pressStart();
+        },
+        { passive: false },
+      );
+      window.addEventListener("touchend", () => pressEnd());
+      window.addEventListener("touchcancel", () => pressEnd());
 
       // Space bar shortcut
-      window.addEventListener('keydown', (e) => { if (e.code === 'Space' && !e.repeat) { e.preventDefault(); pressStart(); }});
-      window.addEventListener('keyup',   (e) => { if (e.code === 'Space') pressEnd(); });
+      window.addEventListener("keydown", (e) => {
+        if (e.code === "Space" && !e.repeat) {
+          e.preventDefault();
+          pressStart();
+        }
+      });
+      window.addEventListener("keyup", (e) => {
+        if (e.code === "Space") pressEnd();
+      });
 
-      clearBtn.addEventListener('click', () => {
-        confirmedText = '';
-        renderTranscript('');
+      clearBtn.addEventListener("click", () => {
+        confirmedText = "";
+        renderTranscript("");
         updateMeta();
-        lastLatencyEl.textContent = '';
+        lastLatencyEl.textContent = "";
       });
     </script>
   </body>
