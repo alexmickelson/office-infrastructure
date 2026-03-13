@@ -153,6 +153,16 @@
         margin-bottom: 0.75rem;
         display: none;
       }
+      #volumeCanvas {
+        width: 100%;
+        max-width: 860px;
+        height: 60px;
+        background: #111;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+        display: block;
+      }
     </style>
   </head>
   <body>
@@ -203,6 +213,8 @@
 
     <div class="error-box" id="errorBox"></div>
 
+    <canvas id="volumeCanvas"></canvas>
+
     <div id="transcript">
       <span class="pending">Transcript will appear here...</span>
     </div>
@@ -232,6 +244,66 @@
       let isRecording = false;
       let segmentIndex = 0;
       let segmentTimer = null;
+
+      // Volume visualizer
+      const canvas = document.getElementById("volumeCanvas");
+      const ctx2d = canvas.getContext("2d");
+      const HISTORY_S = 6; // seconds of history to show
+      const SAMPLE_RATE = 30; // samples per second
+      const MAX_BARS = HISTORY_S * SAMPLE_RATE;
+      const volHistory = [];
+      let analyser = null;
+      let vizRaf = null;
+
+      function startViz(stream) {
+        const audioCtx = new AudioContext();
+        const source = audioCtx.createMediaStreamSource(stream);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 1024;
+        source.connect(analyser);
+        const buf = new Uint8Array(analyser.frequencyBinCount);
+
+        function tick() {
+          vizRaf = requestAnimationFrame(tick);
+          analyser.getByteFrequencyData(buf);
+          const rms =
+            Math.sqrt(buf.reduce((s, v) => s + v * v, 0) / buf.length) / 255;
+          volHistory.push(rms);
+          if (volHistory.length > MAX_BARS) volHistory.shift();
+          drawViz();
+        }
+        tick();
+      }
+
+      function stopViz() {
+        if (vizRaf) {
+          cancelAnimationFrame(vizRaf);
+          vizRaf = null;
+        }
+        drawViz();
+      }
+
+      function drawViz() {
+        const W = canvas.offsetWidth * devicePixelRatio;
+        const H = canvas.offsetHeight * devicePixelRatio;
+        if (canvas.width !== W || canvas.height !== H) {
+          canvas.width = W;
+          canvas.height = H;
+        }
+        ctx2d.clearRect(0, 0, W, H);
+
+        const barW = W / MAX_BARS;
+        for (let i = 0; i < volHistory.length; i++) {
+          const v = volHistory[i];
+          const barH = v * H;
+          // colour: green → yellow → red based on level
+          const hue = 120 - v * 120;
+          ctx2d.fillStyle = `hsl(${hue},80%,45%)`;
+          ctx2d.fillRect(i * barW, H - barH, Math.max(1, barW - 1), barH);
+        }
+      }
+
+      drawViz();
 
       // How many words to feed back as prompt to Whisper to maintain word continuity
       const PROMPT_WORDS = 20;
@@ -412,6 +484,7 @@
         startBtn.disabled = true;
         stopBtn.disabled = false;
         setStatus("Recording…", "recording");
+        startViz(mediaStream);
         startSegment();
       });
 
@@ -420,6 +493,7 @@
         clearTimeout(segmentTimer);
         if (recorder && recorder.state === "recording") recorder.stop();
         if (mediaStream) mediaStream.getTracks().forEach((t) => t.stop());
+        stopViz();
         startBtn.disabled = false;
         stopBtn.disabled = true;
         setStatus("Stopped", "idle");
