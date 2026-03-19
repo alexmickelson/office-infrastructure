@@ -1,0 +1,34 @@
+- name: CrowdStrike Falcon Installation Playbook
+  hosts: all
+  become: true
+
+  vars_files:
+    - ../secrets.yml
+
+  tasks:
+    - name: Copy CrowdStrike installer to target
+      copy:
+        src: ~/Documents/crowdstrike.deb
+        dest: /tmp/crowdstrike.deb
+        mode: "0600"
+
+    - name: Install CrowdStrike Falcon sensor
+      apt:
+        deb: /tmp/crowdstrike.deb
+      notify: Restart falcon-sensor
+
+    - name: Configure CrowdStrike Falcon sensor CID
+      command: /opt/CrowdStrike/falconctl -s --cid="{{ crowdstrike_cid }}" -f
+      notify: Restart falcon-sensor
+
+    - name: Ensure falcon-sensor service is enabled and running
+      service:
+        name: falcon-sensor
+        state: started
+        enabled: true
+
+  handlers:
+    - name: Restart falcon-sensor
+      service:
+        name: falcon-sensor
+        state: restarted
