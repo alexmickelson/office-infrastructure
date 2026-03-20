@@ -1,0 +1,4 @@
+# ansible-playbook -i ai-host.yml --ask-vault-pass --ask-become-pass playbooks/crowdstrike.yml
+all:
+  hosts:
+    snow-ai-server.reindeer-pinecone.ts.net:
