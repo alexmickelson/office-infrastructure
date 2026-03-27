@@ -82,6 +82,6 @@ groups:
 # Hooks to preload both models on startup
 hooks:
   on_startup:
-    preload:
-      - "gpt-oss-120b"
-      - "gemma3-27b"
+    # preload:
+    #   - "gpt-oss-120b"
+    #   - "gemma3-27b"
