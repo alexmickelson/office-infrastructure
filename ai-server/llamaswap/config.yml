@@ -55,6 +55,7 @@ models:
       ./llama-server \
       --port ${PORT} \
       -m models/Qwen3.5-27B-UD-Q8_K_XL.gguf \
+      --mmproj models/Qwen3.5-27B-GGUF-mmproj-F32.gguf \
       --ctx-size 262144 \
       --jinja \
       --temp 0.6 \
