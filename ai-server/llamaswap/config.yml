@@ -2,9 +2,9 @@ models:
   "gpt-oss-120b":
     cmd: |
       ./llama-server \
-      --port ${PORT} \
-      -m models/gpt-oss-120b-F16.gguf \
-      --ctx-size 131072 --jinja -ub 2048 -b 2048 --metrics
+        --port ${PORT} \
+        -m models/gpt-oss-120b-F16.gguf \
+        --ctx-size 131072 --jinja -ub 2048 -b 2048 --metrics
     # --ctx-size 32768 --jinja -ub 4096 -b 4096
     # --jinja --ctx-size 16384
     aliases:
@@ -13,10 +13,10 @@ models:
   "gemma3-27b":
     cmd: |
       ./llama-server \
-      --port ${PORT} \
-      -m models/gemma-3-27b-it-Q2_K_L.gguf \
-      --mmproj models/gemma-mmproj-F16.gguf \
-      --ctx-size 0 --jinja
+        --port ${PORT} \
+        -m models/gemma-3-27b-it-Q2_K_L.gguf \
+        --mmproj models/gemma-mmproj-F16.gguf \
+        --ctx-size 0 --jinja
     # -m models/gemma-3-27b-it-UD-Q4_K_XL.gguf \
     aliases:
       - "gemma3:27b"
@@ -36,14 +36,35 @@ models:
   "qwen3.5-122b":
     cmd: |
       ./llama-server \
-      --port ${PORT} \
-      -m models/Qwen3.5-122B-A10B-Q4_K_M-00001-of-00003.gguf \
-      --mmproj models/mmproj-Qwen3.5-122B.gguf \
-      --ctx-size 100000 --jinja \
+        --port ${PORT} \
+        -m models/Qwen3.5-122B-A10B-Q4_K_M-00001-of-00003.gguf \
+        --mmproj models/mmproj-Qwen3.5-122B.gguf \
+      --ctx-size 100000 \
+      --jinja \
       --threads -1 \
-      --temp 0.6 --top-k 20 --min-p 0.00 --top-p 0.95
+      --temp 0.6 \
+      --top-k 20 \
+      --min-p 0.00 \
+      --top-p 0.95
     aliases:
       - "qwen3.5:122b"
+    ttl: 300
+
+  "qwen3.5-27b":
+    cmd: |
+      ./llama-server \
+      --port ${PORT} \
+      -m models/Qwen3.5-27B-UD-Q8_K_XL.gguf \
+      --ctx-size 262144 \
+      --jinja \
+      --temp 0.6 \
+      --top-k 20 \
+      --min-p 0.0 \
+      --top-p 0.95 \
+      --presence-penalty 0.0 \
+      --repeat-penalty 1.0
+    aliases:
+      - "qwen3.5:27b"
     ttl: 300
 
 # Groups configuration to run both models simultaneously
