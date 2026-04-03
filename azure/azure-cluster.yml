@@ -1,0 +1,38 @@
+cluster:
+  name: office-aks
+  resource_group: test-kuberentes-rg
+  location: westus3
+  kubeconfig: ~/.kube/azureconfig
+
+  node_pool:
+    vm_size: Standard_A4_v2
+    min_count: 1
+    max_count: 5
+
+  autoscaler:
+    enabled: true
+    scan_interval: 30s
+    scale_down_unneeded_time: 5m
+    scale_down_delay_after_add: 5m
+
+  load_balancer_sku: standard
+  # network_plugin: kubenet
+  network_plugin: azure
+  tier: free
+
+  storage:
+    blob_driver: true
+    blob_storage_class_name: blob
+    blob_account_sku: Standard_LRS
+    blob_account_kind: StorageV2
+    blob_protocol: fuse
+    blob_reclaim_policy: Delete
+
+    disk_driver: true
+    disk_storage_class_name: managed-disk
+    disk_sku: Standard_LRS  # Standard HDD — cheapest managed disk tier
+    disk_reclaim_policy: Delete
+
+    file_storage_class_name: azure-file
+    file_sku: Standard_LRS  # Standard SMB — cheapest file share tier
+    file_reclaim_policy: Delete
