@@ -1,6 +1,6 @@
 cluster:
   name: office-aks
-  resource_group: test-kuberentes-rg
+  resource_group: test-kuberentes-resource-group
   location: westus3
   kubeconfig: ~/.kube/azureconfig
 
@@ -20,19 +20,5 @@ cluster:
   network_plugin: azure
   tier: free
 
-  storage:
-    blob_driver: true
-    blob_storage_class_name: blob
-    blob_account_sku: Standard_LRS
-    blob_account_kind: StorageV2
-    blob_protocol: fuse
-    blob_reclaim_policy: Delete
-
-    disk_driver: true
-    disk_storage_class_name: managed-disk
-    disk_sku: Standard_LRS  # Standard HDD — cheapest managed disk tier
-    disk_reclaim_policy: Delete
-
-    file_storage_class_name: azure-file
-    file_sku: Standard_LRS  # Standard SMB — cheapest file share tier
-    file_reclaim_policy: Delete
+  gateway_api:
+    enabled: true
