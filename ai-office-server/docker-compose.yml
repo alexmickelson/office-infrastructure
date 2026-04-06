@@ -83,3 +83,4 @@ services:
     depends_on:
       - whisper
     restart: unless-stopped
+
