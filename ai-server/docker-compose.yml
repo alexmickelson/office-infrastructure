@@ -72,8 +72,8 @@ services:
       - --models-preset
       - /models/config.ini
     volumes:
-      - ./llamaswap/config.ini:/models/config.ini:ro
       - /data/llamaswap/models:/models
+      - ./llamaswap/config.ini:/models/config.ini:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
