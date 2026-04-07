@@ -22,6 +22,21 @@ models:
       - "gemma3:27b"
     ttl: 300
 
+  "gemma4-31b":
+    cmd: |
+      ./llama-server \
+        --port ${PORT} \
+        -m /models/gemma-4-31B-it-BF16-00001-of-00002.gguf \
+        --mmproj /models/mmproj-gemma4-BF16.gguf \
+        --ctx-size 256000 \
+        --jinja \
+        --temp 1.0 \
+        --top-k 64 \
+        --top-p 0.95
+    aliases:
+      - "gemma4:31b"
+    ttl: 300
+
   # "devstral-123b":
   #   cmd: |
   #     ./llama-server \
