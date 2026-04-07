@@ -63,7 +63,7 @@ services:
   llama-server:
     image: ghcr.io/ggml-org/llama.cpp:server-cuda-b8672
     container_name: llama-server
-    network_mode: service:tailscale-ingress
+    # network_mode: service:tailscale-ingress
     command:
       - --host
       - 0.0.0.0
@@ -190,25 +190,25 @@ services:
   #     - OPENWEBUI_DB_NAME=openwebui_db
   #     - OPENWEBUI_DB_HOST=openwebui-db
 
-  tailscale-ingress:
-    image: tailscale/tailscale:latest
-    hostname: ai-snow
-    env_file:
-      - .env
-    environment:
-      # - TS_AUTHKEY= # from .env file
-      - TS_SERVE_CONFIG=/config/ts-config.json
-      - TS_STATE_DIR=/var/lib/tailscale
-    volumes:
-      - /data/tailscale-ingress:/var/lib/tailscale
-      - ./ts-config.json:/config/ts-config.json
-    extra_hosts:
-      - host.docker.internal:host-gateway
-    devices:
-      - /dev/net/tun:/dev/net/tun
-    cap_add:
-      - net_admin
-    restart: always
+  # tailscale-ingress:
+  #   image: tailscale/tailscale:latest
+  #   hostname: ai-snow
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     # - TS_AUTHKEY= # from .env file
+  #     - TS_SERVE_CONFIG=/config/ts-config.json
+  #     - TS_STATE_DIR=/var/lib/tailscale
+  #   volumes:
+  #     - /data/tailscale-ingress:/var/lib/tailscale
+  #     - ./ts-config.json:/config/ts-config.json
+  #   extra_hosts:
+  #     - host.docker.internal:host-gateway
+  #   devices:
+  #     - /dev/net/tun:/dev/net/tun
+  #   cap_add:
+  #     - net_admin
+  #   restart: always
 
   # cloudflare-tunnel:
   #   image: cloudflare/cloudflared
