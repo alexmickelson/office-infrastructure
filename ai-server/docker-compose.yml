@@ -60,6 +60,26 @@ services:
               capabilities:
                 - gpu
 
+  llama-server:
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    container_name: llama-server
+    command: >
+      --port 8082
+      --models-preset /app/models/config.ini
+    volumes:
+      - ./llamaswap/config.ini:/app/models/config.ini:ro
+      - /data/llamaswap/models:/app/models
+    restart: unless-stopped
+    network_mode: service:tailscale-ingress
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
+
   llama-swap:
     image: ghcr.io/mostlygeek/llama-swap:cuda
     container_name: llama-swap
@@ -79,7 +99,6 @@ services:
               capabilities:
                 - gpu
     network_mode: service:tailscale-ingress
-
 
   whisper:
     image: ghcr.io/ggml-org/whisper.cpp:main-cuda
@@ -215,7 +234,6 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
     restart: unless-stopped
-    
 
   tailscale-ingress:
     image: tailscale/tailscale:latest
