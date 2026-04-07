@@ -1,67 +1,67 @@
 services:
-  # openwebui:
-  #   image: ghcr.io/open-webui/open-webui:latest
-  #   container_name: openwebui
-  #   network_mode: service:tailscale-ingress
-  #   # ports:
-  #   #   - "8080:8080"
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - WEBUI_PORT=8080
-  #     - OLLAMA_BASE_URL=http://localhost:11434
-  #     # - WEBUI_SECRET_KEY= # from .env file
-  #     - DATABASE_URL=postgresql://openwebui:9hb02121-9br@openwebui-db:5432/openwebui_db
-  #     - ENABLE_OAUTH_SIGNUP=true
-  #     - MCP_ENABLED=true
-  #     # - WEBUI_AUTH_TRUSTED_EMAIL_HEADER=Cf-Access-Authenticated-User-Email
-  #     # - OAUTH_CLIENT_ID= # from .env file
-  #     # - OAUTH_CLIENT_SECRET= # from .env file
-  #     # - OPENID_PROVIDER_URL= # from .env file
-  #     # - OAUTH_PROVIDER_NAME= # from .env file
-  #     # - OAUTH_SCOPES= # from .env file
-  #     # - OPENID_REDIRECT_URI= # from .env file
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: openwebui
+    network_mode: service:tailscale-ingress
+    # ports:
+    #   - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - WEBUI_PORT=8080
+      - OLLAMA_BASE_URL=http://localhost:11434
+      # - WEBUI_SECRET_KEY= # from .env file
+      - DATABASE_URL=postgresql://openwebui:9hb02121-9br@openwebui-db:5432/openwebui_db
+      - ENABLE_OAUTH_SIGNUP=true
+      - MCP_ENABLED=true
+      # - WEBUI_AUTH_TRUSTED_EMAIL_HEADER=Cf-Access-Authenticated-User-Email
+      # - OAUTH_CLIENT_ID= # from .env file
+      # - OAUTH_CLIENT_SECRET= # from .env file
+      # - OPENID_PROVIDER_URL= # from .env file
+      # - OAUTH_PROVIDER_NAME= # from .env file
+      # - OAUTH_SCOPES= # from .env file
+      # - OPENID_REDIRECT_URI= # from .env file
 
-  #   volumes:
-  #     - /data/openwebui:/app/backend/data
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - ollama
-  # openwebui-db:
-  #   image: postgres:17
-  #   container_name: openwebui-db
-  #   environment:
-  #     POSTGRES_USER: openwebui
-  #     POSTGRES_PASSWORD: 9hb02121-9br
-  #     POSTGRES_DB: openwebui_db
-  #   volumes:
-  #     - /data/openwebui-pg:/var/lib/postgresql/data
-  #   restart: always
+    volumes:
+      - /data/openwebui:/app/backend/data
+    restart: unless-stopped
+    depends_on:
+      - ollama
+  openwebui-db:
+    image: postgres:17
+    container_name: openwebui-db
+    environment:
+      POSTGRES_USER: openwebui
+      POSTGRES_PASSWORD: 9hb02121-9br
+      POSTGRES_DB: openwebui_db
+    volumes:
+      - /data/openwebui-pg:/var/lib/postgresql/data
+    restart: always
 
-  # ollama:
-  #   image: ollama/ollama:latest
-  #   container_name: ollama
-  #   network_mode: service:tailscale-ingress
-  #   # ports:
-  #   #   - "11434:11434"
-  #   environment:
-  #     - OLLAMA_NUM_PARALLEL=4
-  #     - OLLAMA_NUM_PARALLEL=10
-  #     - OLLAMA_MAX_QUEUE=5000
-  #   volumes:
-  #     - /data/ollama:/root/.ollama
-  #   restart: unless-stopped
-  #   deploy:
-  #     resources:
-  #       reservations:
-  #         devices:
-  #           - driver: nvidia
-  #             count: 1
-  #             capabilities:
-  #               - gpu
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    network_mode: service:tailscale-ingress
+    # ports:
+    #   - "11434:11434"
+    environment:
+      - OLLAMA_NUM_PARALLEL=4
+      - OLLAMA_NUM_PARALLEL=10
+      - OLLAMA_MAX_QUEUE=5000
+    volumes:
+      - /data/ollama:/root/.ollama
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
 
   llama-server:
-    image: ghcr.io/ggml-org/llama.cpp:server-cuda-b8672
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
     container_name: llama-server
     # network_mode: service:tailscale-ingress
     command:
@@ -90,140 +90,140 @@ services:
               capabilities:
                 - gpu
 
-  # whisper:
-  #   image: ghcr.io/ggml-org/whisper.cpp:main-cuda
-  #   container_name: whisper
-  #   entrypoint:
-  #     [
-  #       "whisper-server",
-  #       "--host",
-  #       "0.0.0.0",
-  #       "--port",
-  #       "8081",
-  #       "-m",
-  #       "/models/ggml-large-v3.bin",
-  #       "--convert",
-  #     ]
-  #   command: []
-  #   volumes:
-  #     - /data/models:/models
-  #   restart: unless-stopped
-  #   network_mode: service:tailscale-ingress
-  #   deploy:
-  #     resources:
-  #       reservations:
-  #         devices:
-  #           - driver: nvidia
-  #             count: 1
-  #             capabilities:
-  #               - gpu
+  whisper:
+    image: ghcr.io/ggml-org/whisper.cpp:main-cuda
+    container_name: whisper
+    entrypoint:
+      [
+        "whisper-server",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8081",
+        "-m",
+        "/models/ggml-large-v3.bin",
+        "--convert",
+      ]
+    command: []
+    volumes:
+      - /data/models:/models
+    restart: unless-stopped
+    network_mode: service:tailscale-ingress
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
 
-  # prometheus:
-  #   image: prom/prometheus
-  #   container_name: prometheus
-  #   restart: unless-stopped
-  #   # network_mode: service:tailscale-ingress # port 9090
-  #   ports:
-  #     - 9090:9090
-  #   volumes:
-  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml
-  #     - /data/prometheus:/prometheus
-  #   extra_hosts:
-  #     - host.docker.internal:host-gateway
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: unless-stopped
+    # network_mode: service:tailscale-ingress # port 9090
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - /data/prometheus:/prometheus
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
-  # grafana:
-  #   image: grafana/grafana:main
-  #   container_name: grafana
-  #   restart: unless-stopped
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - GF_AUTH_ANONYMOUS_ENABLED=true
-  #     - GF_SECURITY_ADMIN_USER=admin
-  #     # - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
-  #   volumes:
-  #     - /data/grafana:/var/lib/grafana
-  #     - ./grafana-datasource.yml:/etc/grafana/provisioning/datasources/grafana-datasource.yml:ro
-  #   ports:
-  #     - 3000:3000
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:3000/robots.txt"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 3
-  #     start_period: 3s
+  grafana:
+    image: grafana/grafana:main
+    container_name: grafana
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_SECURITY_ADMIN_USER=admin
+      # - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    volumes:
+      - /data/grafana:/var/lib/grafana
+      - ./grafana-datasource.yml:/etc/grafana/provisioning/datasources/grafana-datasource.yml:ro
+    ports:
+      - 3000:3000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/robots.txt"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 3s
 
-  # node_exporter:
-  #   image: quay.io/prometheus/node-exporter:latest
-  #   container_name: node_exporter
-  #   command:
-  #     - "--path.rootfs=/host"
-  #   network_mode: host
-  #   pid: host
-  #   restart: unless-stopped
-  #   volumes:
-  #     - "/:/host:ro,rslave"
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - "--path.rootfs=/host"
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - "/:/host:ro,rslave"
 
-  # dcgm-exporter:
-  #   image: nvidia/dcgm-exporter:4.2.3-4.1.3-ubuntu22.04
-  #   container_name: dcgm-exporter
-  #   network_mode: host # port 9400
-  #   restart: unless-stopped
-  #   deploy:
-  #     resources:
-  #       reservations:
-  #         devices:
-  #           - driver: nvidia
-  #             capabilities: [gpu]
-  #   cap_add:
-  #     - SYS_ADMIN
-  #   environment:
-  #     - NVIDIA_VISIBLE_DEVICES=all
+  dcgm-exporter:
+    image: nvidia/dcgm-exporter:4.2.3-4.1.3-ubuntu22.04
+    container_name: dcgm-exporter
+    network_mode: host # port 9400
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    cap_add:
+      - SYS_ADMIN
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
 
-  # openwebui-exporter:
-  #   image: nicholascecere/exporter-openwebui:latest
-  #   # ports:
-  #   #   - "9091:9090"
-  #   environment:
-  #     - OPENWEBUI_DB_USER=openwebui
-  #     - OPENWEBUI_DB_PASSWORD=9hb02121-9br
-  #     - OPENWEBUI_DB_NAME=openwebui_db
-  #     - OPENWEBUI_DB_HOST=openwebui-db
+  openwebui-exporter:
+    image: nicholascecere/exporter-openwebui:latest
+    # ports:
+    #   - "9091:9090"
+    environment:
+      - OPENWEBUI_DB_USER=openwebui
+      - OPENWEBUI_DB_PASSWORD=9hb02121-9br
+      - OPENWEBUI_DB_NAME=openwebui_db
+      - OPENWEBUI_DB_HOST=openwebui-db
 
-  # tailscale-ingress:
-  #   image: tailscale/tailscale:latest
-  #   hostname: ai-snow
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     # - TS_AUTHKEY= # from .env file
-  #     - TS_SERVE_CONFIG=/config/ts-config.json
-  #     - TS_STATE_DIR=/var/lib/tailscale
-  #   volumes:
-  #     - /data/tailscale-ingress:/var/lib/tailscale
-  #     - ./ts-config.json:/config/ts-config.json
-  #   extra_hosts:
-  #     - host.docker.internal:host-gateway
-  #   devices:
-  #     - /dev/net/tun:/dev/net/tun
-  #   cap_add:
-  #     - net_admin
-  #   restart: always
+  tailscale-ingress:
+    image: tailscale/tailscale:latest
+    hostname: ai-snow
+    env_file:
+      - .env
+    environment:
+      # - TS_AUTHKEY= # from .env file
+      - TS_SERVE_CONFIG=/config/ts-config.json
+      - TS_STATE_DIR=/var/lib/tailscale
+    volumes:
+      - /data/tailscale-ingress:/var/lib/tailscale
+      - ./ts-config.json:/config/ts-config.json
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+    restart: always
 
-  # cloudflare-tunnel:
-  #   image: cloudflare/cloudflared
-  #   container_name: cloudflare-tunnel
-  #   restart: unless-stopped
-  #   env_file:
-  #     - .env
-  #   command: tunnel run
-  #   volumes:
-  #     - /etc/localtime:/etc/localtime:ro
-  #   # environment:
-  #   #   - TUNNEL_TOKEN=${TUNNEL_TOKEN}
-  #   healthcheck:
-  #     test: ["CMD", "cloudflared", "--version"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #     start_period: 10s
+  cloudflare-tunnel:
+    image: cloudflare/cloudflared
+    container_name: cloudflare-tunnel
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: tunnel run
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    # environment:
+    #   - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    healthcheck:
+      test: ["CMD", "cloudflared", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
