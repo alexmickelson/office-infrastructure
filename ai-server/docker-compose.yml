@@ -64,14 +64,19 @@ services:
     image: ghcr.io/ggml-org/llama.cpp:server-cuda
     container_name: llama-server
     network_mode: service:tailscale-ingress
-    command:
-      --host 0.0.0.0
+    command: --host 0.0.0.0
       --port 9292
       --models-preset /models/config.ini
     volumes:
       - ./llamaswap/config.ini:/models/config.ini:ro
       - /data/llamaswap/models:/models
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9292/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     deploy:
       resources:
         reservations:
