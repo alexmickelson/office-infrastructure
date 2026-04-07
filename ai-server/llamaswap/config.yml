@@ -26,8 +26,8 @@ models:
     cmd: |
       ./llama-server \
         --port ${PORT} \
-        -m /models/gemma-4-31B-it-BF16-00001-of-00002.gguf \
-        --mmproj /models/mmproj-gemma4-BF16.gguf \
+        -m models/gemma-4-31B-it-BF16-00001-of-00002.gguf \
+        --mmproj models/mmproj-gemma4-BF16.gguf \
         --ctx-size 10000 \
         --jinja \
         --temp 1.0 \
