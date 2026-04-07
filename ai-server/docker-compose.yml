@@ -209,8 +209,6 @@ services:
     cap_add:
       - net_admin
     restart: always
-    ports:
-      - 8082:8082
 
   # cloudflare-tunnel:
   #   image: cloudflare/cloudflared
