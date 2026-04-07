@@ -76,7 +76,7 @@ services:
       - ./llamaswap/config.ini:/config/config.ini:ro
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082/"]
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
       interval: 10s
       timeout: 5s
       retries: 3
