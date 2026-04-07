@@ -64,7 +64,8 @@ services:
     image: ghcr.io/ggml-org/llama.cpp:server-cuda
     container_name: llama-server
     network_mode: service:tailscale-ingress
-    command: --host 0.0.0.0
+    command: |
+      --host 0.0.0.0
       --port 9292
       --models-preset /models/config.ini
     volumes:
