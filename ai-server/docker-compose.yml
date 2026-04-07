@@ -68,7 +68,7 @@ services:
       - --host
       - 0.0.0.0
       - --port
-      - "8080"
+      - "3333"
       - --models-preset
       - /models/config.ini
     volumes:
