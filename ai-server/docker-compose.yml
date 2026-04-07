@@ -64,7 +64,7 @@ services:
     image: ghcr.io/ggml-org/llama.cpp:server-cuda
     container_name: llama-server
     command: >
-      --port 8082
+      --port 9292
       --models-preset /app/models/config.ini
     volumes:
       - ./llamaswap/config.ini:/app/models/config.ini:ro
@@ -80,25 +80,25 @@ services:
               capabilities:
                 - gpu
 
-  llama-swap:
-    image: ghcr.io/mostlygeek/llama-swap:cuda
-    container_name: llama-swap
-    restart: unless-stopped
-    #ports:
-    #  - "9292:8080"
-    volumes:
-      - ./llamaswap/config.yml:/app/config.yaml
-      - /data/llamaswap/models:/app/models
-    command: --listen :9292
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities:
-                - gpu
-    network_mode: service:tailscale-ingress
+  # llama-swap:
+  #   image: ghcr.io/mostlygeek/llama-swap:cuda
+  #   container_name: llama-swap
+  #   restart: unless-stopped
+  #   #ports:
+  #   #  - "9292:8080"
+  #   volumes:
+  #     - ./llamaswap/config.yml:/app/config.yaml
+  #     - /data/llamaswap/models:/app/models
+  #   command: --listen :9292
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: 1
+  #             capabilities:
+  #               - gpu
+  #   network_mode: service:tailscale-ingress
 
   whisper:
     image: ghcr.io/ggml-org/whisper.cpp:main-cuda
