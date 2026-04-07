@@ -31,13 +31,6 @@
           "Proxy": "http://host.docker.internal:3000"
         }
       }
-    },
-    "${TS_CERT_DOMAIN}:9292": {
-      "Handlers": {
-        "/": {
-          "Proxy": "http://127.0.0.1:9292"
-        }
-      }
     }
   },
   "AllowFunnel": {
