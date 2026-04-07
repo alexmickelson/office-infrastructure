@@ -8,6 +8,9 @@
     },
     "3000": {
       "HTTPS": true
+    },
+    "9292": {
+      "HTTPS": true
     }
   },
   "Web": {
@@ -29,6 +32,13 @@
       "Handlers": {
         "/": {
           "Proxy": "http://host.docker.internal:3000"
+        }
+      }
+    },
+    "${TS_CERT_DOMAIN}:9292": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://127.0.0.1:8082"
         }
       }
     }
