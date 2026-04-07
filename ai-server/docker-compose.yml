@@ -70,10 +70,10 @@ services:
       - --port
       - "8082"
       - --models-preset
-      - /models/config.ini
+      - /config/config.ini
     volumes:
       - /data/llamaswap/models:/models
-      - ./llamaswap/config.ini:/models/config.ini:ro
+      - ./llamaswap/config.ini:/config/config.ini:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
