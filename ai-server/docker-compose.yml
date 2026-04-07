@@ -265,7 +265,7 @@ services:
       - net_admin
     restart: always
     ports:
-      - 9292:9292
+      - 8082:8082
 
   cloudflare-tunnel:
     image: cloudflare/cloudflared
