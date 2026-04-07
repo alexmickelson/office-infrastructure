@@ -61,7 +61,7 @@ services:
                 - gpu
 
   llama-server:
-    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda-b8672
     container_name: llama-server
     network_mode: service:tailscale-ingress
     command:
