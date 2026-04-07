@@ -70,7 +70,6 @@ services:
       - ./llamaswap/config.ini:/app/models/config.ini:ro
       - /data/llamaswap/models:/app/models
     restart: unless-stopped
-    network_mode: service:tailscale-ingress
     deploy:
       resources:
         reservations:
