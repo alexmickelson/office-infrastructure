@@ -75,8 +75,8 @@ services:
       - /data/llamaswap/models:/models
       - ./llamaswap/config.ini:/config/config.ini:ro
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082/"]
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8082/"]
     deploy:
       resources:
         reservations:
