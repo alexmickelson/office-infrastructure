@@ -28,7 +28,7 @@ models:
         --port ${PORT} \
         -m models/gemma-4-31B-it-BF16-00001-of-00002.gguf \
         --mmproj models/mmproj-gemma4-BF16.gguf \
-        --ctx-size 10000 \
+        --ctx-size 0 \
         --jinja \
         --temp 1.0 \
         --top-k 64 \
