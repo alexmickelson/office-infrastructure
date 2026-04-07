@@ -75,8 +75,12 @@ services:
       - /data/llamaswap/models:/models
       - ./llamaswap/config.ini:/config/config.ini:ro
     restart: unless-stopped
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8082/"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 3
+    #   start_period: 30s
     deploy:
       resources:
         reservations:
@@ -139,8 +143,8 @@ services:
     container_name: prometheus
     restart: unless-stopped
     # network_mode: service:tailscale-ingress # port 9090
-    # ports:
-    #   - 9090:9090
+    ports:
+      - 9090:9090
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - /data/prometheus:/prometheus
@@ -160,8 +164,8 @@ services:
     volumes:
       - /data/grafana:/var/lib/grafana
       - ./grafana-datasource.yml:/etc/grafana/provisioning/datasources/grafana-datasource.yml:ro
-    # ports:
-    #   - 3000:3000
+    ports:
+      - 3000:3000
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/robots.txt"]
       interval: 10s
@@ -260,6 +264,8 @@ services:
     cap_add:
       - net_admin
     restart: always
+    ports:
+      - 9292:9292
 
   cloudflare-tunnel:
     image: cloudflare/cloudflared
