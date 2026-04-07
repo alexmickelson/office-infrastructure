@@ -69,6 +69,8 @@ services:
       - 0.0.0.0
       - --port
       - "8082"
+      - --models-max
+      - "1"
       - --models-preset
       - /config/config.ini
     volumes:
