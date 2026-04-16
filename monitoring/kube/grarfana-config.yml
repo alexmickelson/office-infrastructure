@@ -9,7 +9,7 @@ data:
     datasources:
     - name: Prometheus
       type: prometheus
-      url: http://prometheus-service:9090 
+      url: http://prometheus-server.prometheus-system.svc.cluster.local:80
       isDefault: true
       access: proxy
       editable: true

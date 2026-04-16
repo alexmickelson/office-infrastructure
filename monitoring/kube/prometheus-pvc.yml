@@ -4,6 +4,7 @@ metadata:
   namespace: monitoring
   name: prometheus-pvc
 spec:
+  storageClassName: nfs-client
   accessModes:
     - ReadWriteMany
   resources:
