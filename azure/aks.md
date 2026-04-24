@@ -1,7 +1,4 @@
 
-# AKS Cluster Management
-
-Config lives in [azure-cluster.yml](azure-cluster.yml). The Python scripts (`create_cluster.py`, `teardown_cluster.py`) wrap the commands below interactively.
 
 ## Auth
 
@@ -27,7 +24,7 @@ az aks create \
   --node-vm-size Standard_A4_v2 \
   --vm-set-type VirtualMachineScaleSets \
   --load-balancer-sku standard \
-  --network-plugin azure \
+  --network-plugin azure 
   --tier free \
   --generate-ssh-keys \
   --enable-cluster-autoscaler \
