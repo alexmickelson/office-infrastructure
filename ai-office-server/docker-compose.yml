@@ -40,7 +40,7 @@ services:
     # --model-dir /models
     volumes:
       - /data/models:/models
-      # - /data/huggingface-cache:/root/.cache/llama.cpp
+      - /data/huggingface-cache:/root/.cache/huggingface/huggingface
       - ./config.ini:/models/config.ini:ro
     ports:
       - "8081:8081"
