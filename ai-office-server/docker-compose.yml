@@ -67,7 +67,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./huggingface:/home/hfdownloader/.cache/huggingface
+      - /data/huggingface-cache:/home/hfdownloader/.cache/huggingface
     # environment:
     #   HF_TOKEN: ${HF_TOKEN:-}
     command:
