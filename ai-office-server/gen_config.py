@@ -128,22 +128,21 @@ def parse_args() -> argparse.Namespace:
         epilog=(
             "Example:\n"
             "  ./gen_config.py /data/huggingface-cache"
-            " --mount-path /root/.cache/huggingface/huggingface"
-            " > config.ini"
+            " --container-cache-dir /root/.cache/huggingface/huggingface"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
-        "cache_dir",
-        metavar="cache_dir",
+        "host_cache_dir",
+        metavar="host_cache_dir",
         help="HuggingFace cache root on the host  (e.g. /data/huggingface-cache)",
     )
     parser.add_argument(
-        "--mount-path",
+        "--container-cache-dir",
         default=None,
         metavar="PATH",
         help=(
-            "Container path where cache_dir is mounted; rewrites all paths in the output  "
+            "Path where host_cache_dir is mounted inside the container; rewrites all paths in the output  "
             "(e.g. /root/.cache/huggingface/huggingface)"
         ),
     )
@@ -152,8 +151,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args       = parse_args()
-    cache_root = Path(args.cache_dir).resolve()
-    mount_path = args.mount_path.rstrip("/") if args.mount_path else None
+    cache_root = Path(args.host_cache_dir).resolve()
+    mount_path = args.container_cache_dir.rstrip("/") if args.container_cache_dir else None
 
     if not cache_root.is_dir():
         print(f"ERROR: {cache_root} is not a directory.", file=sys.stderr)
