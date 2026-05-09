@@ -66,23 +66,23 @@ STATUS_COLOR = {
 def api_request(base_url: str, path: str, payload: dict | None = None) -> dict:
     url = base_url.rstrip("/") + path
     if payload is None:
-        req = urllib.request.Request(url, headers={"Accept": "application/json"})
+        request = urllib.request.Request(url, headers={"Accept": "application/json"})
     else:
         data = json.dumps(payload).encode()
-        req = urllib.request.Request(
+        request = urllib.request.Request(
             url, data=data,
             headers={"Content-Type": "application/json", "Accept": "application/json"},
             method="POST",
         )
-    with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT) as resp:
-        return json.loads(resp.read().decode())
+    with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT) as http_response:
+        return json.loads(http_response.read().decode())
 
 
-def chat(base_url: str, model: str, prompt: str) -> dict:
+def chat(base_url: str, model: str, prompt: str, max_tokens: int = 512) -> dict:
     return api_request(base_url, "/v1/chat/completions", {
         "model": model,
         "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": 512,
+        "max_tokens": max_tokens,
         "stream": False,
     })
 
@@ -97,39 +97,50 @@ def _set(idx: int, **kwargs) -> None:
 
 
 def run_benchmarks(base_url: str, models: list[str]) -> None:
-    for i, model_id in enumerate(models):
+    for model_idx, model_id in enumerate(models):
         # Warm-up
-        _set(i, status=ST_WARMUP)
+        _set(model_idx, status=ST_WARMUP)
         try:
-            t0 = time.monotonic()
-            chat(base_url, model_id, WARMUP_PROMPT)
-            _set(i, warmup_elapsed_s=round(time.monotonic() - t0, 2))
+            warmup_start = time.monotonic()
+            chat(base_url, model_id, WARMUP_PROMPT, max_tokens=64)
+            _set(model_idx, warmup_elapsed_s=round(time.monotonic() - warmup_start, 2))
         except Exception as exc:
-            _set(i, status=ST_ERROR, error=str(exc))
+            _set(model_idx, status=ST_ERROR, error=str(exc))
             continue
 
         # Benchmark
-        _set(i, status=ST_PROMPTING)
+        _set(model_idx, status=ST_PROMPTING)
         try:
-            t0 = time.monotonic()
-            resp = chat(base_url, model_id, BENCHMARK_PROMPT)
-            elapsed = time.monotonic() - t0
-            usage   = resp.get("usage", {})
-            ctokens = usage.get("completion_tokens", 0)
-            tps     = round(ctokens / elapsed, 2) if elapsed > 0 else 0
-            choices = resp.get("choices", [])
-            response = choices[0].get("message", {}).get("content", "").strip() if choices else ""
-            _set(i,
+            bench_start = time.monotonic()
+            api_response = chat(base_url, model_id, BENCHMARK_PROMPT)
+            client_elapsed = time.monotonic() - bench_start
+
+            # Prefer llama.cpp server-side timings over client-side estimates
+            timings = api_response.get("timings", {})
+            usage   = api_response.get("usage", {})
+
+            if timings.get("predicted_n"):
+                completion_tokens = int(timings["predicted_n"])
+                tokens_per_sec    = round(timings.get("predicted_per_second", 0), 2)
+                elapsed           = round(timings["predicted_ms"] / 1000, 2)
+            else:
+                completion_tokens = usage.get("completion_tokens", 0)
+                elapsed           = round(client_elapsed, 2)
+                tokens_per_sec    = round(completion_tokens / elapsed, 2) if elapsed > 0 else 0
+
+            choices = api_response.get("choices", [])
+            response_text = choices[0].get("message", {}).get("content", "").strip() if choices else ""
+            _set(model_idx,
                 status=ST_DONE,
-                elapsed_s=round(elapsed, 2),
+                elapsed_s=elapsed,
                 prompt_tokens=usage.get("prompt_tokens"),
-                completion_tokens=ctokens,
+                completion_tokens=completion_tokens,
                 total_tokens=usage.get("total_tokens"),
-                tokens_per_second=tps,
-                response=response,
+                tokens_per_second=tokens_per_sec,
+                response=response_text,
             )
         except Exception as exc:
-            _set(i, status=ST_ERROR, error=str(exc))
+            _set(model_idx, status=ST_ERROR, error=str(exc))
 
     _done.set()
 
@@ -141,11 +152,11 @@ def run_benchmarks(base_url: str, models: list[str]) -> None:
 def _safe_addstr(win: "curses._CursesWindow", row: int, col: int,
                  text: str, attr: int = 0) -> None:
     """addstr that silently ignores out-of-bounds writes."""
-    h, w = win.getmaxyx()
-    if row >= h or col >= w:
+    height, width = win.getmaxyx()
+    if row >= height or col >= width:
         return
     try:
-        win.addstr(row, col, text[: w - col - 1], attr)
+        win.addstr(row, col, text[: width - col - 1], attr)
     except curses.error:
         pass
 
@@ -172,27 +183,27 @@ def draw(stdscr: "curses._CursesWindow", output_file: str) -> None:
     frame = 0
     while True:
         stdscr.erase()
-        h, w = stdscr.getmaxyx()
+        height, width = stdscr.getmaxyx()
         row  = 0
 
         # Title
         title = " ◈  Model Benchmark "
-        _safe_addstr(stdscr, row, max(0, (w - len(title)) // 2), title,
+        _safe_addstr(stdscr, row, max(0, (width - len(title)) // 2), title,
                      curses.A_BOLD | curses.color_pair(C_WHITE))
         row += 1
-        _safe_addstr(stdscr, row, 0, "─" * (w - 1))
+        _safe_addstr(stdscr, row, 0, "─" * (width - 1))
         row += 1
 
         # Column headers
-        hdr = curses.A_BOLD | curses.color_pair(C_WHITE)
-        _safe_addstr(stdscr, row, COL_MODEL,   f"{'Model':<35}",  hdr)
-        _safe_addstr(stdscr, row, COL_STATUS,  f"{'Status':<17}", hdr)
-        _safe_addstr(stdscr, row, COL_WARMUP,  f"{'Warmup':>9}",  hdr)
-        _safe_addstr(stdscr, row, COL_TPS,     f"{'t/s':>9}",     hdr)
-        _safe_addstr(stdscr, row, COL_TOKENS,  f"{'tokens':>9}",  hdr)
-        _safe_addstr(stdscr, row, COL_ELAPSED, f"{'elapsed':>9}", hdr)
+        header_attr = curses.A_BOLD | curses.color_pair(C_WHITE)
+        _safe_addstr(stdscr, row, COL_MODEL,   f"{'Model':<35}",  header_attr)
+        _safe_addstr(stdscr, row, COL_STATUS,  f"{'Status':<17}", header_attr)
+        _safe_addstr(stdscr, row, COL_WARMUP,  f"{'Warmup':>9}",  header_attr)
+        _safe_addstr(stdscr, row, COL_TPS,     f"{'t/s':>9}",     header_attr)
+        _safe_addstr(stdscr, row, COL_TOKENS,  f"{'tokens':>9}",  header_attr)
+        _safe_addstr(stdscr, row, COL_ELAPSED, f"{'elapsed':>9}", header_attr)
         row += 1
-        _safe_addstr(stdscr, row, 0, "─" * (w - 1))
+        _safe_addstr(stdscr, row, 0, "─" * (width - 1))
         row += 1
 
         with _lock:
@@ -206,9 +217,9 @@ def draw(stdscr: "curses._CursesWindow", output_file: str) -> None:
             color  = curses.color_pair(STATUS_COLOR.get(status, C_DEFAULT))
 
             if status in (ST_WARMUP, ST_PROMPTING):
-                sym = SPINNER[frame % len(SPINNER)]
+                status_icon = SPINNER[frame % len(SPINNER)]
             else:
-                sym = STATUS_SYMBOL.get(status, "?")
+                status_icon = STATUS_SYMBOL.get(status, "?")
 
             if status in (ST_DONE, ST_ERROR):
                 done_count += 1
@@ -219,7 +230,7 @@ def draw(stdscr: "curses._CursesWindow", output_file: str) -> None:
             elapsed = f"{entry['elapsed_s']}s"         if entry["elapsed_s"]          is not None else "-"
 
             _safe_addstr(stdscr, row, COL_MODEL,   f"{entry['model'][:34]:<35}")
-            _safe_addstr(stdscr, row, COL_STATUS,  f"{sym} {status:<15}", color)
+            _safe_addstr(stdscr, row, COL_STATUS,  f"{status_icon} {status:<15}", color)
             _safe_addstr(stdscr, row, COL_WARMUP,  f"{warmup:>9}")
             _safe_addstr(stdscr, row, COL_TPS,     f"{tps:>9}",
                          color if status == ST_DONE else curses.color_pair(C_DEFAULT))
@@ -228,13 +239,13 @@ def draw(stdscr: "curses._CursesWindow", output_file: str) -> None:
             row += 1
 
         # Footer
-        _safe_addstr(stdscr, h - 2, 0, "─" * (w - 1))
+        _safe_addstr(stdscr, height - 2, 0, "─" * (width - 1))
         total = len(snapshot)
         if _done.is_set():
             footer = f" Done! {done_count}/{total} complete  •  {output_file}  •  press any key to exit"
         else:
             footer = f" Running… {done_count}/{total} complete"
-        _safe_addstr(stdscr, h - 1, 0, footer)
+        _safe_addstr(stdscr, height - 1, 0, footer)
 
         stdscr.refresh()
         frame += 1
@@ -278,6 +289,7 @@ def main() -> None:
 
     for model_id in models:
         _state.append({
+            "host": base_url,
             "model": model_id,
             "status": ST_PENDING,
             "warmup_elapsed_s": None,
@@ -299,12 +311,12 @@ def main() -> None:
 
     # Write CSV
     fieldnames = [
-        "model", "warmup_elapsed_s", "elapsed_s",
+        "host", "model", "warmup_elapsed_s", "elapsed_s",
         "prompt_tokens", "completion_tokens", "total_tokens",
         "tokens_per_second", "response", "error",
     ]
-    with open(args.output, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+    with open(args.output, "w", newline="", encoding="utf-8") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
         with _lock:
             writer.writerows(_state)
