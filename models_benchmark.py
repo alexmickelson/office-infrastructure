@@ -211,7 +211,7 @@ def draw(stdscr: "curses._CursesWindow", output_file: str) -> None:
 
         done_count = 0
         for entry in snapshot:
-            if row >= h - 2:
+            if row >= height - 2:
                 break
             status = entry["status"]
             color  = curses.color_pair(STATUS_COLOR.get(status, C_DEFAULT))
@@ -311,15 +311,20 @@ def main() -> None:
 
     # Write CSV
     fieldnames = [
-        "host", "model", "warmup_elapsed_s", "elapsed_s",
+        "host", "model", "tokens_per_second", "warmup_elapsed_s", "elapsed_s",
         "prompt_tokens", "completion_tokens", "total_tokens",
-        "tokens_per_second", "response", "error",
+        "response", "error",
     ]
     with open(args.output, "w", newline="", encoding="utf-8") as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
         with _lock:
-            writer.writerows(_state)
+            sorted_state = sorted(
+                _state,
+                key=lambda row: row["tokens_per_second"] or 0,
+                reverse=True,
+            )
+        writer.writerows(sorted_state)
 
     print(f"Results written to {args.output}")
 
