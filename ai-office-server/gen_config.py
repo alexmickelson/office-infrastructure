@@ -129,7 +129,7 @@ def parse_args() -> argparse.Namespace:
             "Example:\n"
             "  ./gen_config.py /data/huggingface-cache"
             " --mount-path /root/.cache/huggingface/huggingface"
-            " --output config.ini"
+            " > config.ini"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
@@ -137,12 +137,6 @@ def parse_args() -> argparse.Namespace:
         "cache_dir",
         metavar="cache_dir",
         help="HuggingFace cache root on the host  (e.g. /data/huggingface-cache)",
-    )
-    parser.add_argument(
-        "--output", "-o",
-        default=None,
-        metavar="FILE",
-        help="Write to FILE instead of stdout  (e.g. config.ini)",
     )
     parser.add_argument(
         "--mount-path",
@@ -171,13 +165,7 @@ def main() -> None:
         sys.exit(1)
 
     print_discovered_entries(entries)
-    output = render_config(entries, cache_root, mount_path)
-
-    if args.output:
-        Path(args.output).write_text(output, encoding="utf-8")
-        print(f"Written to {args.output}", file=sys.stderr)
-    else:
-        print(output)
+    print(render_config(entries, cache_root, mount_path))
 
 
 if __name__ == "__main__":
