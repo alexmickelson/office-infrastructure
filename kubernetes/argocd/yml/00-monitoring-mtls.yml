@@ -5,6 +5,13 @@ metadata:
   labels:
     istio-injection: enabled
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kiali-operator
+  labels:
+    istio-injection: enabled
+---
 apiVersion: security.istio.io/v1beta1
 kind: PeerAuthentication
 metadata:
@@ -12,4 +19,4 @@ metadata:
   namespace: monitoring
 spec:
   mtls:
-    mode: STRICT
+    mode: PERMISSIVE
