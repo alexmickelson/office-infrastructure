@@ -65,7 +65,7 @@ services:
     image: ghcr.io/bodaay/huggingfacemodeldownloader:latest
     container_name: hfdownloader
     ports:
-      - "8080:8080"
+      - "8888:8080"
     volumes:
       - /data/huggingface-cache:/home/hfdownloader/.cache/huggingface
     # environment:
