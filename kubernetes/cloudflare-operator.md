@@ -1,14 +1,16 @@
 
+# Cloudflare Tunnel
+
+Managed by ArgoCD via `kubernetes/argocd/yml/cloudflared.yml`.
 
 ```bash
-helm repo add cloudflare https://cloudflare.github.io/helm-charts
-helm repo update
+kubectl apply -f kubernetes/argocd/yml/cloudflared.yml
+```
 
-helm upgrade --install cloudflared cloudflare/cloudflare-tunnel-remote \
-    -n cloudflared \
-    --create-namespace \
-    --set image.tag=2026.3.0
+The tunnel token must be created manually as a secret (not stored in Git):
 
+```bash
+kubectl create namespace cloudflared
 kubectl delete secret cloudflared-cloudflare-tunnel-remote -n cloudflared
 kubectl create secret generic cloudflared-cloudflare-tunnel-remote \
     -n cloudflared \
