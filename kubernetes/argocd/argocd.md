@@ -17,49 +17,14 @@ kubectl patch configmap argocd-cmd-params-cm \
 
 ## Observability
 
-### Prometheus + Grafana (kube-prometheus-stack)
-
-
-apply `yml` folder first to create namespaces.
+Managed by ArgoCD via the `yml/` folder. Apply all at once:
 
 ```bash
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
-helm repo add kiali https://kiali.org/helm-charts
-
-helm repo update
-
-helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
-  -n monitoring \
-  --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
-  --set-string 'grafana.grafana\.ini.server.root_url=https://alexmonitoring.snowse.io/grafana' \
-  --set-string 'grafana.grafana\.ini.server.serve_from_sub_path=true' \
-  --set prometheus.prometheusSpec.externalUrl="https://alexmonitoring.snowse.io/prometheus" \
-  --set prometheus.prometheusSpec.routePrefix="/prometheus"
-
-helm upgrade --install jaeger jaegertracing/jaeger \
-  -n monitoring \
-  --set query.basePath="/jaeger"
-
-helm upgrade --install kiali-operator kiali/kiali-operator \
-  --namespace kiali-operator \
-  --set cr.create=true \
-  --set cr.namespace=istio-system \
-  --set cr.spec.server.web_root="/kiali" \
-  --set cr.spec.external_services.grafana.url="https://alexmonitoring.snowse.io/grafana" \
-  --set cr.spec.external_services.grafana.enabled=true \
-  --set cr.spec.external_services.tracing.enabled=true \
-  --set cr.spec.external_services.tracing.use_grpc=false \
-  --set cr.spec.external_services.prometheus.url="http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090/prometheus" \
-  --set cr.spec.external_services.grafana.in_cluster_url="http://prometheus-grafana.monitoring.svc.cluster.local:80" \
-  --set cr.spec.external_services.grafana.auth.type=basic \
-  --set cr.spec.external_services.grafana.auth.username=admin \
-  --set cr.spec.external_services.grafana.auth.password=prom-operator \
-  --set cr.spec.external_services.tracing.in_cluster_url="http://jaeger.monitoring.svc.cluster.local:16686" \
-  --set-string 'cr.spec.deployment.pod_annotations.sidecar\.istio\.io/inject=true'
+kubectl apply -f kubernetes/argocd/yml/00-monitoring-mtls.yml
+kubectl apply -f kubernetes/argocd/yml/prometheus.yml
+kubectl apply -f kubernetes/argocd/yml/jaeger.yml
+kubectl apply -f kubernetes/argocd/yml/kiali-operator.yml
+kubectl apply -f kubernetes/argocd/yml/monitoring-access.yml
 ```
 
-Grafana is bundled. Import the Istio dashboards (IDs: `7639`, `7636`, `7630`, `11829`, `7645`, `13277`) from grafana.com.
-
-
-kiali token `kubectl -n istio-system create token kiali-service-account`
+Grafana is bundled with prometheus. Import the Istio dashboards (IDs: `7639`, `7636`, `7630`, `11829`, `7645`, `13277`) from grafana.com.

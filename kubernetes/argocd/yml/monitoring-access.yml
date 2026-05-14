@@ -7,12 +7,12 @@ metadata:
   namespace: monitoring
 spec:
   from:
-    - group: gateway.networking.k8s.io
-      kind: HTTPRoute
-      namespace: argocd
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    namespace: argocd
   to:
-    - group: ""
-      kind: Service
+  - group: ""
+    kind: Service
 ---
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: ReferenceGrant
@@ -21,15 +21,15 @@ metadata:
   namespace: istio-system
 spec:
   from:
-    - group: gateway.networking.k8s.io
-      kind: HTTPRoute
-      namespace: argocd
-    - group: gateway.networking.k8s.io
-      kind: HTTPRoute
-      namespace: istio-system
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    namespace: argocd
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    namespace: istio-system
   to:
-    - group: ""
-      kind: Service
+  - group: ""
+    kind: Service
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -38,19 +38,19 @@ metadata:
   namespace: argocd
 spec:
   parentRefs:
-    - name: main-gateway
-      namespace: istio-system
+  - name: main-gateway
+    namespace: istio-system
   hostnames:
-    - "alexmonitoring.snowse.io"
+  - "alexmonitoring.snowse.io"
   rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /grafana
-      backendRefs:
-        - name: prometheus-grafana
-          namespace: monitoring
-          port: 80
+  - matches:
+    - path:
+      type: PathPrefix
+      value: /grafana
+    backendRefs:
+    - name: prometheus-grafana
+      namespace: monitoring
+      port: 80
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -59,19 +59,19 @@ metadata:
   namespace: argocd
 spec:
   parentRefs:
-    - name: main-gateway
-      namespace: istio-system
+  - name: main-gateway
+    namespace: istio-system
   hostnames:
-    - "alexmonitoring.snowse.io"
+  - "alexmonitoring.snowse.io"
   rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /prometheus
-      backendRefs:
-        - name: prometheus-kube-prometheus-prometheus
-          namespace: monitoring
-          port: 9090
+  - matches:
+    - path:
+      type: PathPrefix
+      value: /prometheus
+    backendRefs:
+    - name: prometheus-kube-prometheus-prometheus
+      namespace: monitoring
+      port: 9090
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -80,19 +80,19 @@ metadata:
   namespace: argocd
 spec:
   parentRefs:
-    - name: main-gateway
-      namespace: istio-system
+  - name: main-gateway
+    namespace: istio-system
   hostnames:
-    - "alexmonitoring.snowse.io"
+  - "alexmonitoring.snowse.io"
   rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /jaeger
-      backendRefs:
-        - name: jaeger
-          namespace: monitoring
-          port: 16686
+  - matches:
+    - path:
+      type: PathPrefix
+      value: /jaeger
+    backendRefs:
+    - name: jaeger
+      namespace: monitoring
+      port: 16686
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -101,19 +101,19 @@ metadata:
   namespace: argocd
 spec:
   parentRefs:
-    - name: main-gateway
-      namespace: istio-system
+  - name: main-gateway
+    namespace: istio-system
   hostnames:
-    - "alexmonitoring.snowse.io"
+  - "alexmonitoring.snowse.io"
   rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /kiali
-      backendRefs:
-        - name: kiali
-          namespace: istio-system
-          port: 20001
+  - matches:
+    - path:
+      type: PathPrefix
+      value: /kiali
+    backendRefs:
+    - name: kiali
+      namespace: istio-system
+      port: 20001
 ---
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
@@ -123,9 +123,9 @@ metadata:
 spec:
   action: ALLOW
   rules:
-    - from:
-        - source:
-            namespaces: ["argocd", "istio-system"]
+  - from:
+    - source:
+      namespaces: ["argocd", "istio-system"]
 ---
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
@@ -134,10 +134,10 @@ metadata:
   namespace: istio-system
 spec:
   selector:
-    matchLabels:
-      app: kiali
+  matchLabels:
+    app: kiali
   action: ALLOW
   rules:
-    - from:
-        - source:
-            namespaces: ["argocd", "istio-system"]
+  - from:
+    - source:
+      namespaces: ["argocd", "istio-system"]

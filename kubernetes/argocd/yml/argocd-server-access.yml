@@ -4,17 +4,17 @@ metadata:
   name: main-gateway
   namespace: istio-system
   annotations:
-    tailscale.com/expose: "true"
+  tailscale.com/expose: "true"
 spec:
   gatewayClassName: istio
   listeners:
-    - name: http
-      port: 80
-      protocol: HTTP
-      hostname: "*.snowse.io"
-      allowedRoutes:
-        namespaces:
-          from: All
+  - name: http
+    port: 80
+    protocol: HTTP
+    hostname: "*.snowse.io"
+    allowedRoutes:
+    namespaces:
+      from: All
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -23,18 +23,18 @@ metadata:
   namespace: argocd
 spec:
   parentRefs:
-    - name: main-gateway
-      namespace: istio-system
+  - name: main-gateway
+    namespace: istio-system
   hostnames:
-    - "alexargocd.snowse.io"
+  - "alexargocd.snowse.io"
   rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: argocd-server
-          port: 80
+  - matches:
+    - path:
+      type: PathPrefix
+      value: /
+    backendRefs:
+    - name: argocd-server
+      port: 80
 ---
 apiVersion: security.istio.io/v1beta1
 kind: PeerAuthentication
@@ -43,7 +43,7 @@ metadata:
   namespace: argocd
 spec:
   mtls:
-    mode: STRICT
+  mode: STRICT
 ---
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
@@ -52,10 +52,10 @@ metadata:
   namespace: argocd
 spec:
   selector:
-    matchLabels:
-      app: argocd-server
+  matchLabels:
+    app: argocd-server
   action: ALLOW
   rules:
-    - from:
-        - source:
-            namespaces: ["cloudflared", "istio-system"]
+  - from:
+    - source:
+      namespaces: ["cloudflared", "istio-system"]
