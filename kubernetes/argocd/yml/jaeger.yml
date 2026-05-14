@@ -6,20 +6,20 @@ metadata:
 spec:
   project: default
   source:
-  repoURL: https://jaegertracing.github.io/helm-charts
-  chart: jaeger
-  targetRevision: "*"
-  helm:
-    releaseName: jaeger
-    values: |
-    query:
-      basePath: "/jaeger"
+    repoURL: https://jaegertracing.github.io/helm-charts
+    chart: jaeger
+    targetRevision: "*"
+    helm:
+      releaseName: jaeger
+      values: |
+        query:
+          basePath: "/jaeger"
   destination:
-  server: https://kubernetes.default.svc
-  namespace: monitoring
+    server: https://kubernetes.default.svc
+    namespace: monitoring
   syncPolicy:
-  automated:
-    prune: true
-    selfHeal: true
-  syncOptions:
-    - CreateNamespace=false
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false

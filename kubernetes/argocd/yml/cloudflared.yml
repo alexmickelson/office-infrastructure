@@ -6,24 +6,24 @@ metadata:
 spec:
   project: default
   source:
-  repoURL: https://cloudflare.github.io/helm-charts
-  chart: cloudflare-tunnel-remote
-  targetRevision: "*"
-  helm:
-    releaseName: cloudflared
+    repoURL: https://cloudflare.github.io/helm-charts
+    chart: cloudflare-tunnel-remote
+    targetRevision: "*"
+    helm:
+      releaseName: cloudflared
   destination:
-  server: https://kubernetes.default.svc
-  namespace: cloudflared
-  syncPolicy:
-  automated:
-    prune: true
-    selfHeal: true
-  syncOptions:
-    - CreateNamespace=true
-  ignoreDifferences:
-  - group: ""
-    kind: Secret
-    name: cloudflared-cloudflare-tunnel-remote
+    server: https://kubernetes.default.svc
     namespace: cloudflared
-    jsonPointers:
-    - /data
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: cloudflared-cloudflare-tunnel-remote
+      namespace: cloudflared
+      jsonPointers:
+        - /data

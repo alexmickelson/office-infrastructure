@@ -6,47 +6,47 @@ metadata:
 spec:
   project: default
   source:
-  repoURL: https://kiali.org/helm-charts
-  chart: kiali-operator
-  targetRevision: "*"
-  helm:
-    releaseName: kiali-operator
-    values: |
-    cr:
-      create: true
-      namespace: istio-system
-      spec:
-      server:
-        web_root: "/kiali"
-      auth:
-        # anonymous is safe here — Kiali is only reachable via Cloudflare tunnel
-        # which requires authentication, and Istio AuthorizationPolicy restricts
-        # in-cluster access to the cloudflared and istio-system namespaces only
-        strategy: anonymous
-      external_services:
-        grafana:
-        enabled: true
-        url: "https://alexmonitoring.snowse.io/grafana"
-        in_cluster_url: "http://prometheus-grafana.monitoring.svc.cluster.local:80"
-        auth:
-          type: basic
-          username: admin
-          password: prom-operator
-        tracing:
-        enabled: true
-        use_grpc: false
-        in_cluster_url: "http://jaeger.monitoring.svc.cluster.local:16686"
-        prometheus:
-        url: "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090/prometheus"
-      deployment:
-        pod_annotations:
-        sidecar.istio.io/inject: "true"
+    repoURL: https://kiali.org/helm-charts
+    chart: kiali-operator
+    targetRevision: "*"
+    helm:
+      releaseName: kiali-operator
+      values: |
+        cr:
+          create: true
+          namespace: istio-system
+          spec:
+            server:
+              web_root: "/kiali"
+            auth:
+              # anonymous is safe here - Kiali is only reachable via Cloudflare tunnel
+              # which requires authentication, and Istio AuthorizationPolicy restricts
+              # in-cluster access to the cloudflared and istio-system namespaces only
+              strategy: anonymous
+            external_services:
+              grafana:
+                enabled: true
+                url: "https://alexmonitoring.snowse.io/grafana"
+                in_cluster_url: "http://prometheus-grafana.monitoring.svc.cluster.local:80"
+                auth:
+                  type: basic
+                  username: admin
+                  password: prom-operator
+              tracing:
+                enabled: true
+                use_grpc: false
+                in_cluster_url: "http://jaeger.monitoring.svc.cluster.local:16686"
+              prometheus:
+                url: "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090/prometheus"
+            deployment:
+              pod_annotations:
+                sidecar.istio.io/inject: "true"
   destination:
-  server: https://kubernetes.default.svc
-  namespace: kiali-operator
+    server: https://kubernetes.default.svc
+    namespace: kiali-operator
   syncPolicy:
-  automated:
-    prune: true
-    selfHeal: true
-  syncOptions:
-    - CreateNamespace=false
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
