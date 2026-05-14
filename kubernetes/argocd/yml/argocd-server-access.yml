@@ -8,17 +8,10 @@ metadata:
 spec:
   gatewayClassName: istio
   listeners:
-    - name: argocd
+    - name: http
       port: 80
       protocol: HTTP
-      hostname: "alexargocd.snowse.io"
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: monitoring
-      port: 80
-      protocol: HTTP
-      hostname: "alexmonitoring.snowse.io"
+      hostname: "*.snowse.io"
       allowedRoutes:
         namespaces:
           from: All
