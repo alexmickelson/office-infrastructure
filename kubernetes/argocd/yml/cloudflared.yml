@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://cloudflare.github.io/helm-charts
     chart: cloudflare-tunnel-remote
-    targetRevision: "*"
+    targetRevision: "0.1.2"
     helm:
       releaseName: cloudflared
   destination:
