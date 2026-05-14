@@ -24,6 +24,9 @@ spec:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
       namespace: argocd
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: istio-system
   to:
     - group: ""
       kind: Service
@@ -35,8 +38,8 @@ metadata:
   namespace: argocd
 spec:
   parentRefs:
-    - name: argocd-gateway
-      namespace: argocd
+    - name: main-gateway
+      namespace: istio-system
   hostnames:
     - "alexmonitoring.snowse.io"
   rules:
@@ -56,8 +59,8 @@ metadata:
   namespace: argocd
 spec:
   parentRefs:
-    - name: argocd-gateway
-      namespace: argocd
+    - name: main-gateway
+      namespace: istio-system
   hostnames:
     - "alexmonitoring.snowse.io"
   rules:
@@ -77,8 +80,8 @@ metadata:
   namespace: argocd
 spec:
   parentRefs:
-    - name: argocd-gateway
-      namespace: argocd
+    - name: main-gateway
+      namespace: istio-system
   hostnames:
     - "alexmonitoring.snowse.io"
   rules:
@@ -87,7 +90,7 @@ spec:
             type: PathPrefix
             value: /jaeger
       backendRefs:
-        - name: jaeger-query
+        - name: jaeger
           namespace: monitoring
           port: 16686
 ---
@@ -98,8 +101,8 @@ metadata:
   namespace: argocd
 spec:
   parentRefs:
-    - name: argocd-gateway
-      namespace: argocd
+    - name: main-gateway
+      namespace: istio-system
   hostnames:
     - "alexmonitoring.snowse.io"
   rules:
@@ -137,4 +140,4 @@ spec:
   rules:
     - from:
         - source:
-            namespaces: ["argocd"]
+            namespaces: ["argocd", "istio-system"]

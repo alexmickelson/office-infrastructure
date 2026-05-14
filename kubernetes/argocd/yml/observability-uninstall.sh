@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-export KUBECONFIG=~/.kube/office-framework-config
+# export KUBECONFIG=~/.kube/office-framework-config
 
 # Remove Kiali CR first so the operator can clean up before it's removed
 kubectl delete kiali --all --all-namespaces --ignore-not-found
@@ -11,6 +11,3 @@ kubectl delete crd kialis.kiali.io --ignore-not-found
 helm uninstall jaeger -n monitoring --ignore-not-found
 helm uninstall prometheus -n monitoring --ignore-not-found
 
-# Remove monitoring namespace resources managed by kubectl
-kubectl delete -f monitoring-mtls.yml --ignore-not-found
-kubectl delete -f monitoring-access.yml --ignore-not-found

@@ -9,11 +9,13 @@ gateway -> ingress replacement
 ```bash
 helm repo add istio https://istio-release.storage.googleapis.com/charts
 helm repo update
+kubectl create namespace istio-system --dry-run=client -o yaml | kubectl apply -f -
 helm upgrade --install istio-base istio/base \
     -n istio-system \
-    --set defaultRevision=default \
-    --create-namespace
-helm upgrade --install istio-cni istio/cni -n istio-system --wait
+    --set defaultRevision=default
+helm upgrade --install istio-cni istio/cni -n istio-system --wait \
+  --set cni.cniBinDir=/var/lib/rancher/k3s/data/cni \
+  --set cni.cniConfDir=/var/lib/rancher/k3s/agent/etc/cni/net.d
 ```
 
 
@@ -33,5 +35,16 @@ helm upgrade --install istiod istio/istiod -n istio-system --wait
 
 
 ```bash
-helm upgrade --install istio-ingressgateway istio/gateway -n istio-system
+helm upgrade --install istio-ingressgateway istio/gateway -n istio-system \
+  --set service.loadBalancerClass=tailscale
+```
+
+
+## Uninstall
+
+```bash
+helm uninstall istio-ingressgateway -n istio-system
+helm uninstall istiod -n istio-system
+helm uninstall istio-cni -n istio-system
+helm uninstall istio-base -n istio-system
 ```

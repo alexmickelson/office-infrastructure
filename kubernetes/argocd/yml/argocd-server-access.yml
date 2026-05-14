@@ -1,15 +1,20 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: argocd-gateway
-  namespace: argocd
+  name: main-gateway
+  namespace: istio-system
+  annotations:
+    tailscale.com/expose: "true"
 spec:
   gatewayClassName: istio
   listeners:
-    - name: http
+    - name: argocd
       port: 80
       protocol: HTTP
       hostname: "alexargocd.snowse.io"
+      allowedRoutes:
+        namespaces:
+          from: All
     - name: monitoring
       port: 80
       protocol: HTTP
@@ -25,8 +30,8 @@ metadata:
   namespace: argocd
 spec:
   parentRefs:
-    - name: argocd-gateway
-      namespace: argocd
+    - name: main-gateway
+      namespace: istio-system
   hostnames:
     - "alexargocd.snowse.io"
   rules:
@@ -60,4 +65,4 @@ spec:
   rules:
     - from:
         - source:
-            namespaces: ["cloudflared"]
+            namespaces: ["cloudflared", "istio-system"]

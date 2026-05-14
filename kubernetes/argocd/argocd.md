@@ -6,7 +6,6 @@ kubectl create namespace argocd
 kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
-
 let gateway handle tls
 
 ```bash
@@ -47,12 +46,16 @@ helm upgrade --install kiali-operator kiali/kiali-operator \
   --set cr.create=true \
   --set cr.namespace=istio-system \
   --set cr.spec.server.web_root="/kiali" \
-  --set cr.spec.external_services.prometheus.url="http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090" \
-  --set cr.spec.external_services.grafana.enabled=true \
-  --set cr.spec.external_services.grafana.in_cluster_url="http://prometheus-grafana.monitoring.svc.cluster.local:80" \
   --set cr.spec.external_services.grafana.url="https://alexmonitoring.snowse.io/grafana" \
+  --set cr.spec.external_services.grafana.enabled=true \
   --set cr.spec.external_services.tracing.enabled=true \
-  --set cr.spec.external_services.tracing.in_cluster_url="http://jaeger-query.monitoring.svc.cluster.local:16686" \
+  --set cr.spec.external_services.tracing.use_grpc=false \
+  --set cr.spec.external_services.prometheus.url="http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090/prometheus" \
+  --set cr.spec.external_services.grafana.in_cluster_url="http://prometheus-grafana.monitoring.svc.cluster.local:80" \
+  --set cr.spec.external_services.grafana.auth.type=basic \
+  --set cr.spec.external_services.grafana.auth.username=admin \
+  --set cr.spec.external_services.grafana.auth.password=prom-operator \
+  --set cr.spec.external_services.tracing.in_cluster_url="http://jaeger.monitoring.svc.cluster.local:16686" \
   --set-string 'cr.spec.deployment.pod_annotations.sidecar\.istio\.io/inject=true'
 ```
 
