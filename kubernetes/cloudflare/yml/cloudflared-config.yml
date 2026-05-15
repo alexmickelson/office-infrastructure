@@ -13,6 +13,6 @@ data:
         service: http://main-gateway-istio.istio-system.svc.cluster.local:80
       - hostname: alexmonitoring.snowse.io
         service: http://main-gateway-istio.istio-system.svc.cluster.local:80
-      - hostname: opencost.alex.snowse.io
+      - hostname: alexopencost.snowse.io
         service: http://main-gateway-istio.istio-system.svc.cluster.local:80
       - service: http_status:404

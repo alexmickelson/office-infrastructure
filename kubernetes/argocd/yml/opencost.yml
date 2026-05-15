@@ -59,7 +59,7 @@ spec:
     - name: main-gateway
       namespace: istio-system
   hostnames:
-    - "opencost.alex.snowse.io"
+    - "alexopencost.snowse.io"
   rules:
     - matches:
         - path:
