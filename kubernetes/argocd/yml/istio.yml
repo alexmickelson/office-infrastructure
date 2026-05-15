@@ -26,6 +26,13 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      name: istiod-default-validator
+      jsonPointers:
+        - /webhooks/0/clientConfig/caBundle
+        - /webhooks/0/failurePolicy
 ---
 # istio-cni: per-node DaemonSet for CNI networking (k3s paths)
 apiVersion: argoproj.io/v1alpha1
@@ -73,6 +80,10 @@ spec:
     targetRevision: "1.29.2"
     helm:
       releaseName: istiod
+      values: |
+        webhooks:
+          injection:
+            failurePolicy: Fail
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
@@ -82,3 +93,10 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=false
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      name: istio-validator-istio-system
+      jsonPointers:
+        - /webhooks/0/clientConfig/caBundle
+        - /webhooks/0/failurePolicy
