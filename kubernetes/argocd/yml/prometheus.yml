@@ -16,7 +16,6 @@ spec:
           prometheusSpec:
             serviceMonitorSelectorNilUsesHelmValues: false
             externalUrl: "https://alexmonitoring.snowse.io/prometheus"
-            routePrefix: "/prometheus"
             additionalScrapeConfigs:
               - job_name: opencost
                 honor_labels: true
@@ -34,6 +33,9 @@ spec:
             server:
               root_url: "https://alexmonitoring.snowse.io/grafana"
               serve_from_sub_path: true
+            auth.anonymous:
+              enabled: true
+              org_role: Viewer
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
@@ -61,6 +63,12 @@ spec:
         - path:
             type: PathPrefix
             value: /prometheus
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
       backendRefs:
         - name: prometheus-kube-prometheus-prometheus
           namespace: monitoring

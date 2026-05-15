@@ -18,7 +18,7 @@ spec:
               enabled: false
             external:
               enabled: true
-              url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+              url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090/prometheus
           metrics:
             kubeStateMetrics:
               emitKsmV1Metrics: false

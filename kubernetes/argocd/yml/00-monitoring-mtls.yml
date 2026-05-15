@@ -19,6 +19,13 @@ metadata:
   labels:
     istio-injection: enabled
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: opencost
+  labels:
+    istio-injection: enabled
+---
 apiVersion: security.istio.io/v1beta1
 kind: PeerAuthentication
 metadata:

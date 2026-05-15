@@ -29,15 +29,13 @@ spec:
                 url: "https://alexmonitoring.snowse.io/grafana"
                 in_cluster_url: "http://prometheus-grafana.monitoring.svc.cluster.local:80"
                 auth:
-                  type: basic
-                  username: admin
-                  password: prom-operator
+                  type: none
               tracing:
                 enabled: true
                 use_grpc: false
                 in_cluster_url: "http://jaeger.monitoring.svc.cluster.local:16686"
               prometheus:
-                url: "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090/prometheus"
+                url: "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
             deployment:
               pod_annotations:
                 sidecar.istio.io/inject: "true"
