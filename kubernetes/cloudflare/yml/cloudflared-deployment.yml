@@ -22,7 +22,7 @@ spec:
             - --metrics
             - 0.0.0.0:20241
             - --config
-            - /etc/cloudflared/config.yaml
+            - /etc/cloudflared/config/config.yaml
             - run
           livenessProbe:
             httpGet:
@@ -33,8 +33,7 @@ spec:
             failureThreshold: 1
           volumeMounts:
             - name: config
-              mountPath: /etc/cloudflared/config.yaml
-              subPath: config.yaml
+              mountPath: /etc/cloudflared/config
               readOnly: true
             - name: credentials
               mountPath: /etc/cloudflared/credentials.json
