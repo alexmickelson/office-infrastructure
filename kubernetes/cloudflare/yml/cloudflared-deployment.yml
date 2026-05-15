@@ -24,6 +24,7 @@ spec:
             - --config
             - /etc/cloudflared/config/config.yaml
             - run
+            - 42b1bab8-3465-4aa3-a418-5b976383c606
           livenessProbe:
             httpGet:
               path: /ready
