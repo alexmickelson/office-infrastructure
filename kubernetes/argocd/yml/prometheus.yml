@@ -22,6 +22,20 @@ spec:
             server:
               root_url: "https://alexmonitoring.snowse.io/grafana"
               serve_from_sub_path: true
+        prometheus:
+          prometheusSpec:
+            additionalScrapeConfigs:
+              - job_name: opencost
+                honor_labels: true
+                scrape_interval: 1m
+                scrape_timeout: 10s
+                metrics_path: /metrics
+                scheme: http
+                dns_sd_configs:
+                  - names:
+                      - opencost.opencost
+                    type: A
+                    port: 9003
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

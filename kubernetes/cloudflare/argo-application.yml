@@ -6,11 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://cloudflare.github.io/helm-charts
-    chart: cloudflare-tunnel-remote
-    targetRevision: "0.1.2"
-    helm:
-      releaseName: cloudflared
+    repoURL: git@github.com:alexmickelson/office-ansible.git
+    targetRevision: HEAD
+    path: kubernetes/cloudflare/yml
   destination:
     server: https://kubernetes.default.svc
     namespace: cloudflared
@@ -20,10 +18,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-  ignoreDifferences:
-    - group: ""
-      kind: Secret
-      name: cloudflared-cloudflare-tunnel-remote
-      namespace: cloudflared
-      jsonPointers:
-        - /data

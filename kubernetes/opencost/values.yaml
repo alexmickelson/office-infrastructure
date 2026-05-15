@@ -4,7 +4,7 @@ opencost:
       enabled: false
     external:
       enabled: true
-      url: http://prometheus-server.prometheus-system.svc.cluster.local:80
+      url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
   metrics:
     kubeStateMetrics:
       emitKsmV1Metrics: false
