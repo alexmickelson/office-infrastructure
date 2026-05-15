@@ -5,6 +5,7 @@ metadata:
   namespace: istio-system
   annotations:
     tailscale.com/expose: "true"
+    external-dns.alpha.kubernetes.io/target: "42b1bab8-3465-4aa3-a418-5b976383c606.cfargotunnel.com"
 spec:
   gatewayClassName: istio
   listeners:

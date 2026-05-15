@@ -18,3 +18,15 @@ kubectl create secret generic cloudflared-credentials \
   > kubernetes/cloudflare/yml/cloudflared-credentials-sealed.yml
 '
 ```
+
+## external dns
+
+use <https://github.com/kubernetes-sigs/external-dns> to create dns records when you make the kubernetes routes
+
+dash.cloudflare.com → My Profile → API Tokens with Edit zone DNS permission
+
+```bash
+kubectl create secret generic external-dns-cloudflare \
+  --namespace external-dns \
+  --from-literal=cloudflare-api-token="<YOUR_TOKEN>"
+```

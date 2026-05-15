@@ -59,12 +59,12 @@ spec:
     - name: main-gateway
       namespace: istio-system
   hostnames:
-    - "alexmonitoring.snowse.io"
+    - "opencost.alex.snowse.io"
   rules:
     - matches:
         - path:
             type: PathPrefix
-            value: /opencost
+            value: /
       backendRefs:
         - name: opencost
           namespace: opencost

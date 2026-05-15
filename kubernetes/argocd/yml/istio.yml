@@ -84,6 +84,8 @@ spec:
         webhooks:
           injection:
             failurePolicy: Fail
+        sidecarInjectorWebhook:
+          enableNamespacesByDefault: true
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system

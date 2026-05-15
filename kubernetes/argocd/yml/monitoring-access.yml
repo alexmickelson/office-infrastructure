@@ -125,7 +125,7 @@ spec:
   rules:
     - from:
         - source:
-            namespaces: ["argocd", "istio-system"]
+            namespaces: ["argocd", "istio-system", "opencost"]
 ---
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
