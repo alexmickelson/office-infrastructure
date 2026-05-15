@@ -1,0 +1,59 @@
+# Routes use the existing main-gateway (avoids spawning a new LoadBalancer)
+# ReferenceGrants allow cross-namespace backend references
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: argocd-gateway-to-monitoring
+  namespace: monitoring
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: argocd
+  to:
+    - group: ""
+      kind: Service
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: argocd-gateway-to-istio-system
+  namespace: istio-system
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: argocd
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: istio-system
+  to:
+    - group: ""
+      kind: Service
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: monitoring-policy
+  namespace: monitoring
+spec:
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            namespaces: ["argocd", "istio-system", "opencost"]
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: kiali-policy
+  namespace: istio-system
+spec:
+  selector:
+    matchLabels:
+      app: kiali
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            namespaces: ["argocd", "istio-system"]
