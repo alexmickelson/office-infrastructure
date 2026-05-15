@@ -12,8 +12,62 @@ spec:
     helm:
       releaseName: jaeger
       values: |
-        query:
-          basePath: "/jaeger"
+        userconfig:
+          service:
+            extensions: [jaeger_storage, jaeger_query, remote_sampling, healthcheckv2]
+            pipelines:
+              traces:
+                receivers: [otlp, jaeger, zipkin]
+                processors: [batch, adaptive_sampling]
+                exporters: [jaeger_storage_exporter]
+            telemetry:
+              resource:
+                service.name: jaeger
+              metrics:
+                level: detailed
+                readers:
+                  - pull:
+                      exporter:
+                        prometheus:
+                          host: 0.0.0.0
+                          port: 8888
+          extensions:
+            healthcheckv2:
+              use_v2: true
+              http: {}
+            jaeger_query:
+              base_path: /jaeger
+              storage:
+                traces: some_store
+            jaeger_storage:
+              backends:
+                some_store:
+                  memory:
+                    max_traces: 100000
+            remote_sampling:
+              adaptive:
+                sampling_store: some_store
+                initial_sampling_probability: 0.1
+              http: {}
+              grpc: {}
+          receivers:
+            otlp:
+              protocols:
+                grpc: {}
+                http: {}
+            jaeger:
+              protocols:
+                grpc: {}
+                thrift_binary: {}
+                thrift_compact: {}
+                thrift_http: {}
+            zipkin: {}
+          processors:
+            batch: {}
+            adaptive_sampling: {}
+          exporters:
+            jaeger_storage_exporter:
+              trace_storage: some_store
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
