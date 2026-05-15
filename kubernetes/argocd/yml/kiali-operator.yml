@@ -37,7 +37,7 @@ spec:
               prometheus:
                 url: "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
             deployment:
-              pod_annotations:
+              pod_labels:
                 sidecar.istio.io/inject: "true"
   destination:
     server: https://kubernetes.default.svc

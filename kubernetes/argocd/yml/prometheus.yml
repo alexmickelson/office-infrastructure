@@ -36,6 +36,46 @@ spec:
             auth.anonymous:
               enabled: true
               org_role: Viewer
+          dashboards:
+            default:
+              istio-mesh:
+                gnetId: 7639
+                datasource: Prometheus
+              istio-service:
+                gnetId: 7636
+                datasource: Prometheus
+              istio-workload:
+                gnetId: 7630
+                datasource: Prometheus
+              istio-performance:
+                gnetId: 11829
+                datasource: Prometheus
+              istio-control-plane:
+                gnetId: 7645
+                datasource: Prometheus
+              istio-wasm:
+                gnetId: 13277
+                datasource: Prometheus
+          dashboards:
+            default:
+              istio-mesh:
+                gnetId: 7639
+                datasource: Prometheus
+              istio-service:
+                gnetId: 7636
+                datasource: Prometheus
+              istio-workload:
+                gnetId: 7630
+                datasource: Prometheus
+              istio-performance:
+                gnetId: 11829
+                datasource: Prometheus
+              istio-control-plane:
+                gnetId: 7645
+                datasource: Prometheus
+              istio-wasm:
+                gnetId: 13277
+                datasource: Prometheus
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
@@ -94,3 +134,47 @@ spec:
         - name: prometheus-grafana
           namespace: monitoring
           port: 80
+---
+# PodMonitor to scrape Envoy sidecar metrics from all istio-proxy containers
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: envoy-stats-monitor
+  namespace: monitoring
+  labels:
+    monitoring: istio-proxies
+spec:
+  selector:
+    matchExpressions:
+      - { key: istio-prometheus-ignore, operator: DoesNotExist }
+  namespaceSelector:
+    any: true
+  jobLabel: envoy-stats
+  podMetricsEndpoints:
+    - path: /stats/prometheus
+      targetPort: 15090
+      interval: 15s
+      relabelings:
+        - action: keep
+          sourceLabels: [__meta_kubernetes_pod_container_name]
+          regex: "istio-proxy"
+---
+# ServiceMonitor to scrape istiod control plane metrics
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: istio-component-monitor
+  namespace: monitoring
+  labels:
+    monitoring: istio-components
+spec:
+  jobLabel: istio
+  targetLabels: [app]
+  selector:
+    matchExpressions:
+      - { key: istio, operator: In, values: [pilot] }
+  namespaceSelector:
+    any: true
+  endpoints:
+    - port: http-monitoring
+      interval: 15s

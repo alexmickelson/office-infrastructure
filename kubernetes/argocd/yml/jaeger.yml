@@ -44,3 +44,18 @@ spec:
         - name: jaeger
           namespace: monitoring
           port: 16686
+---
+# Istio sends traces to zipkin.istio-system:9411 by default.
+# This ExternalName service routes that traffic to Jaeger in the monitoring namespace.
+apiVersion: v1
+kind: Service
+metadata:
+  name: zipkin
+  namespace: istio-system
+spec:
+  type: ExternalName
+  externalName: jaeger.monitoring.svc.cluster.local
+  ports:
+    - port: 9411
+      targetPort: 9411
+      name: http-query
