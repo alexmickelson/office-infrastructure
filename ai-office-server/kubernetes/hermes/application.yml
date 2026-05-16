@@ -22,13 +22,15 @@ spec:
       labels:
         app: hermes
     spec:
+      securityContext:
+        runAsUser: 10000
+        runAsGroup: 10000
+        runAsNonRoot: true
       containers:
         - name: hermes
           image: alexmickelson/hermes-agent:6
           imagePullPolicy: Always
           ports:
-            - name: gateway
-              containerPort: 8642
             - name: dashboard
               containerPort: 9119
           env:
@@ -37,6 +39,8 @@ spec:
             - name: API_SERVER_HOST
               value: "0.0.0.0"
             - name: HERMES_DASHBOARD
+              value: "1"
+            - name: HERMES_DASHBOARD_TUI
               value: "1"
           volumeMounts:
             - name: data
@@ -76,32 +80,9 @@ spec:
   selector:
     app: hermes
   ports:
-    - name: gateway
-      port: 8642
-      targetPort: 8642
     - name: dashboard
       port: 9119
       targetPort: 9119
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: hermes
-  namespace: hermes
-spec:
-  parentRefs:
-    - name: main-gateway
-      namespace: istio-system
-  hostnames:
-    - "alexhermes.snowse.io"
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: hermes
-          port: 8642
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute

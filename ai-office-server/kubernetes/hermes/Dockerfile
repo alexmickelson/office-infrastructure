@@ -14,13 +14,13 @@ RUN curl -L https://nixos.org/nix/install | sh -s -- --no-daemon --no-modify-pro
     mkdir -p /home/hermes/.config/nix && \
     echo "experimental-features = nix-command flakes" > /home/hermes/.config/nix/nix.conf
 
-ENV PATH=/home/hermes/.nix-profile/bin:$PATH
+ENV PATH=/home/hermes/.nix-profile/bin:/opt/hermes/.venv/bin:$PATH
 ENV NIX_PATH=/home/hermes/.nix-defexpr/channels
 ENV NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
-USER root
+USER hermes
 
-COPY entrypoint.sh /entrypoint.sh
+COPY --chown=hermes:hermes entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
