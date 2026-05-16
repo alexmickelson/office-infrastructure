@@ -1,0 +1,21 @@
+name: build and push hermes agent
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+
+      - name: log in to docker hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u alexmickelson --password-stdin
+
+      - name: build and push
+        run: |
+          docker build -t alexmickelson/hermes-agent:${{ github.run_id }} ai-server/kubernetes/hermes
+          docker push alexmickelson/hermes-agent:${{ github.run_id }}
+
