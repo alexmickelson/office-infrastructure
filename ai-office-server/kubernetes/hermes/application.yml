@@ -28,7 +28,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: hermes
-          image: alexmickelson/hermes-agent:6
+          image: alexmickelson/hermes-agent:7
           imagePullPolicy: Always
           ports:
             - name: dashboard
@@ -45,6 +45,10 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /opt/data
+            - name: home
+              mountPath: /home/hermes
+            - name: nix
+              mountPath: /nix
           resources:
             requests:
               memory: "1Gi"
@@ -69,6 +73,14 @@ spec:
         - name: data
           hostPath:
             path: /data/hermes
+            type: DirectoryOrCreate
+        - name: home
+          hostPath:
+            path: /data/hermes-home
+            type: DirectoryOrCreate
+        - name: nix
+          hostPath:
+            path: /data/hermes-nix
             type: DirectoryOrCreate
 ---
 apiVersion: v1
