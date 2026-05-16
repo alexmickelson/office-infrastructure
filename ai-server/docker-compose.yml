@@ -63,7 +63,7 @@ services:
   llama-server:
     image: ghcr.io/ggml-org/llama.cpp:server-cuda
     container_name: llama-server
-    # network_mode: service:tailscale-ingress
+    network_mode: service:tailscale-ingress
     command:
       - --host
       - 0.0.0.0
@@ -75,7 +75,7 @@ services:
       - /config/config.ini
     volumes:
       - /data/llamaswap/models:/models
-      - ./llamaswap/config.ini:/config/config.ini:ro
+      - ./config.ini:/config/config.ini:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
