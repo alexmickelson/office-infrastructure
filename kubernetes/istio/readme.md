@@ -8,3 +8,4 @@ https://istio.io/latest/docs/setup/install/helm/
 - **main-gateway** — `Gateway` resource using Kubernetes Gateway API, managed via `argocd-server-access.yml`; no legacy `istio-ingressgateway` Deployment needed
 
 
+tutorial <https://www.youtube.com/watch?v=6NHASise7rQ>
