@@ -29,3 +29,58 @@ spec:
       selfHeal: true
     syncOptions:
       - ServerSideApply=true
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: envoy-gateway
+  namespace: envoy-ai-gateway
+spec:
+  parentRefs:
+    - name: main-gateway
+      namespace: istio-system
+  hostnames:
+    - "alexenvoy.snowse.io"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: envoy-gateway
+          port: 18000
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: gateway-to-envoy-ai-gateway
+  namespace: envoy-ai-gateway
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: envoy-ai-gateway
+  to:
+    - group: ""
+      kind: Service
+---
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: envoy-ai-gateway
+spec:
+  mtls:
+    mode: STRICT
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: envoy-ai-gateway-policy
+  namespace: envoy-ai-gateway
+spec:
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            namespaces: ["cloudflared", "istio-system"]

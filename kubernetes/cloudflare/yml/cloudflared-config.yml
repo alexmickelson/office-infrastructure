@@ -15,4 +15,6 @@ data:
         service: http://main-gateway-istio.istio-system.svc.cluster.local:80
       - hostname: alexopencost.snowse.io
         service: http://main-gateway-istio.istio-system.svc.cluster.local:80
+      - hostname: alexenvoy.snowse.io
+        service: http://main-gateway-istio.istio-system.svc.cluster.local:80
       - service: http_status:404
