@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: hermes
-          image: 144.17.92.12:5000/hermes-agent:latest
+          image: alexmickelson/hermes-agent:1
           imagePullPolicy: Always
           ports:
             - name: gateway
@@ -93,7 +93,7 @@ spec:
     - name: main-gateway
       namespace: istio-system
   hostnames:
-    - "hermes.snowse.io"
+    - "alexhermes.snowse.io"
   rules:
     - matches:
         - path:
@@ -113,7 +113,7 @@ spec:
     - name: main-gateway
       namespace: istio-system
   hostnames:
-    - "hermes-dashboard.snowse.io"
+    - "alexhermes-dashboard.snowse.io"
   rules:
     - matches:
         - path:
