@@ -33,7 +33,7 @@ spec:
                           port: 8888
           extensions:
             healthcheckv2:
-              use_v2: true
+              use_v2: false
               http: {}
             jaeger_query:
               base_path: /jaeger
