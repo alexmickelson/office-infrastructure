@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: hermes
-          image: alexmickelson/hermes-agent:1
+          image: alexmickelson/hermes-agent:2
           imagePullPolicy: Always
           ports:
             - name: gateway
