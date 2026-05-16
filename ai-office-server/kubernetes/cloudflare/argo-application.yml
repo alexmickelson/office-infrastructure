@@ -15,7 +15,7 @@ spec:
   source:
     repoURL: https://github.com/alexmickelson/office-infrastructure.git
     targetRevision: HEAD
-    path: kubernetes/cloudflare/yml
+    path: ai-office-server/kubernetes/cloudflare/yml
   destination:
     server: https://kubernetes.default.svc
     namespace: cloudflared
