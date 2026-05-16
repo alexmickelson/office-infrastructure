@@ -30,36 +30,67 @@ spec:
     syncOptions:
       - ServerSideApply=true
 ---
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
+apiVersion: argoproj.io/v1alpha1
+kind: Application
 metadata:
-  name: envoy-gateway
-  namespace: envoy-ai-gateway
+  name: envoy-ai-gateway-crds
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
-  parentRefs:
-    - name: main-gateway
-      namespace: istio-system
-  hostnames:
-    - "alexenvoy.snowse.io"
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: envoy-gateway
-          port: 18000
+  project: default
+  source:
+    repoURL: registry-1.docker.io/envoyproxy
+    chart: ai-gateway-crds-helm
+    targetRevision: v0.6.0
+    helm:
+      releaseName: aieg-crd
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: envoy-ai-gateway
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
 ---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: envoy-ai-gateway
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: default
+  source:
+    repoURL: registry-1.docker.io/envoyproxy
+    chart: ai-gateway-helm
+    targetRevision: v0.6.0
+    helm:
+      releaseName: aieg
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: envoy-ai-gateway
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+---
+# ReferenceGrant allows argocd-namespace HTTPRoutes to reach services here
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: ReferenceGrant
 metadata:
-  name: gateway-to-envoy-ai-gateway
+  name: argocd-to-envoy-ai-gateway
   namespace: envoy-ai-gateway
 spec:
   from:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
-      namespace: envoy-ai-gateway
+      namespace: argocd
   to:
     - group: ""
       kind: Service
@@ -83,4 +114,22 @@ spec:
   rules:
     - from:
         - source:
-            namespaces: ["cloudflared", "istio-system"]
+            namespaces: ["cloudflared", "istio-system", "envoy-ai-gateway"]
+---
+# ServiceMonitor for envoy-gateway controller metrics (port 19001)
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: envoy-gateway
+  namespace: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+      - envoy-ai-gateway
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: envoy-gateway
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
