@@ -16,6 +16,6 @@ jobs:
 
       - name: build and push
         run: |
-          docker build -t alexmickelson/hermes-agent:${{ github.run_id }} ai-server/kubernetes/hermes
-          docker push alexmickelson/hermes-agent:${{ github.run_id }}
+          docker build -t alexmickelson/hermes-agent:${{ github.run_number }} ai-server/kubernetes/hermes
+          docker push alexmickelson/hermes-agent:${{ github.run_number }}
 
