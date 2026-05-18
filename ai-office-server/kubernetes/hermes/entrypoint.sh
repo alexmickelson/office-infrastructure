@@ -55,12 +55,15 @@ mkdir -p /etc/profile.d
 NIX_PROFILE_SCRIPT="/etc/profile.d/nix-hermes.sh"
 cat > "$NIX_PROFILE_SCRIPT" << 'NIXSCRIPT'
 # Make Nix available in all login shells
+# Re-resolve the profile symlink so newly installed binaries are found
+# even in long-running shells after `nix profile install`.
 for nix_profile in "$HOME/.nix-profile" "/home/hermes/.nix-profile"; do
     if [ -L "$nix_profile" ]; then
         NIX_PROFILE_BIN=$(readlink -f "$nix_profile")/bin
-        if [ -d "$NIX_PROFILE_BIN" ]; then
-            export PATH="$NIX_PROFILE_BIN:$PATH"
-        fi
+        case ":$PATH:" in
+            *":$NIX_PROFILE_BIN:"*) ;;
+            *) export PATH="$NIX_PROFILE_BIN:$PATH" ;;
+        esac
         # Source the official Nix environment if available; this sets NIX_PATH etc.
         if [ -e "$nix_profile/etc/profile.d/nix.sh" ]; then
             . "$nix_profile/etc/profile.d/nix.sh"
