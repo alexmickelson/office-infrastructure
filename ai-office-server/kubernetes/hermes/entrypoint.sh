@@ -18,6 +18,7 @@ mkdir -p /opt/data/.config/nix
 if [ ! -f /opt/data/.config/nix/nix.conf ]; then
     echo "experimental-features = nix-command flakes" > /opt/data/.config/nix/nix.conf
 fi
+chown -R hermes:hermes /opt/data/.config
 
 # ── 3. Fix /home/hermes ownership and forwarder symlinks ────────────────────
 if [ "$(id -u)" = "0" ]; then
