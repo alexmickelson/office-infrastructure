@@ -1,32 +1,51 @@
-#!/bin/sh
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Bootstrap /nix on first run (empty hostPath volume shadows the image store).
-if [ ! -d /nix/store ] || [ -z "$(ls -A /nix/store 2>/dev/null)" ]; then
-  echo "[entrypoint] /nix/store is empty, installing Nix into the persistent volume..."
-  curl -L https://nixos.org/nix/install | sh -s -- --no-daemon --no-modify-profile
-  echo "[entrypoint] Nix installed"
+export HOME=/home/hermes
+
+# ── 1. Bootstrap Nix on first run ───────────────────────────────────────────
+if ! find /nix/store -maxdepth 2 -name nix -type f 2>/dev/null | grep -q .; then
+    echo "[entrypoint] Nix not found in persisted /nix. Bootstrapping..."
+    # single-user, leaves home rc files alone (we activate manually)
+    curl -fsSL https://nixos.org/nix/install | bash -s -- --no-daemon --no-modify-profile
 fi
 
-# Restore nix.conf and .nix-profile if home volume is fresh.
-if [ ! -e "$HOME/.config/nix/nix.conf" ]; then
-  mkdir -p "$HOME/.config/nix"
-  echo "experimental-features = nix-command flakes" > "$HOME/.config/nix/nix.conf"
+# ── 2. Activate Nix ─────────────────────────────────────────────────────────
+NIX_BIN=$(find /nix/store -maxdepth 2 -name nix -type f 2>/dev/null | head -n1)
+if [[ -z "$NIX_BIN" ]]; then
+    echo "[entrypoint] ERROR: nix binary missing in /nix/store" >&2
+    exit 1
+fi
+NIX_DIR=$(dirname "$NIX_BIN")
+export PATH="$NIX_DIR:${PATH}"
+
+# Source the installer env script (sets NIX_PATH, etc.)
+if [[ -e /home/hermes/.nix-profile/etc/profile.d/nix.sh ]]; then
+    . /home/hermes/.nix-profile/etc/profile.d/nix.sh
+elif [[ -e "$NIX_DIR/../etc/profile.d/nix.sh" ]]; then
+    . "$NIX_DIR/../etc/profile.d/nix.sh"
 fi
 
-# Source nix environment so subcommands (nix-channel, etc.) get NIX_PATH and other vars.
-if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
-  . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+# Ensure flakes
+mkdir -p /home/hermes/.config/nix
+if [[ ! -f /home/hermes/.config/nix/nix.conf ]]; then
+    echo "experimental-features = nix-command flakes" > /home/hermes/.config/nix/nix.conf
 fi
 
-ENV_FILE="/opt/data/.env"
+# ── 3. Re-create profile symlink if lost ────────────────────────────────────
+PROFILE_LINK="/home/hermes/.nix-profile"
+PROFILE_TARGET="/nix/var/nix/profiles/per-user/hermes/profile"
 
-if ! grep -q '^API_SERVER_KEY=' "$ENV_FILE" 2>/dev/null; then
-  KEY=$(openssl rand -hex 32)
-  echo "API_SERVER_KEY=$KEY" >> "$ENV_FILE"
-  echo "[entrypoint] Generated new API_SERVER_KEY and appended to $ENV_FILE"
-else
-  echo "[entrypoint] API_SERVER_KEY already set, skipping"
+if [[ ! -L "$PROFILE_LINK" ]] || [[ ! -e "$PROFILE_LINK" ]]; then
+    mkdir -p "$(dirname "$PROFILE_TARGET")"
+    ln -sf "$PROFILE_TARGET" "$PROFILE_LINK"
 fi
 
-exec /opt/hermes/docker/entrypoint.sh "$@"
+# ── 4. Restore tools from flake if missing ──────────────────────────────────
+if [[ -f /home/hermes/tools/flake.nix ]] && [[ ! -e /home/hermes/.nix-profile/bin/gh ]]; then
+    echo "[entrypoint] Restoring nix tools profile..."
+    nix profile install /home/hermes/tools#default || true
+fi
+
+# ── 5. Start main process ───────────────────────────────────────────────────
+exec "$@"
