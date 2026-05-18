@@ -3,6 +3,9 @@ set -euo pipefail
 
 export HOME=/home/hermes
 
+# Resolve the main command before PATH is modified by Nix
+ORIG_CMD=$(command -v "$1" 2>/dev/null || true)
+
 # ── 1. Bootstrap Nix on first run ───────────────────────────────────────────
 if ! find /nix/store -maxdepth 4 -name nix -type f 2>/dev/null | grep -q .; then
     echo "[entrypoint] Nix not found in persisted /nix. Bootstrapping..."
@@ -48,4 +51,9 @@ if [[ -f /home/hermes/tools/flake.nix ]] && [[ ! -e /home/hermes/.nix-profile/bi
 fi
 
 # ── 5. Start main process ───────────────────────────────────────────────────
+# Use the pre-nix resolved path if the command got shadowed by a nix directory
+if [[ -n "$ORIG_CMD" ]] && [[ -f "$ORIG_CMD" ]]; then
+    shift
+    exec "$ORIG_CMD" "$@"
+fi
 exec "$@"
