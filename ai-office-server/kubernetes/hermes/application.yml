@@ -24,8 +24,9 @@ spec:
     spec:
       containers:
         - name: hermes
-          image: alexmickelson/hermes-agent:test2
+          image: alexmickelson/hermes-agent:13
           imagePullPolicy: Always
+          args: ["sleep", "infinity"]
           ports:
             - name: dashboard
               containerPort: 9119
@@ -52,16 +53,16 @@ spec:
               cpu: "2"
           livenessProbe:
             httpGet:
-              path: /health
-              port: 8642
-            initialDelaySeconds: 5
+              path: /api/status
+              port: 9119
+            initialDelaySeconds: 30
             periodSeconds: 30
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /health
-              port: 8642
-            initialDelaySeconds: 15
+              path: /api/status
+              port: 9119
+            initialDelaySeconds: 10
             periodSeconds: 10
       volumes:
         - name: data
