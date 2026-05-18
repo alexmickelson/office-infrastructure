@@ -26,9 +26,19 @@ spec:
         runAsUser: 10000
         runAsGroup: 10000
         runAsNonRoot: true
+      initContainers:
+        - name: fix-nix-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 10000:10000 /nix"]
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+          volumeMounts:
+            - name: nix
+              mountPath: /nix
       containers:
         - name: hermes
-          image: alexmickelson/hermes-agent:7
+          image: alexmickelson/hermes-agent:8
           imagePullPolicy: Always
           ports:
             - name: dashboard
