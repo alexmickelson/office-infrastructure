@@ -4,14 +4,14 @@ set -euo pipefail
 export HOME=/home/hermes
 
 # ── 1. Bootstrap Nix on first run ───────────────────────────────────────────
-if ! find /nix/store -maxdepth 2 -name nix -type f 2>/dev/null | grep -q .; then
+if ! find /nix/store -maxdepth 4 -name nix -type f 2>/dev/null | grep -q .; then
     echo "[entrypoint] Nix not found in persisted /nix. Bootstrapping..."
     # single-user, leaves home rc files alone (we activate manually)
     curl -fsSL https://nixos.org/nix/install | bash -s -- --no-daemon --no-modify-profile
 fi
 
 # ── 2. Activate Nix ─────────────────────────────────────────────────────────
-NIX_BIN=$(find /nix/store -maxdepth 2 -name nix -type f 2>/dev/null | head -n1)
+NIX_BIN=$(find /nix/store -maxdepth 4 -name nix -type f 2>/dev/null | head -n1)
 if [[ -z "$NIX_BIN" ]]; then
     echo "[entrypoint] ERROR: nix binary missing in /nix/store" >&2
     exit 1
