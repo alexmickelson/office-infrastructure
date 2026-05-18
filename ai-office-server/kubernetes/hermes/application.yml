@@ -43,7 +43,7 @@ spec:
               mountPath: /opt/data
       containers:
         - name: hermes
-          image: alexmickelson/hermes-agent:9
+          image: alexmickelson/hermes-agent:10
           imagePullPolicy: Always
           ports:
             - name: dashboard
