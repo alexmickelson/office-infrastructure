@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: hermes
-          image: alexmickelson/hermes-agent:15
+          image: alexmickelson/hermes-agent:16
           imagePullPolicy: Always
           args: ["sleep", "infinity"]
           ports:
