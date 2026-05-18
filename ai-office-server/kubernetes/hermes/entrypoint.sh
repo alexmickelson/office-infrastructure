@@ -28,6 +28,13 @@ if [ "$(id -u)" = "0" ]; then
     chown -R hermes:hermes /home/hermes
 fi
 
+# Ensure the running user's home also has the .nix-profile symlink
+# (some sessions set HOME=/opt/data or /opt/data/home instead of /home/hermes)
+if [ ! -L "$HOME/.nix-profile" ] || [ ! -e "$HOME/.nix-profile" ]; then
+    mkdir -p "$HOME/.local/state/nix/profiles"
+    ln -sf /opt/data/.local/state/nix/profiles/profile "$HOME/.nix-profile" 2>/dev/null || true
+fi
+
 # ── 4. Find Nix binary (not in the profile, in the installer store path) ────
 NIX_BIN=$(find /nix/store -maxdepth 4 -name nix -type f 2>/dev/null | head -n1)
 if [ -z "$NIX_BIN" ]; then
@@ -48,16 +55,19 @@ mkdir -p /etc/profile.d
 NIX_PROFILE_SCRIPT="/etc/profile.d/nix-hermes.sh"
 cat > "$NIX_PROFILE_SCRIPT" << 'NIXSCRIPT'
 # Make Nix available in all login shells
-if [ -L /home/hermes/.nix-profile ]; then
-    NIX_PROFILE_BIN=$(readlink -f /home/hermes/.nix-profile)/bin
-    if [ -d "$NIX_PROFILE_BIN" ]; then
-        export PATH="$NIX_PROFILE_BIN:$PATH"
+for nix_profile in "$HOME/.nix-profile" "/home/hermes/.nix-profile"; do
+    if [ -L "$nix_profile" ]; then
+        NIX_PROFILE_BIN=$(readlink -f "$nix_profile")/bin
+        if [ -d "$NIX_PROFILE_BIN" ]; then
+            export PATH="$NIX_PROFILE_BIN:$PATH"
+        fi
+        # Source the official Nix environment if available; this sets NIX_PATH etc.
+        if [ -e "$nix_profile/etc/profile.d/nix.sh" ]; then
+            . "$nix_profile/etc/profile.d/nix.sh"
+        fi
+        break
     fi
-    # Source the official Nix environment if available; this sets NIX_PATH etc.
-    if [ -e /home/hermes/.nix-profile/etc/profile.d/nix.sh ]; then
-        . /home/hermes/.nix-profile/etc/profile.d/nix.sh
-    fi
-fi
+done
 # Also inject the raw nix store binary dir in case the profile link is stale
 for nix_dir in /nix/store/*/bin; do
     case ":$PATH:" in
@@ -65,6 +75,8 @@ for nix_dir in /nix/store/*/bin; do
         *) export PATH="$nix_dir:$PATH" ;;
     esac
 done
+# Clear command hash so newly installed binaries are found without a new shell
+hash -r 2>/dev/null || true
 NIXSCRIPT
 chmod 644 "$NIX_PROFILE_SCRIPT"
 
@@ -81,5 +93,16 @@ fi
 BASHRC
 fi
 
-# ── 6. Hand off to upstream ─────────────────────────────────────────────────
+# ── 6. Install .bashrc for the running user ─────────────────────────────────
+# /opt/data is a persistent volume mount, so files copied in the Dockerfile
+# are hidden at runtime. We create it here instead.
+if [ -f /etc/hermes-bashrc ] && [ ! -f "$HOME/.bashrc" ]; then
+    cp /etc/hermes-bashrc "$HOME/.bashrc"
+    # If running as root, fix ownership for the hermes user
+    if [ "$(id -u)" = "0" ] && [ "$HOME" = "/opt/data" ]; then
+        chown hermes:hermes "$HOME/.bashrc"
+    fi
+fi
+
+# ── 7. Hand off to upstream ─────────────────────────────────────────────────
 exec /opt/hermes/docker/entrypoint.sh "$@"
