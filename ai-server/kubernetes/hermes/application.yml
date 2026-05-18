@@ -22,13 +22,15 @@ spec:
       labels:
         app: hermes
     spec:
+      securityContext:
+        runAsUser: 10000
+        runAsGroup: 10000
+        runAsNonRoot: true
       containers:
         - name: hermes
-          image: 144.17.92.12:5000/hermes-agent:latest
+          image: alexmickelson/hermes-agent:8
           imagePullPolicy: Always
           ports:
-            - name: gateway
-              containerPort: 8642
             - name: dashboard
               containerPort: 9119
           env:
@@ -38,9 +40,15 @@ spec:
               value: "0.0.0.0"
             - name: HERMES_DASHBOARD
               value: "1"
+            - name: HERMES_DASHBOARD_TUI
+              value: "1"
           volumeMounts:
             - name: data
               mountPath: /opt/data
+            - name: home
+              mountPath: /home/hermes
+            - name: nix
+              mountPath: /nix
           resources:
             requests:
               memory: "1Gi"
@@ -66,6 +74,14 @@ spec:
           hostPath:
             path: /data/hermes
             type: DirectoryOrCreate
+        - name: home
+          hostPath:
+            path: /data/hermes-home
+            type: DirectoryOrCreate
+        - name: nix
+          hostPath:
+            path: /data/hermes-nix
+            type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: Service
@@ -76,32 +92,9 @@ spec:
   selector:
     app: hermes
   ports:
-    - name: gateway
-      port: 8642
-      targetPort: 8642
     - name: dashboard
       port: 9119
       targetPort: 9119
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: hermes
-  namespace: hermes
-spec:
-  parentRefs:
-    - name: main-gateway
-      namespace: istio-system
-  hostnames:
-    - "hermes.snowse.io"
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: hermes
-          port: 8642
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -113,7 +106,7 @@ spec:
     - name: main-gateway
       namespace: istio-system
   hostnames:
-    - "hermes-dashboard.snowse.io"
+    - "alexhermes-dashboard.snowse.io"
   rules:
     - matches:
         - path:
