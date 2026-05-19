@@ -76,6 +76,7 @@ services:
       - /config/config.ini
     volumes:
       - /data/llamaswap/models:/models
+      - /data/huggingface-cache:/root/.cache/huggingface/huggingface
       - ./config.ini:/config/config.ini:ro
     restart: unless-stopped
     healthcheck:
@@ -92,7 +93,20 @@ services:
               count: 1
               capabilities:
                 - gpu
+  hfdownloader:
+    image: ghcr.io/bodaay/huggingfacemodeldownloader:latest
+    container_name: hfdownloader
+    network_mode: service:tailscale-ingress
+    volumes:
+      - /data/huggingface-cache:/home/hfdownloader/.cache/huggingface
+    # environment:
+    #   HF_TOKEN: ${HF_TOKEN:-}
+    command:
+      - serve
+      - --port
+      - "8083"
 
+    restart: unless-stopped
   whisper:
     image: ghcr.io/ggml-org/whisper.cpp:main-cuda
     container_name: whisper
