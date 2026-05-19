@@ -49,19 +49,6 @@ services:
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128
 
-  # lemonade:
-  #   image: ghcr.io/lemonade-sdk/lemonade-server:latest
-  #   container_name: lemonade-server
-  #   ports:
-  #     - "13305:13305"
-  #   volumes:
-  #     - /data/lemonade/cache:/root/.cache/huggingface
-  #     - /data/lemonade/llama:/opt/lemonade/llama
-  #     - /data/lemonade/recipe:/root/.cache/lemonade
-  #   restart: unless-stopped
-  #   devices:
-  #     - /dev/dri/renderD128:/dev/dri/renderD128
-
   hfdownloader:
     image: ghcr.io/bodaay/huggingfacemodeldownloader:latest
     container_name: hfdownloader
