@@ -111,4 +111,4 @@ spec:
   rules:
     - from:
         - source:
-            namespaces: ["argocd", "istio-system"]
+            namespaces: ["argocd", "istio-system", "monitoring"]
