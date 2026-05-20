@@ -25,6 +25,76 @@ spec:
               emitKsmV1MetricsOnly: false
           ui:
             enabled: true
+          exporter:
+            extraEnv:
+              LOG_LEVEL: debug
+          extraObjects:
+            - apiVersion: v1
+              kind: ConfigMap
+              metadata:
+                name: opencost-pricing
+                namespace: opencost
+              data:
+                default.json: |
+                  {
+                    "provider": "custom",
+                    "description": "Default pricing for bare-metal k3s cluster",
+                    "CPU": "0.031611",
+                    "spotCPU": "0.006655",
+                    "RAM": "0.004237",
+                    "spotRAM": "0.000892",
+                    "GPU": "0.95",
+                    "spotGPU": "0.190",
+                    "storage": "0.00005479452",
+                    "zoneNetworkEgress": "0.01",
+                    "regionNetworkEgress": "0.01",
+                    "internetNetworkEgress": "0.12",
+                    "network": "0.01",
+                    "loadBalancer": "0.025",
+                    "spotLabel": "kops.k8s.io/instancegroup",
+                    "spotLabelValue": "spotinstance-nodes",
+                    "awsSpotDataRegion": "us-east-1",
+                    "awsSpotDataBucket": "spot-data-feed-9be528e8-af48-43e9-9b4b-af4f5d8e9a2b",
+                    "awsSpotDataPrefix": "/spot",
+                    "projectID": "",
+                    "athenaBucketName": "s3://aws-athena-query-results-978564896215-us-east-1",
+                    "athenaRegion": "us-east-1",
+                    "athenaDatabase": "athenacurcfn_opencost",
+                    "athenaTable": "opencost",
+                    "athenaWorkgroup": "primary",
+                    "masterPayerARN": "",
+                    "customPricesEnabled": "true",
+                    "defaultIdle": "true",
+                    "azureSubscriptionID": "",
+                    "azureClientID": "",
+                    "azureClientSecret": "",
+                    "azureTenantID": "",
+                    "azureBillingRegion": "",
+                    "azureBillingAccount": "",
+                    "azureOfferID": "",
+                    "currencyCode": "USD",
+                    "discount": "0",
+                    "discountedCPU": "0.031611",
+                    "discountedSpotCPU": "0.006655",
+                    "discountedRAM": "0.004237",
+                    "discountedSpotRAM": "0.000892",
+                    "discountedGPU": "0.95",
+                    "discountedSpotGPU": "0.190",
+                    "discountedStorage": "0.00005479452",
+                    "discountedZoneNetworkEgress": "0.01",
+                    "discountedRegionNetworkEgress": "0.01",
+                    "discountedInternetNetworkEgress": "0.12",
+                    "sharedCPU": "0.031611",
+                    "sharedRAM": "0.004237",
+                    "sharedGPU": "0.95",
+                    "sharedStorage": "0.00005479452",
+                    "sharedZoneNetworkEgress": "0.01",
+                    "sharedRegionNetworkEgress": "0.01",
+                    "sharedInternetNetworkEgress": "0.12",
+                    "sharedLoadBalancer": "0.025",
+                    "neglectedResources": "0",
+                    "billableResources": "0"
+                  }
   destination:
     server: https://kubernetes.default.svc
     namespace: opencost
