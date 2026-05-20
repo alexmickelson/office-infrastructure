@@ -146,6 +146,9 @@ metadata:
   name: opencost-policy
   namespace: opencost
 spec:
+  selector:
+    matchLabels:
+      app: opencost
   action: ALLOW
   rules:
     - from:
