@@ -101,3 +101,23 @@ rules:
       - pods
       - nodes
     verbs: ["get", "list"]
+
+  # Istio security resources (AuthorizationPolicies, PeerAuthentication, etc.)
+  - apiGroups: ["security.istio.io"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+
+  # Istio networking resources (DestinationRules, VirtualServices, etc.)
+  - apiGroups: ["networking.istio.io"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+
+  # ArgoCD Application resources
+  - apiGroups: ["argoproj.io"]
+    resources: ["applications"]
+    verbs: ["get", "list", "watch"]
+
+  # Gateway API
+  - apiGroups: ["gateway.networking.k8s.io"]
+    resources: ["httproutes", "gateways", "referencegrants"]
+    verbs: ["get", "list", "watch"]
