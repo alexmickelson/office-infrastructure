@@ -28,8 +28,6 @@ spec:
           exporter:
             extraEnv:
               LOG_LEVEL: debug
-          podAnnotations:
-            traffic.sidecar.istio.io/excludeOutboundPorts: "9090"
           extraObjects:
             - apiVersion: v1
               kind: ConfigMap
