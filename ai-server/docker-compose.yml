@@ -71,7 +71,7 @@ services:
       - "8082"
       - --ui
       - --models-max
-      - "1"
+      - "2"
       - --models-preset
       - /config/config.ini
     volumes:
