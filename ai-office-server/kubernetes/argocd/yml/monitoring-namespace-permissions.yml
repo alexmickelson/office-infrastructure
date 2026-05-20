@@ -1,5 +1,21 @@
-# Routes use the existing main-gateway (avoids spawning a new LoadBalancer)
-# ReferenceGrants allow cross-namespace backend references
+# Allow Prometheus (monitoring namespace) to scrape metrics endpoints mesh-wide.
+# Applied in istio-system as the root namespace per mesh config.
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: prometheus-scrape
+  namespace: istio-system
+spec:
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            namespaces: ["monitoring"]
+      to:
+        - operation:
+            ports: ["9090", "9003", "8080", "15020", "80", "16686", "20001", "20201"]
+---
+# ReferenceGrants for cross-namespace HTTPRoutes
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: ReferenceGrant
 metadata:
@@ -31,17 +47,38 @@ spec:
     - group: ""
       kind: Service
 ---
+# Only protect the Grafana UI and Alertmanager, not namespace-wide.
+# Prometheus needs to receive scrapes from all namespaces — managed by
+# the workload-level prometheus-scrape policy in istio-system.
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: monitoring-policy
+  name: grafana-policy
   namespace: monitoring
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: grafana
   action: ALLOW
   rules:
     - from:
         - source:
-            namespaces: ["argocd", "istio-system", "monitoring", "opencost"]
+            namespaces: ["argocd", "istio-system"]
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: alertmanager-policy
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: alertmanager
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            namespaces: ["monitoring"]
 ---
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
