@@ -214,6 +214,7 @@ services:
       - .env
     environment:
       # - TS_AUTHKEY= # from .env file
+      - TS_USERSPACE=true
       - TS_SERVE_CONFIG=/config/ts-config.json
       - TS_STATE_DIR=/var/lib/tailscale
     volumes:
