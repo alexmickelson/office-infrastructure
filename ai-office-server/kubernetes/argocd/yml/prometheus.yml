@@ -15,6 +15,7 @@ spec:
         prometheus:
           prometheusSpec:
             serviceMonitorSelectorNilUsesHelmValues: false
+            podMonitorSelectorNilUsesHelmValues: false
             externalUrl: "https://alexmonitoring.snowse.io/prometheus"
             additionalScrapeConfigs:
               - job_name: opencost

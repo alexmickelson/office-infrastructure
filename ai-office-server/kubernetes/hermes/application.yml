@@ -22,14 +22,11 @@ spec:
       labels:
         app: hermes
     spec:
-      securityContext:
-        runAsUser: 10000
-        runAsGroup: 10000
-        runAsNonRoot: true
       containers:
         - name: hermes
-          image: alexmickelson/hermes-agent:8
+          image: alexmickelson/hermes-agent:16
           imagePullPolicy: Always
+          args: ["sleep", "infinity"]
           ports:
             - name: dashboard
               containerPort: 9119
@@ -45,8 +42,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /opt/data
-            - name: home
-              mountPath: /home/hermes
             - name: nix
               mountPath: /nix
           resources:
@@ -58,25 +53,21 @@ spec:
               cpu: "2"
           livenessProbe:
             httpGet:
-              path: /health
-              port: 8642
+              path: /api/status
+              port: 9119
             initialDelaySeconds: 30
             periodSeconds: 30
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /health
-              port: 8642
-            initialDelaySeconds: 15
+              path: /api/status
+              port: 9119
+            initialDelaySeconds: 10
             periodSeconds: 10
       volumes:
         - name: data
           hostPath:
             path: /data/hermes
-            type: DirectoryOrCreate
-        - name: home
-          hostPath:
-            path: /data/hermes-home
             type: DirectoryOrCreate
         - name: nix
           hostPath:

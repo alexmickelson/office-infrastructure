@@ -63,18 +63,22 @@ services:
   llama-server:
     image: ghcr.io/ggml-org/llama.cpp:server-cuda
     container_name: llama-server
-    network_mode: service:tailscale-ingress
+    # network_mode: service:tailscale-ingress
+    ports:
+      - 100.114.68.27:9292:8082
     command:
       - --host
       - 0.0.0.0
       - --port
       - "8082"
+      - --ui
       - --models-max
-      - "1"
+      - "2"
       - --models-preset
       - /config/config.ini
     volumes:
       - /data/llamaswap/models:/models
+      - /data/huggingface-cache:/root/.cache/huggingface/huggingface
       - ./config.ini:/config/config.ini:ro
     restart: unless-stopped
     healthcheck:
@@ -91,7 +95,20 @@ services:
               count: 1
               capabilities:
                 - gpu
+  hfdownloader:
+    image: ghcr.io/bodaay/huggingfacemodeldownloader:latest
+    container_name: hfdownloader
+    network_mode: service:tailscale-ingress
+    volumes:
+      - /data/huggingface-cache:/home/hfdownloader/.cache/huggingface
+    # environment:
+    #   HF_TOKEN: ${HF_TOKEN:-}
+    command:
+      - serve
+      - --port
+      - "8083"
 
+    restart: unless-stopped
   whisper:
     image: ghcr.io/ggml-org/whisper.cpp:main-cuda
     container_name: whisper
@@ -126,7 +143,7 @@ services:
     restart: unless-stopped
     # network_mode: service:tailscale-ingress # port 9090
     ports:
-      - 9090:9090
+      - 100.114.68.27:9090:9090
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - /data/prometheus:/prometheus
@@ -147,7 +164,7 @@ services:
       - /data/grafana:/var/lib/grafana
       - ./grafana-datasource.yml:/etc/grafana/provisioning/datasources/grafana-datasource.yml:ro
     ports:
-      - 3000:3000
+      - 100.114.68.27:3000:3000
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/robots.txt"]
       interval: 10s
@@ -193,12 +210,13 @@ services:
       - OPENWEBUI_DB_HOST=openwebui-db
 
   tailscale-ingress:
-    image: tailscale/tailscale:latest
+    image: tailscale/tailscale:v1.80
     hostname: ai-snow
     env_file:
       - .env
     environment:
       # - TS_AUTHKEY= # from .env file
+      - TS_USERSPACE=true
       - TS_SERVE_CONFIG=/config/ts-config.json
       - TS_STATE_DIR=/var/lib/tailscale
     volumes:

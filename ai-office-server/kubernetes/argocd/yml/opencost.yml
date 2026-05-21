@@ -18,13 +18,41 @@ spec:
               enabled: false
             external:
               enabled: true
-              url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090/prometheus
+              url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
           metrics:
             kubeStateMetrics:
               emitKsmV1Metrics: false
               emitKsmV1MetricsOnly: false
           ui:
             enabled: true
+          exporter:
+            extraEnv:
+              LOG_LEVEL: debug
+          extraObjects:
+            - apiVersion: v1
+              kind: ConfigMap
+              metadata:
+                name: opencost-pricing
+                namespace: opencost
+              data:
+                default.json: |
+                  {
+                    "provider": "custom",
+                    "description": "Default pricing for bare-metal k3s cluster",
+                    "CPU": "0.031611",
+                    "RAM": "0.004237",
+                    "GPU": "0.95",
+                    "storage": "0.00005479452",
+                    "zoneNetworkEgress": "0.01",
+                    "regionNetworkEgress": "0.01",
+                    "internetNetworkEgress": "0.12",
+                    "network": "0.01",
+                    "loadBalancer": "0.025",
+                    "customPricesEnabled": "true",
+                    "defaultIdle": "true",
+                    "currencyCode": "USD",
+                    "discount": "0"
+                  }
   destination:
     server: https://kubernetes.default.svc
     namespace: opencost
@@ -76,8 +104,11 @@ metadata:
   name: opencost-policy
   namespace: opencost
 spec:
+  selector:
+    matchLabels:
+      app: opencost
   action: ALLOW
   rules:
     - from:
         - source:
-            namespaces: ["argocd", "istio-system"]
+            namespaces: ["argocd", "istio-system", "monitoring"]
