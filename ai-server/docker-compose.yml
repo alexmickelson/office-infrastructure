@@ -143,7 +143,7 @@ services:
     restart: unless-stopped
     # network_mode: service:tailscale-ingress # port 9090
     ports:
-      - 9090:9090
+      - 100.114.68.27:9090:9090
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - /data/prometheus:/prometheus
@@ -164,7 +164,7 @@ services:
       - /data/grafana:/var/lib/grafana
       - ./grafana-datasource.yml:/etc/grafana/provisioning/datasources/grafana-datasource.yml:ro
     ports:
-      - 3000:3000
+      - 100.114.68.27:3000:3000
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/robots.txt"]
       interval: 10s
