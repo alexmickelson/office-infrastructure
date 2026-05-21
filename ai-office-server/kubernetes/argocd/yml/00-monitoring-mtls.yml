@@ -1,3 +1,5 @@
+# Namespaces with Istio injection enabled (strict everywhere)
+---
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -26,6 +28,17 @@ metadata:
   labels:
     istio-injection: enabled
 ---
+# Mesh-wide STRICT mTLS — all sidecar-to-sidecar traffic is encrypted
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: istio-system
+spec:
+  mtls:
+    mode: STRICT
+---
+# monitoring namespace STRICT (redundant with mesh-wide but explicit)
 apiVersion: security.istio.io/v1beta1
 kind: PeerAuthentication
 metadata:

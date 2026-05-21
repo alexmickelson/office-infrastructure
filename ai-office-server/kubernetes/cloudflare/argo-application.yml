@@ -5,6 +5,15 @@ metadata:
   labels:
     istio-injection: enabled
 ---
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: cloudflared
+spec:
+  mtls:
+    mode: STRICT
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

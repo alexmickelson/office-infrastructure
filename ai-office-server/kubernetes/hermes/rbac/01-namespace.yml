@@ -5,3 +5,13 @@ metadata:
   labels:
     app: hermes
     name: hermes
+    istio-injection: enabled
+---
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: hermes
+spec:
+  mtls:
+    mode: STRICT

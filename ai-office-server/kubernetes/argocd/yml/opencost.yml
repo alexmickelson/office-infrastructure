@@ -1,3 +1,19 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: opencost
+  labels:
+    istio-injection: enabled
+---
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: opencost
+spec:
+  mtls:
+    mode: STRICT
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -61,7 +77,7 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
+      - CreateNamespace=false
 ---
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: ReferenceGrant

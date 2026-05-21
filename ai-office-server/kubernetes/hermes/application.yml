@@ -3,7 +3,18 @@ kind: Namespace
 metadata:
   name: hermes
   labels:
+    app: hermes
+    name: hermes
     istio-injection: enabled
+---
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: hermes
+spec:
+  mtls:
+    mode: STRICT
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -21,6 +32,7 @@ spec:
     metadata:
       labels:
         app: hermes
+        app.kubernetes.io/name: hermes
     spec:
       containers:
         - name: hermes
@@ -106,3 +118,18 @@ spec:
       backendRefs:
         - name: hermes
           port: 9119
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: hermes-policy
+  namespace: hermes
+spec:
+  selector:
+    matchLabels:
+      app: hermes
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            namespaces: ["cloudflared", "istio-system"]
