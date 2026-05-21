@@ -208,7 +208,7 @@ services:
       - OPENWEBUI_DB_HOST=openwebui-db
 
   tailscale-ingress:
-    image: tailscale/tailscale:v1.96.5
+    image: tailscale/tailscale:v1.80
     hostname: ai-snow
     env_file:
       - .env
