@@ -29,6 +29,7 @@ spec:
                       - opencost.opencost
                     type: A
                     port: 9003
+
         grafana:
           grafana.ini:
             server:
@@ -37,44 +38,46 @@ spec:
             auth.anonymous:
               enabled: true
               org_role: Viewer
+          # Required: tell Grafana to load dashboards from the default provider
+          dashboardProviders:
+            dashboardproviders.yaml:
+              apiVersion: 1
+              providers:
+                - name: default
+                  orgId: 1
+                  folder: Istio
+                  type: file
+                  disableDeletion: false
+                  editable: true
+                  options:
+                    path: /var/lib/grafana/dashboards/default
           dashboards:
             default:
               istio-mesh:
                 gnetId: 7639
+                revision: 305
                 datasource: Prometheus
               istio-service:
                 gnetId: 7636
+                revision: 236
                 datasource: Prometheus
               istio-workload:
                 gnetId: 7630
+                revision: 232
                 datasource: Prometheus
               istio-performance:
                 gnetId: 11829
+                revision: 110
                 datasource: Prometheus
               istio-control-plane:
                 gnetId: 7645
+                revision: 223
                 datasource: Prometheus
               istio-wasm:
                 gnetId: 13277
+                revision: 59
                 datasource: Prometheus
-              istio-mesh:
-                gnetId: 7639
-                datasource: Prometheus
-              istio-service:
-                gnetId: 7636
-                datasource: Prometheus
-              istio-workload:
-                gnetId: 7630
-                datasource: Prometheus
-              istio-performance:
-                gnetId: 11829
-                datasource: Prometheus
-              istio-control-plane:
-                gnetId: 7645
-                datasource: Prometheus
-              istio-wasm:
-                gnetId: 13277
-                datasource: Prometheus
+
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
@@ -134,7 +137,7 @@ spec:
           namespace: monitoring
           port: 80
 ---
-# PodMonitor to scrape Envoy sidecar metrics from all istio-proxy containers
+# Scrapes merged metrics (Envoy + app) from all sidecar proxies on port 15020
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -150,6 +153,15 @@ spec:
     any: true
   jobLabel: envoy-stats
   podMetricsEndpoints:
+    # Port 15020: merged metrics (Envoy + app) — works for all pods with istio-proxy
+    - path: /stats/prometheus
+      targetPort: 15020
+      interval: 15s
+      relabelings:
+        - action: keep
+          sourceLabels: [__meta_kubernetes_pod_container_name]
+          regex: "istio-proxy"
+    # Port 15090: Envoy-only metrics — primarily for gateway pods
     - path: /stats/prometheus
       targetPort: 15090
       interval: 15s
@@ -158,7 +170,7 @@ spec:
           sourceLabels: [__meta_kubernetes_pod_container_name]
           regex: "istio-proxy"
 ---
-# ServiceMonitor to scrape istiod control plane metrics
+# Scrapes istiod control plane metrics
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
