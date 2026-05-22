@@ -35,7 +35,7 @@ spec:
                 use_grpc: false
                 in_cluster_url: "http://jaeger.monitoring.svc.cluster.local:16686"
               prometheus:
-                url: "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
+                url: "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090/"
             deployment:
               pod_labels:
                 sidecar.istio.io/inject: "true"

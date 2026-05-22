@@ -57,8 +57,6 @@ spec:
               istio-wasm:
                 gnetId: 13277
                 datasource: Prometheus
-          dashboards:
-            default:
               istio-mesh:
                 gnetId: 7639
                 datasource: Prometheus
