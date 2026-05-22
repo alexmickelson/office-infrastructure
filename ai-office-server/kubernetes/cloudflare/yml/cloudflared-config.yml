@@ -12,8 +12,8 @@ data:
 
     ingress:
       - hostname: "alexsimplesyllabuscheck.snowse.io"
-        service: http://istio-ingressgateway.istio-system.svc.cluster.local:80
-        
+        service: http://webapp.simple-syllabus.svc.cluster.local:4000
+
       - hostname: "*.snowse.io"
         service: http://main-gateway-istio.istio-system.svc.cluster.local:80
 
