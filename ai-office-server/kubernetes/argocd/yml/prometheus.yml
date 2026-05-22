@@ -107,8 +107,17 @@ spec:
 
   podMetricsEndpoints:
     - path: /stats/prometheus
-      port: http-envoy-prom
       interval: 15s
+      relabelings:
+        - action: keep
+          sourceLabels:
+            - __meta_kubernetes_pod_container_name
+          regex: istio-proxy
+
+        - action: keep
+          sourceLabels:
+            - __meta_kubernetes_pod_container_port_name
+          regex: http-envoy-prom
   # podMetricsEndpoints:
   #   - path: /stats/prometheus
   #     relabelings:
