@@ -101,14 +101,28 @@ spec:
     any: true
   selector:
     matchExpressions:
-      - {key: istio-prometheus-ignore, operator: DoesNotExist}
+      - key: istio-prometheus-ignore
+        operator: DoesNotExist
   jobLabel: envoy-stats
+
   podMetricsEndpoints:
     - path: /stats/prometheus
-      relabelings:
-        - sourceLabels: [__meta_kubernetes_pod_container_port_name]
-          action: keep
-          regex: '.*-envoy-prom'
+      port: http-envoy-prom
+      interval: 15s
+  # podMetricsEndpoints:
+  #   - path: /stats/prometheus
+  #     relabelings:
+  #       - sourceLabels: [__meta_kubernetes_pod_container_port_name]
+  #         action: keep
+  #         regex: ".*-envoy-prom"
+  #       - sourceLabels:
+  #           [
+  #             __meta_kubernetes_namespace,
+  #             __meta_kubernetes_pod_label_service_istio_io_canonical_name,
+  #           ]
+  #         separator: /
+  #         targetLabel: instance
+  #         action: replace
 ---
 # Istiod control plane metrics
 apiVersion: monitoring.coreos.com/v1
