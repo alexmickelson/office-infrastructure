@@ -14,22 +14,40 @@ spec:
       values: |
         prometheus:
           prometheusSpec:
-            serviceMonitorSelectorNilUsesHelmValues: false
-            podMonitorSelectorNilUsesHelmValues: false
             externalUrl: "https://alexmonitoring.snowse.io/prometheus"
             additionalScrapeConfigs:
-              - job_name: opencost
-                honor_labels: true
-                scrape_interval: 1m
-                scrape_timeout: 10s
-                metrics_path: /metrics
-                scheme: http
-                dns_sd_configs:
-                  - names:
-                      - opencost.opencost
-                    type: A
-                    port: 9003
-
+              # - job_name: opencost
+              #   honor_labels: true
+              #   scrape_interval: 1m
+              #   scrape_timeout: 10s
+              #   metrics_path: /metrics
+              #   scheme: http
+              #   dns_sd_configs:
+              #     - names:
+              #         - opencost.opencost
+              #       type: A
+              #       port: 9003
+              # Recommended by istio.io/docs/ops/integrations/prometheus:
+              # Discovers all ports named *-envoy-prom across sidecars and gateways
+              - job_name: 'envoy-stats'
+                metrics_path: /stats/prometheus
+                kubernetes_sd_configs:
+                  - role: pod
+                relabel_configs:
+                  - source_labels: [__meta_kubernetes_pod_container_port_name]
+                    action: keep
+                    regex: '.*-envoy-prom'
+              # Istiod control plane metrics
+              - job_name: 'istiod'
+                kubernetes_sd_configs:
+                  - role: endpoints
+                    namespaces:
+                      names:
+                        - istio-system
+                relabel_configs:
+                  - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+                    action: keep
+                    regex: istiod;http-monitoring
 
         grafana:
           grafana.ini:
@@ -88,66 +106,6 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
----
-# Recommended by istio.io/docs/ops/integrations/prometheus:
-# Discovers all ports named *-envoy-prom across sidecars and gateways
-apiVersion: monitoring.coreos.com/v1
-kind: PodMonitor
-metadata:
-  name: envoy-stats-monitor
-  namespace: monitoring
-spec:
-  namespaceSelector:
-    any: true
-  selector:
-    matchExpressions:
-      - key: istio-prometheus-ignore
-        operator: DoesNotExist
-  jobLabel: envoy-stats
-
-  podMetricsEndpoints:
-    - path: /stats/prometheus
-      interval: 15s
-      relabelings:
-        - action: keep
-          sourceLabels:
-            - __meta_kubernetes_pod_container_name
-          regex: istio-proxy
-
-        - action: keep
-          sourceLabels:
-            - __meta_kubernetes_pod_container_port_name
-          regex: http-envoy-prom
-  # podMetricsEndpoints:
-  #   - path: /stats/prometheus
-  #     relabelings:
-  #       - sourceLabels: [__meta_kubernetes_pod_container_port_name]
-  #         action: keep
-  #         regex: ".*-envoy-prom"
-  #       - sourceLabels:
-  #           [
-  #             __meta_kubernetes_namespace,
-  #             __meta_kubernetes_pod_label_service_istio_io_canonical_name,
-  #           ]
-  #         separator: /
-  #         targetLabel: instance
-  #         action: replace
----
-# Istiod control plane metrics
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: istiod-monitor
-  namespace: monitoring
-spec:
-  namespaceSelector:
-    matchNames:
-      - istio-system
-  selector:
-    matchLabels:
-      app: istiod
-  endpoints:
-    - port: http-monitoring
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute

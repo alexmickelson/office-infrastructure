@@ -8,7 +8,15 @@ data:
     tunnel: 141192d6-c05c-4cb4-816b-56bd6ce29b1b
     credentials-file: /etc/cloudflared/credentials.json
 
+    protocol: http2
+
     ingress:
       - hostname: "*.snowse.io"
         service: http://main-gateway-istio.istio-system.svc.cluster.local:80
+
+        originRequest:
+          http2Origin: false
+          disableChunkedEncoding: true
+          connectTimeout: 30s
+
       - service: http_status:404
