@@ -12,15 +12,23 @@ import argparse
 import csv
 import curses
 import json
+import os
+import re
 import sys
 import threading
 import time
 import urllib.request
 from datetime import datetime
+from pathlib import Path
 
 WARMUP_PROMPT = "Say 'ready' and nothing else."
 BENCHMARK_PROMPT = "Briefly describe the best web framework."
 REQUEST_TIMEOUT = 600  # seconds per request
+
+# Long context settings
+CONTEXT_FILE_PATH = Path(__file__).parent / "data" / "benchmark-context.txt"
+GUTENBERG_URL = "https://www.gutenberg.org/cache/epub/2600/pg2600.txt"  # War and Peace
+DEFAULT_CONTEXT_TOKENS = 80000  # ~60k words of conversation history
 
 # Statuses
 ST_PENDING = "pending"
@@ -60,6 +68,65 @@ STATUS_COLOR = {
 
 
 # ---------------------------------------------------------------------------
+# Long context builder (downloads book, caches on disk)
+# ---------------------------------------------------------------------------
+
+
+def _download_book() -> str:
+    """Download War and Peace from Project Gutenberg."""
+    print(f"  Downloading context text ({GUTENBERG_URL}) ...", file=sys.stderr)
+    with urllib.request.urlopen(GUTENBERG_URL, timeout=120) as resp:
+        raw = resp.read().decode("utf-8")
+    # Strip PG header/trailer
+    text = re.sub(r"^\*+.*?\*+", "", raw, count=2, flags=re.DOTALL).strip()
+    return text
+
+
+def _load_book_text() -> str:
+    """Load book text from cache or download."""
+    if CONTEXT_FILE_PATH.exists():
+        print(f"  Using cached context: {CONTEXT_FILE_PATH}", file=sys.stderr)
+        return CONTEXT_FILE_PATH.read_text(encoding="utf-8")
+
+    CONTEXT_FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    text = _download_book()
+    CONTEXT_FILE_PATH.write_text(text, encoding="utf-8")
+    print(
+        f"  Cached context to {CONTEXT_FILE_PATH} ({len(text)} chars)", file=sys.stderr
+    )
+    return text
+
+
+def build_long_context_messages(target_tokens: int) -> list[dict]:
+    """Build a conversation of ~target_tokens filled with book content.
+
+    Roughly 1 token ≈ 0.75 words, so target_words = target_tokens * 0.75.
+    We split the text into alternating user/assistant messages (~300 words each) to reach
+    the target token count, then append the actual benchmark prompt."""
+    target_words = int(target_tokens * 0.75)
+    chunk_size = 300  # words per message turn (user + assistant ≈ 600 words per round)
+
+    text = _load_book_text()
+    words = re.split(r"\s+", text.strip())
+
+    messages: list[dict] = []
+    needed = min(target_words, len(words))  # safety cap
+    offset = 0
+    role_toggle = False
+
+    while offset < needed:
+        chunk = " ".join(words[offset : offset + chunk_size])
+        offset += chunk_size
+        if role_toggle:
+            messages.append({"role": "assistant", "content": chunk})
+        else:
+            messages.append({"role": "user", "content": chunk})
+        role_toggle = not role_toggle
+
+    return messages
+
+
+# ---------------------------------------------------------------------------
 # API helpers
 # ---------------------------------------------------------------------------
 
@@ -80,13 +147,23 @@ def api_request(base_url: str, path: str, payload: dict | None = None) -> dict:
         return json.loads(http_response.read().decode())
 
 
-def chat(base_url: str, model: str, prompt: str, max_tokens: int = 512) -> dict:
+def chat(
+    base_url: str,
+    model: str,
+    prompt_or_messages: str | list[dict],
+    max_tokens: int = 512,
+) -> dict:
+    """Send a chat request. prompt_or_messages can be a simple string or a full messages list."""
+    if isinstance(prompt_or_messages, str):
+        messages = [{"role": "user", "content": prompt_or_messages}]
+    else:
+        messages = prompt_or_messages
     return api_request(
         base_url,
         "/v1/chat/completions",
         {
             "model": model,
-            "messages": [{"role": "user", "content": prompt}],
+            "messages": messages,
             "max_tokens": max_tokens,
             "stream": False,
         },
@@ -103,27 +180,40 @@ def _set(idx: int, **kwargs) -> None:
         _state[idx].update(kwargs)
 
 
-def run_benchmarks(base_url: str, models: list[str]) -> None:
+def run_benchmarks(
+    base_url: str,
+    models: list[str],
+    context_messages: list[dict] | None = None,
+) -> None:
+    # context_messages is pre-built before the TUI starts (download output
+    # would corrupt the curses display if done in this worker thread)
+
     for model_idx, model_id in enumerate(models):
         # Brief pause to let the server unload the previous model
         if model_idx > 0:
             time.sleep(1)
 
-        # Warm-up
+        # Warm-up (with long context so we prime the KV cache)
         _set(model_idx, status=ST_WARMUP)
         try:
             warmup_start = time.monotonic()
-            chat(base_url, model_id, WARMUP_PROMPT, max_tokens=64)
+            if context_messages:
+                chat(base_url, model_id, context_messages, max_tokens=64)
+            else:
+                chat(base_url, model_id, WARMUP_PROMPT, max_tokens=64)
             _set(model_idx, warmup_elapsed_s=round(time.monotonic() - warmup_start, 2))
         except Exception as exc:
             _set(model_idx, status=ST_ERROR, error=str(exc))
             continue
 
-        # Benchmark
+        # Benchmark (re-run to get clean timings after model is loaded)
         _set(model_idx, status=ST_PROMPTING)
         try:
             bench_start = time.monotonic()
-            api_response = chat(base_url, model_id, BENCHMARK_PROMPT)
+            if context_messages:
+                api_response = chat(base_url, model_id, context_messages)
+            else:
+                api_response = chat(base_url, model_id, BENCHMARK_PROMPT)
             client_elapsed = time.monotonic() - bench_start
 
             # Prefer llama.cpp server-side timings over client-side estimates
@@ -141,6 +231,9 @@ def run_benchmarks(base_url: str, models: list[str]) -> None:
                     round(completion_tokens / elapsed, 2) if elapsed > 0 else 0
                 )
 
+            # Prompt (prefill) processing speed
+            prompt_tps = round(timings.get("prompt_per_second", 0), 2)
+
             choices = api_response.get("choices", [])
             response_text = (
                 choices[0].get("message", {}).get("content", "").strip()
@@ -155,6 +248,7 @@ def run_benchmarks(base_url: str, models: list[str]) -> None:
                 completion_tokens=completion_tokens,
                 total_tokens=usage.get("total_tokens"),
                 tokens_per_second=tokens_per_sec,
+                prompt_tokens_per_second=prompt_tps,
                 response=response_text,
             )
         except Exception as exc:
@@ -321,6 +415,12 @@ def main() -> None:
         default=None,
         help="Output CSV file (default: benchmark_<host>_<timestamp>.csv)",
     )
+    parser.add_argument(
+        "--context-tokens",
+        type=int,
+        default=DEFAULT_CONTEXT_TOKENS,
+        help=f"Target tokens of conversation history before the benchmark prompt (default: {DEFAULT_CONTEXT_TOKENS}). Set to 0 to disable.",
+    )
     args = parser.parse_args()
     base_url = args.url.rstrip("/")
 
@@ -358,13 +458,28 @@ def main() -> None:
                 "completion_tokens": None,
                 "total_tokens": None,
                 "tokens_per_second": None,
+                "prompt_tokens_per_second": None,
                 "response": None,
                 "error": None,
             }
         )
 
+    # Build context before the TUI starts so download output doesn't corrupt it
+    if args.context_tokens and args.context_tokens > 0:
+        print(
+            f"\nBuilding ~{args.context_tokens:,}-token conversation context ...",
+            file=sys.stderr,
+        )
+        context_messages = build_long_context_messages(args.context_tokens)
+        context_messages.append({"role": "user", "content": BENCHMARK_PROMPT})
+        print(f"  Built {len(context_messages)} messages\n", file=sys.stderr)
+    else:
+        context_messages = None
+
     worker = threading.Thread(
-        target=run_benchmarks, args=(base_url, models), daemon=True
+        target=run_benchmarks,
+        args=(base_url, models, context_messages),
+        daemon=True,
     )
     worker.start()
 
@@ -376,6 +491,7 @@ def main() -> None:
     fieldnames = [
         "host",
         "model",
+        "prompt_tokens_per_second",
         "tokens_per_second",
         "warmup_elapsed_s",
         "elapsed_s",
