@@ -290,9 +290,10 @@ def draw(stdscr: "curses._CursesWindow", output_file: str) -> None:
     COL_MODEL = 0
     COL_STATUS = 36
     COL_WARMUP = 54
-    COL_TPS = 64
-    COL_TOKENS = 74
-    COL_ELAPSED = 84
+    COL_PROMPT_TPS = 64
+    COL_DECODE_TPS = 74
+    COL_TOKENS = 84
+    COL_ELAPSED = 94
 
     frame = 0
     while True:
@@ -310,7 +311,7 @@ def draw(stdscr: "curses._CursesWindow", output_file: str) -> None:
             curses.A_BOLD | curses.color_pair(C_WHITE),
         )
         row += 1
-        _safe_addstr(stdscr, row, 0, "─" * (width - 1))
+        _safe_addstr(stdscr, row, 0, "─" * min(width - 1, 103))
         row += 1
 
         # Column headers
@@ -318,7 +319,8 @@ def draw(stdscr: "curses._CursesWindow", output_file: str) -> None:
         _safe_addstr(stdscr, row, COL_MODEL, f"{'Model':<35}", header_attr)
         _safe_addstr(stdscr, row, COL_STATUS, f"{'Status':<17}", header_attr)
         _safe_addstr(stdscr, row, COL_WARMUP, f"{'Warmup':>9}", header_attr)
-        _safe_addstr(stdscr, row, COL_TPS, f"{'t/s':>9}", header_attr)
+        _safe_addstr(stdscr, row, COL_PROMPT_TPS, f"{'PP t/s':>9}", header_attr)
+        _safe_addstr(stdscr, row, COL_DECODE_TPS, f"{'TG t/s':>9}", header_attr)
         _safe_addstr(stdscr, row, COL_TOKENS, f"{'tokens':>9}", header_attr)
         _safe_addstr(stdscr, row, COL_ELAPSED, f"{'elapsed':>9}", header_attr)
         row += 1
