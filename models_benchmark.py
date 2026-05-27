@@ -382,8 +382,6 @@ def main() -> None:
         "prompt_tokens",
         "completion_tokens",
         "total_tokens",
-        "response",
-        "error",
     ]
     with open(args.output, "w", newline="", encoding="utf-8") as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction="ignore")
