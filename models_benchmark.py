@@ -211,22 +211,26 @@ def run_benchmarks(
         try:
             bench_start = time.monotonic()
             if context_messages:
-                api_response = chat(base_url, model_id, context_messages)
+                api_response = chat(
+                    base_url, model_id, context_messages, max_tokens=1024
+                )
             else:
-                api_response = chat(base_url, model_id, BENCHMARK_PROMPT)
-            client_elapsed = time.monotonic() - bench_start
+                api_response = chat(
+                    base_url, model_id, BENCHMARK_PROMPT, max_tokens=1024
+                )
 
-            # Prefer llama.cpp server-side timings over client-side estimates
+            # Wall time for total prompt + completion (excludes warmup)
+            elapsed = round(time.monotonic() - bench_start, 1)
+
+            # Prefer llama.cpp server-side timings for per-phase speed
             timings = api_response.get("timings", {})
             usage = api_response.get("usage", {})
 
             if timings.get("predicted_n"):
                 completion_tokens = int(timings["predicted_n"])
                 tokens_per_sec = round(timings.get("predicted_per_second", 0), 2)
-                elapsed = round(timings["predicted_ms"] / 1000, 2)
             else:
                 completion_tokens = usage.get("completion_tokens", 0)
-                elapsed = round(client_elapsed, 2)
                 tokens_per_sec = (
                     round(completion_tokens / elapsed, 2) if elapsed > 0 else 0
                 )
@@ -350,6 +354,11 @@ def draw(stdscr: "curses._CursesWindow", output_file: str) -> None:
                 if entry["warmup_elapsed_s"] is not None
                 else "-"
             )
+            prompt_tps = (
+                str(entry["prompt_tokens_per_second"])
+                if entry["prompt_tokens_per_second"] is not None
+                else "-"
+            )
             tps = (
                 str(entry["tokens_per_second"])
                 if entry["tokens_per_second"] is not None
@@ -370,7 +379,14 @@ def draw(stdscr: "curses._CursesWindow", output_file: str) -> None:
             _safe_addstr(
                 stdscr,
                 row,
-                COL_TPS,
+                COL_PROMPT_TPS,
+                f"{prompt_tps:>9}",
+                color if status == ST_DONE else curses.color_pair(C_DEFAULT),
+            )
+            _safe_addstr(
+                stdscr,
+                row,
+                COL_DECODE_TPS,
                 f"{tps:>9}",
                 color if status == ST_DONE else curses.color_pair(C_DEFAULT),
             )
@@ -493,8 +509,8 @@ def main() -> None:
     fieldnames = [
         "host",
         "model",
-        "prompt_tokens_per_second",
         "tokens_per_second",
+        "prompt_tokens_per_second",
         "warmup_elapsed_s",
         "elapsed_s",
         "prompt_tokens",
