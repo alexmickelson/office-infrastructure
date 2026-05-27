@@ -318,11 +318,21 @@ def main() -> None:
     )
     parser.add_argument(
         "--output",
-        default=f"benchmark_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-        help="Output CSV file (default: benchmark_<timestamp>.csv)",
+        default=None,
+        help="Output CSV file (default: benchmark_<host>_<timestamp>.csv)",
     )
     args = parser.parse_args()
     base_url = args.url.rstrip("/")
+
+    if args.output is None:
+        import urllib.parse
+
+        _parsed = urllib.parse.urlparse(base_url)
+        _host = _parsed.hostname or "server"
+        _port = f"_{_parsed.port}" if _parsed.port else ""
+        args.output = (
+            f"benchmark_{_host}{_port}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        )
 
     # Discover models before starting the TUI
     try:
