@@ -3,7 +3,7 @@ services:
     image: ghcr.io/open-webui/open-webui:latest
     container_name: openwebui
     ports:
-      - "8080:8080"
+      - 100.112.73.80:8080:8080
     environment:
       - WEBUI_PORT=8080
       - DATABASE_URL=postgresql://openwebui:9hb02121-9br@openwebui-db:5432/openwebui_db
@@ -44,7 +44,7 @@ services:
       - /data/huggingface-cache:/root/.cache/huggingface/huggingface
       - ./config.ini:/models/config.ini:ro
     ports:
-      - "8081:8081"
+      - 100.112.73.80:8081:8081
     restart: unless-stopped
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128
@@ -53,7 +53,7 @@ services:
     image: ghcr.io/bodaay/huggingfacemodeldownloader:latest
     container_name: hfdownloader
     ports:
-      - "8888:8080"
+      - 100.112.73.80:8888:8080
     volumes:
       - /data/huggingface-cache:/home/hfdownloader/.cache/huggingface
     # environment:
@@ -81,7 +81,7 @@ services:
         "--convert",
       ]
     ports:
-      - 8082:8080
+      - 100.112.73.80:8082:8080
     command: []
     volumes:
       - /data/models:/models
@@ -93,7 +93,7 @@ services:
     image: nginx:alpine
     container_name: whisper-proxy
     ports:
-      - "8443:443"
+      - 100.112.73.80:8443:443
     volumes:
       - ./nginx/whisper-nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./nginx/html:/usr/share/nginx/html:ro
