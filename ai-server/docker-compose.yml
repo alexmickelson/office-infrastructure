@@ -109,6 +109,7 @@ services:
       - "8083"
 
     restart: unless-stopped
+    
   whisper:
     image: ghcr.io/ggml-org/whisper.cpp:main-cuda
     container_name: whisper
