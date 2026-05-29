@@ -43,7 +43,9 @@ patches:
         namespace: pantheon
       spec:
         parentRefs:
-          - name: main-gateway
+          - group: gateway.networking.k8s.io	
+            kind: Gateway	
+            name: main-gateway
             namespace: istio-system
         hostnames:
           - "alexpantheon.snowse.io"
