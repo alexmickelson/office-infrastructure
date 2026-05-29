@@ -3,8 +3,6 @@ kind: Application
 metadata:
   name: ai-pantheon
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
 
