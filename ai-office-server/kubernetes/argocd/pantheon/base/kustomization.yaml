@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - https://github.com/alexmickelson/ai_pantheon//kube/base.yaml?ref=main
+  - https://github.com/alexmickelson/ai_pantheon//kube/postgres.yaml?ref=main
+  - https://github.com/alexmickelson/ai_pantheon//kube/app.yaml?ref=main

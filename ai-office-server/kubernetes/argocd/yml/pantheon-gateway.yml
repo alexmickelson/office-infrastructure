@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ai-pantheon
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/alexmickelson/office-ansible.git
+    targetRevision: main
+    path: ai-office-server/kubernetes/argocd/pantheon/overlays/production
+
+    kustomize:
+      commonAnnotations:
+        argocd.argoproj.io/managed-by: argocd
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: pantheon
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
