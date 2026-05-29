@@ -7,7 +7,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/alexmickelson/office-ansible.git
+    repoURL: https://github.com/alexmickelson/office-infrastructure.git
     targetRevision: main
     path: ai-office-server/kubernetes/argocd/pantheon/overlays/production
 
