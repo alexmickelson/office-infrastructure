@@ -39,11 +39,7 @@ kubectl create secret generic postgres-credentials \
 # ──────────────────────────────────────────────────────────────────────────────
 # app-secret  (SECRET_KEY_BASE, OIDC_ISSUER, OIDC_CLIENT_ID)
 # ──────────────────────────────────────────────────────────────────────────────
-if command -v mix &>/dev/null; then
-    DEFAULT_SECRET_KEY_BASE=$(mix phx.gen.secret)
-else
-    DEFAULT_SECRET_KEY_BASE=$(openssl rand -hex 32)
-fi
+DEFAULT_SECRET_KEY_BASE=$(openssl rand -hex 32)
 
 read -r -p "SECRET_KEY_BASE [${DEFAULT_SECRET_KEY_BASE}]: " val
 SECRET_KEY_BASE="${val:-$DEFAULT_SECRET_KEY_BASE}"

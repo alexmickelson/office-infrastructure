@@ -5,11 +5,6 @@ kind: Kustomization
 resources:
   - ../../base
 
-images:
-  - name: ghcr.io/alexmickelson/pantheon-gateway
-    newName: ghcr.io/alexmickelson/ai-pantheon
-    newTag: "2"
-
 configMapGenerator:
   - name: app-config
     namespace: pantheon
@@ -20,6 +15,25 @@ configMapGenerator:
       - PORT=4000
 
 patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: pantheon
+        namespace: pantheon
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: pantheon
+        template:
+          metadata:
+            labels:
+              app: pantheon
+          spec:
+            containers:
+              - name: pantheon
+                image: ghcr.io/alexmickelson/pantheon-gateway:2
   - patch: |-
       apiVersion: gateway.networking.k8s.io/v1
       kind: HTTPRoute
