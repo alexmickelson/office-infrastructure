@@ -11,7 +11,7 @@ configMapGenerator:
     behavior: merge
     literals:
       - PHX_HOST=alexpantheon.snowse.io
-      - OIDC_REDIRECT_URI=https://alexpantheon.snowse.io
+      - OIDC_REDIRECT_URI=https://alexpantheon.snowse.io/auth/callback
       - POOL_SIZE=10
       - PORT=4000
 
