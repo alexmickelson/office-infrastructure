@@ -2,6 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
+  - ./externalsecret.yml
   - https://raw.githubusercontent.com/SnowSE/discordAdminBot/main/kube/deployment.yaml
   - https://raw.githubusercontent.com/SnowSE/discordAdminBot/main/kube/service.yaml
   - https://raw.githubusercontent.com/SnowSE/discordAdminBot/main/kube/pvc.yaml
