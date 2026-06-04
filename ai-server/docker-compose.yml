@@ -78,7 +78,7 @@ services:
       - /config/config.ini
       - --metrics
       - --parallel
-      - "4"
+      - "2"
     volumes:
       - /data/llamaswap/models:/models
       - /data/huggingface-cache:/root/.cache/huggingface/huggingface
