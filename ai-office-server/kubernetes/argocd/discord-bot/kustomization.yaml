@@ -1,0 +1,46 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - https://raw.githubusercontent.com/SnowSE/discordAdminBot/main/kube/0-namespace.yaml
+  - https://raw.githubusercontent.com/SnowSE/discordAdminBot/main/kube/deployment.yaml
+  - https://raw.githubusercontent.com/SnowSE/discordAdminBot/main/kube/service.yaml
+  - https://raw.githubusercontent.com/SnowSE/discordAdminBot/main/kube/pvc.yaml
+  - https://raw.githubusercontent.com/SnowSE/discordAdminBot/main/kube/httproute.yaml
+
+namespace: discord-bot
+
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: discordadminbot
+        namespace: discord-bot
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: discordadminbot
+        template:
+          metadata:
+            labels:
+              app: discordadminbot
+          spec:
+            containers:
+              - name: discordadminbot
+                image: ghcr.io/snowse/discordadminbot:2
+  - patch: |-
+      apiVersion: gateway.networking.k8s.io/v1
+      kind: HTTPRoute
+      metadata:
+        name: discordadminbot
+        namespace: discord-bot
+      spec:
+        parentRefs:
+          - group: gateway.networking.k8s.io
+            kind: Gateway
+            name: main-gateway
+            namespace: istio-system
+        hostnames:
+          - "discordadmin.snowse.io"

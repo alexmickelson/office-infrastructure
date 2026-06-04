@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: ai-pantheon
+  name: discord-bot
   namespace: argocd
 spec:
   project: default
@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/alexmickelson/office-infrastructure.git
     targetRevision: main
-    path: ai-office-server/kubernetes/argocd/pantheon
+    path: ai-office-server/kubernetes/argocd/discord-bot
 
     kustomize:
       commonAnnotations:
@@ -17,7 +17,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: pantheon
+    namespace: discord-bot
 
   syncPolicy:
     automated:

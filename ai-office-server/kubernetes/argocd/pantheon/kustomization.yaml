@@ -2,7 +2,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - ../../base
+  - https://raw.githubusercontent.com/alexmickelson/ai_pantheon/main/kube/base.yaml
+  - https://raw.githubusercontent.com/alexmickelson/ai_pantheon/main/kube/postgres.yaml
+  - https://raw.githubusercontent.com/alexmickelson/ai_pantheon/main/kube/app.yaml
 
 configMapGenerator:
   - name: app-config
