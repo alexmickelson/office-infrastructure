@@ -35,3 +35,9 @@ patchesJson6902:
         path: /spec/hostnames
         value:
           - "discordadmin.snowse.io"
+      - op: add
+        path: /spec/rules/0/backendRefs/0/group
+        value: ""
+      - op: add
+        path: /spec/rules/0/backendRefs/0/kind
+        value: Service
