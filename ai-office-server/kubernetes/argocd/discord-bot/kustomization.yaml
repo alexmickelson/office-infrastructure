@@ -13,39 +13,25 @@ patches:
   - target:
       kind: Deployment
       name: discordadminbot
-    patch: |-
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        name: discordadminbot
-        namespace: discord-bot
-      spec:
-        replicas: 1
-        selector:
-          matchLabels:
-            app: discordadminbot
-        template:
-          metadata:
-            labels:
-              app: discordadminbot
-          spec:
-            containers:
-              - name: discordadminbot
-                image: ghcr.io/snowse/discordadminbot:2
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 1
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: ghcr.io/snowse/discordadminbot:2
   - target:
       kind: HTTPRoute
       name: discordadminbot
-    patch: |-
-      apiVersion: gateway.networking.k8s.io/v1
-      kind: HTTPRoute
-      metadata:
-        name: discordadminbot
-        namespace: discord-bot
-      spec:
-        parentRefs:
-          - group: gateway.networking.k8s.io
-            kind: Gateway
-            name: main-gateway
-            namespace: istio-system
-        hostnames:
+    patch: |
+      - op: replace
+        path: /spec/parentRefs/0
+        value:
+          group: gateway.networking.k8s.io
+          kind: Gateway
+          name: main-gateway
+          namespace: istio-system
+      - op: replace
+        path: /spec/hostnames
+        value:
           - "discordadmin.snowse.io"
