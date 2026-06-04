@@ -41,3 +41,6 @@ patchesJson6902:
       - op: add
         path: /spec/rules/0/backendRefs/0/kind
         value: Service
+      - op: add
+        path: /spec/rules/0/backendRefs/0/weight
+        value: 1
