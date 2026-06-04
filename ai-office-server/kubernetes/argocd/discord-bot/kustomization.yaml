@@ -16,7 +16,6 @@ patches:
       kind: Deployment
       metadata:
         name: discordadminbot
-        namespace: discord-bot
       spec:
         replicas: 1
         selector:
@@ -35,7 +34,6 @@ patches:
       kind: HTTPRoute
       metadata:
         name: discordadminbot
-        namespace: discord-bot
       spec:
         parentRefs:
           - group: gateway.networking.k8s.io
