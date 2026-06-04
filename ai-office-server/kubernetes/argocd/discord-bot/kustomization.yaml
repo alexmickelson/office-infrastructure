@@ -9,7 +9,7 @@ resources:
 
 namespace: discord-bot
 
-patches:
+patchesJson6902:
   - target:
       kind: Deployment
       name: discordadminbot
