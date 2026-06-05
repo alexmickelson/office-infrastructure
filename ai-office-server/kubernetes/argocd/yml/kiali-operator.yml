@@ -1,3 +1,13 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kiali-operator
+  annotations:
+    repo: "https://github.com/alexmickelson/office-infrastructure"
+    path: "ai-office-server/kubernetes/argocd/yml/kiali-operator.yml"
+  labels:
+    istio-injection: enabled
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
