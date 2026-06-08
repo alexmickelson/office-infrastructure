@@ -20,7 +20,7 @@ patchesJson6902:
         value: 1
       - op: replace
         path: /spec/template/spec/containers/0/image
-        value: ghcr.io/snowse/discordadminbot:9
+        value: ghcr.io/snowse/discordadminbot:10
   - target:
       kind: HTTPRoute
       name: discordadminbot
