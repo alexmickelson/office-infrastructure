@@ -14,44 +14,47 @@ jobs:
   static-validation:
     name: Static YAML Validation
     runs-on: ubuntu-latest
-    container:
-      image: nixery.dev/shell/yamllint/kubeconform/kube-linter
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Lint YAML files
         run: |
-          yamllint -f parsable ai-office-server/ || true
+          docker run --rm -v $PWD:/workspace -w /workspace \
+            nixery.dev/shell/yamllint \
+            yamllint -f parsable ai-office-server/ || true
           echo "✅ YAML linting complete"
 
       - name: Validate Kubernetes manifests
         run: |
           echo "🔍 Validating Kubernetes resources..."
 
-          # Validate all YAML files in kubernetes directory
-          find ai-office-server/kubernetes -name '*.yml' -o -name '*.yaml' | while read file; do
-            echo "Checking: $file"
-            kubeconform -summary -output text \
-              -skip CustomResourceDefinition,Application,Gateway,HTTPRoute \
-              "$file" || true
-          done
+          docker run --rm -v $PWD:/workspace -w /workspace \
+            nixery.dev/shell/kubeconform \
+            sh -c '
+              find ai-office-server/kubernetes -name "*.yml" -o -name "*.yaml" | while read file; do
+                echo "Checking: $file"
+                kubeconform -summary -output text \
+                  -skip CustomResourceDefinition,Application,Gateway,HTTPRoute \
+                  "$file" || true
+              done
+            '
 
           echo "✅ Kubernetes validation complete"
 
       - name: Run kube-linter
         run: |
           echo "🔍 Running kube-linter security checks..."
-          kube-linter lint ai-office-server/kubernetes/ \
-            --config .github/kube-linter-config.yaml \
-            || true
+          docker run --rm -v $PWD:/workspace -w /workspace \
+            nixery.dev/shell/kube-linter \
+            kube-linter lint ai-office-server/kubernetes/ \
+              --config .github/kube-linter-config.yaml \
+              || true
           echo "✅ Security linting complete"
 
   helm-validation:
     name: Helm Template Rendering
     runs-on: ubuntu-latest
-    container:
-      image: nixery.dev/shell/kubernetes-helm/yq-go
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -60,64 +63,66 @@ jobs:
         run: |
           echo "🔍 Validating Helm charts in ArgoCD Applications..."
 
-          for file in ai-office-server/kubernetes/argocd/yml/*.yml; do
-            # Extract Helm chart info
-            REPO_URL=$(yq eval '.spec.source.repoURL // ""' "$file")
-            CHART=$(yq eval '.spec.source.chart // ""' "$file")
-            VERSION=$(yq eval '.spec.source.targetRevision // ""' "$file")
-            
-            # Skip if not a Helm chart
-            if [ -z "$CHART" ] || [ "$CHART" = "null" ]; then
-              continue
-            fi
-            
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "📦 Chart: $CHART"
-            echo "🏷️  Version: $VERSION"
-            echo "📍 Repo: $REPO_URL"
-            
-            # Add Helm repo
-            REPO_NAME=$(echo "$REPO_URL" | md5sum | cut -d' ' -f1)
-            helm repo add "$REPO_NAME" "$REPO_URL" 2>/dev/null || true
-            helm repo update "$REPO_NAME" 2>/dev/null || true
-            
-            # Check if version exists
-            if helm search repo "$REPO_NAME/$CHART" --version "$VERSION" | grep -q "$VERSION"; then
-              echo "✅ Version $VERSION exists"
+          docker run --rm -v $PWD:/workspace -w /workspace \
+            nixery.dev/shell/kubernetes-helm/yq-go \
+            sh -c '
+              for file in ai-office-server/kubernetes/argocd/yml/*.yml; do
+                # Extract Helm chart info
+                REPO_URL=$(yq eval ".spec.source.repoURL // \"\"" "$file")
+                CHART=$(yq eval ".spec.source.chart // \"\"" "$file")
+                VERSION=$(yq eval ".spec.source.targetRevision // \"\"" "$file")
+                
+                # Skip if not a Helm chart
+                if [ -z "$CHART" ] || [ "$CHART" = "null" ]; then
+                  continue
+                fi
+                
+                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                echo "📦 Chart: $CHART"
+                echo "🏷️  Version: $VERSION"
+                echo "📍 Repo: $REPO_URL"
+                
+                # Add Helm repo
+                REPO_NAME=$(echo "$REPO_URL" | md5sum | cut -d" " -f1)
+                helm repo add "$REPO_NAME" "$REPO_URL" 2>/dev/null || true
+                helm repo update "$REPO_NAME" 2>/dev/null || true
+                
+                # Check if version exists
+                if helm search repo "$REPO_NAME/$CHART" --version "$VERSION" | grep -q "$VERSION"; then
+                  echo "✅ Version $VERSION exists"
+                  
+                  # Try to render template
+                  VALUES=$(yq eval ".spec.source.helm.values // \"\"" "$file")
+                  
+                  if [ -n "$VALUES" ] && [ "$VALUES" != "null" ]; then
+                    echo "$VALUES" > /tmp/values.yaml
+                    helm template test "$REPO_NAME/$CHART" \
+                      --version "$VERSION" \
+                      --values /tmp/values.yaml \
+                      --dry-run > /dev/null 2>&1 && \
+                      echo "✅ Template renders successfully" || \
+                      echo "⚠️  Template rendering failed"
+                  else
+                    helm template test "$REPO_NAME/$CHART" \
+                      --version "$VERSION" \
+                      --dry-run > /dev/null 2>&1 && \
+                      echo "✅ Template renders successfully" || \
+                      echo "⚠️  Template rendering failed"
+                  fi
+                else
+                  echo "❌ Version $VERSION not found in repository"
+                  exit 1
+                fi
+                
+                echo ""
+              done
               
-              # Try to render template
-              VALUES=$(yq eval '.spec.source.helm.values // ""' "$file")
-              
-              if [ -n "$VALUES" ] && [ "$VALUES" != "null" ]; then
-                echo "$VALUES" > /tmp/values.yaml
-                helm template test "$REPO_NAME/$CHART" \
-                  --version "$VERSION" \
-                  --values /tmp/values.yaml \
-                  --dry-run > /dev/null 2>&1 && \
-                  echo "✅ Template renders successfully" || \
-                  echo "⚠️  Template rendering failed"
-              else
-                helm template test "$REPO_NAME/$CHART" \
-                  --version "$VERSION" \
-                  --dry-run > /dev/null 2>&1 && \
-                  echo "✅ Template renders successfully" || \
-                  echo "⚠️  Template rendering failed"
-              fi
-            else
-              echo "❌ Version $VERSION not found in repository"
-              exit 1
-            fi
-            
-            echo ""
-          done
-
-          echo "✅ Helm validation complete"
+              echo "✅ Helm validation complete"
+            '
 
   docker-security-scan:
     name: Docker Image Security Scanning
     runs-on: ubuntu-latest
-    container:
-      image: nixery.dev/shell/trivy/yq-go/jq
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -126,87 +131,92 @@ jobs:
         run: |
           echo "🔍 Scanning Docker images for vulnerabilities..."
 
-          IMAGES_FILE="/tmp/images.txt"
-          > "$IMAGES_FILE"
+          docker run --rm -v $PWD:/workspace -w /workspace \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            nixery.dev/shell/trivy/yq-go/jq \
+            sh -c '
+              IMAGES_FILE="/tmp/images.txt"
+              > "$IMAGES_FILE"
 
-          # Extract images from docker-compose.yml
-          if [ -f "ai-office-server/docker-compose.yml" ]; then
-            yq eval '.services.*.image' ai-office-server/docker-compose.yml | \
-              grep -v "null" >> "$IMAGES_FILE" || true
-          fi
-
-          # Extract images from Kubernetes manifests
-          find ai-office-server/kubernetes -name '*.yml' -o -name '*.yaml' | while read file; do
-            yq eval '.. | select(has("image")) | .image' "$file" 2>/dev/null | \
-              grep -v "null" >> "$IMAGES_FILE" || true
-          done
-
-          # Extract images from kustomization patches
-          find ai-office-server -name 'kustomization.yaml' | while read file; do
-            yq eval '.patchesJson6902.[].patch' "$file" 2>/dev/null | \
-              grep -oP 'ghcr\.io/[^"]+:[^"]+|[a-z0-9]+/[a-z0-9-]+:[0-9]+' >> "$IMAGES_FILE" || true
-          done
-
-          # Deduplicate and filter
-          sort -u "$IMAGES_FILE" | grep -E ':' > /tmp/unique_images.txt || true
-
-          if [ ! -s /tmp/unique_images.txt ]; then
-            echo "⚠️  No Docker images found to scan"
-            exit 0
-          fi
-
-          echo "Found $(wc -l < /tmp/unique_images.txt) unique images to scan"
-          echo ""
-
-          CRITICAL_FOUND=0
-          HIGH_FOUND=0
-
-          while IFS= read -r image; do
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "🔍 Scanning: $image"
-            echo ""
-            
-            # Run trivy scan
-            trivy image \
-              --severity CRITICAL,HIGH \
-              --exit-code 0 \
-              --no-progress \
-              --format table \
-              "$image" || true
-            
-            # Check for critical/high vulnerabilities
-            VULN_COUNT=$(trivy image --severity CRITICAL,HIGH --format json "$image" 2>/dev/null | \
-              jq '[.Results[]?.Vulnerabilities[]? | select(.Severity == "CRITICAL" or .Severity == "HIGH")] | length' || echo "0")
-            
-            if [ "$VULN_COUNT" -gt 0 ]; then
-              echo "⚠️  Found $VULN_COUNT CRITICAL/HIGH vulnerabilities"
-              if trivy image --severity CRITICAL --format json "$image" 2>/dev/null | jq -e '.Results[]?.Vulnerabilities[]? | select(.Severity == "CRITICAL")' > /dev/null; then
-                CRITICAL_FOUND=1
-              else
-                HIGH_FOUND=1
+              # Extract images from docker-compose.yml
+              if [ -f "ai-office-server/docker-compose.yml" ]; then
+                yq eval ".services.*.image" ai-office-server/docker-compose.yml | \
+                  grep -v "null" >> "$IMAGES_FILE" || true
               fi
-            else
-              echo "✅ No CRITICAL/HIGH vulnerabilities found"
-            fi
-            
-            echo ""
-          done < /tmp/unique_images.txt
 
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "📊 Security Scan Summary"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+              # Extract images from Kubernetes manifests
+              find ai-office-server/kubernetes -name "*.yml" -o -name "*.yaml" | while read file; do
+                yq eval ".. | select(has(\"image\")) | .image" "$file" 2>/dev/null | \
+                  grep -v "null" >> "$IMAGES_FILE" || true
+              done
 
-          if [ "$CRITICAL_FOUND" -eq 1 ]; then
-            echo "❌ CRITICAL vulnerabilities found - Review required"
-            echo "::warning::Critical vulnerabilities detected in Docker images"
-            # Uncomment to fail on critical vulns:
-            # exit 1
-          elif [ "$HIGH_FOUND" -eq 1 ]; then
-            echo "⚠️  HIGH vulnerabilities found - Review recommended"
-            echo "::warning::High severity vulnerabilities detected in Docker images"
-          else
-            echo "✅ No critical or high severity vulnerabilities found"
-          fi
+              # Extract images from kustomization patches
+              find ai-office-server -name "kustomization.yaml" | while read file; do
+                yq eval ".patchesJson6902.[].patch" "$file" 2>/dev/null | \
+                  grep -oP "ghcr\\.io/[^\"]+:[^\"]+|[a-z0-9]+/[a-z0-9-]+:[0-9]+" >> "$IMAGES_FILE" || true
+              done
+
+              # Deduplicate and filter
+              sort -u "$IMAGES_FILE" | grep -E ":" > /tmp/unique_images.txt || true
+
+              if [ ! -s /tmp/unique_images.txt ]; then
+                echo "⚠️  No Docker images found to scan"
+                exit 0
+              fi
+
+              echo "Found $(wc -l < /tmp/unique_images.txt) unique images to scan"
+              echo ""
+
+              CRITICAL_FOUND=0
+              HIGH_FOUND=0
+
+              while IFS= read -r image; do
+                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                echo "🔍 Scanning: $image"
+                echo ""
+                
+                # Run trivy scan
+                trivy image \
+                  --severity CRITICAL,HIGH \
+                  --exit-code 0 \
+                  --no-progress \
+                  --format table \
+                  "$image" || true
+                
+                # Check for critical/high vulnerabilities
+                VULN_COUNT=$(trivy image --severity CRITICAL,HIGH --format json "$image" 2>/dev/null | \
+                  jq "[.Results[]?.Vulnerabilities[]? | select(.Severity == \"CRITICAL\" or .Severity == \"HIGH\")] | length" || echo "0")
+                
+                if [ "$VULN_COUNT" -gt 0 ]; then
+                  echo "⚠️  Found $VULN_COUNT CRITICAL/HIGH vulnerabilities"
+                  if trivy image --severity CRITICAL --format json "$image" 2>/dev/null | jq -e ".Results[]?.Vulnerabilities[]? | select(.Severity == \"CRITICAL\")" > /dev/null; then
+                    CRITICAL_FOUND=1
+                  else
+                    HIGH_FOUND=1
+                  fi
+                else
+                  echo "✅ No CRITICAL/HIGH vulnerabilities found"
+                fi
+                
+                echo ""
+              done < /tmp/unique_images.txt
+
+              echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+              echo "📊 Security Scan Summary"
+              echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+              if [ "$CRITICAL_FOUND" -eq 1 ]; then
+                echo "❌ CRITICAL vulnerabilities found - Review required"
+                echo "::warning::Critical vulnerabilities detected in Docker images"
+                # Uncomment to fail on critical vulns:
+                # exit 1
+              elif [ "$HIGH_FOUND" -eq 1 ]; then
+                echo "⚠️  HIGH vulnerabilities found - Review recommended"
+                echo "::warning::High severity vulnerabilities detected in Docker images"
+              else
+                echo "✅ No critical or high severity vulnerabilities found"
+              fi
+            '
 
   summary:
     name: Validation Summary
