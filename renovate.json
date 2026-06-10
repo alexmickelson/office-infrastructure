@@ -1,0 +1,124 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":dependencyDashboard"],
+  "timezone": "America/Denver",
+  "schedule": [
+    "after 10pm every weekday",
+    "before 5am every weekday",
+    "every weekend"
+  ],
+  "labels": ["dependencies"],
+  "commitMessagePrefix": "⬆️",
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "ai-server/**",
+    "ansible/**",
+    "authentication/**",
+    "azure/**",
+    "data/**",
+    "kubernetes/**",
+    "monitoring/**",
+    "tailscale/**"
+  ],
+  "includePaths": ["ai-office-server/**"],
+  "docker-compose": {
+    "enabled": true,
+    "fileMatch": ["ai-office-server/docker-compose\\.yml$"]
+  },
+  "kubernetes": {
+    "enabled": true,
+    "fileMatch": ["ai-office-server/.*\\.ya?ml$"]
+  },
+  "regexManagers": [
+    {
+      "description": "Update Helm chart versions in ArgoCD Applications",
+      "fileMatch": ["ai-office-server/kubernetes/argocd/.*\\.ya?ml$"],
+      "matchStrings": [
+        "chart:\\s+(?<depName>[^\\s]+)\\s+targetRevision:\\s+[\"']?(?<currentValue>[^\"'\\s]+)[\"']?"
+      ],
+      "datasourceTemplate": "helm"
+    },
+    {
+      "description": "Update container images in Kustomization patches",
+      "fileMatch": ["ai-office-server/.*kustomization\\.ya?ml$"],
+      "matchStrings": ["image:\\s+(?<depName>[^:]+):(?<currentValue>[^\\s]+)"],
+      "datasourceTemplate": "docker"
+    },
+    {
+      "description": "Update container images in regular Kubernetes deployments",
+      "fileMatch": ["ai-office-server/kubernetes/.*\\.ya?ml$"],
+      "matchStrings": ["image:\\s+(?<depName>[^:]+):(?<currentValue>[^\\s]+)"],
+      "datasourceTemplate": "docker"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Group all Istio updates together",
+      "groupName": "Istio",
+      "matchDatasources": ["helm"],
+      "matchPackagePatterns": ["istio", "^base$", "^istiod$", "^cni$"]
+    },
+    {
+      "description": "Group ArgoCD related updates",
+      "groupName": "ArgoCD",
+      "matchDatasources": ["helm"],
+      "matchPackagePatterns": ["argo.*cd"]
+    },
+    {
+      "description": "Group monitoring stack updates",
+      "groupName": "Monitoring Stack",
+      "matchDatasources": ["helm"],
+      "matchPackagePatterns": ["prometheus", "grafana", "kiali", "jaeger"]
+    },
+    {
+      "description": "Group all llama.cpp images together",
+      "groupName": "llama.cpp",
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": ["llama\\.cpp"]
+    },
+    {
+      "description": "Auto-merge minor and patch updates for stable packages",
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": [
+        "^postgres$",
+        "^nginx$",
+        "^cloudflare/cloudflared$"
+      ],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "description": "Separate PRs for major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "Pin digest for production images",
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": [
+        "ghcr\\.io/open-webui/open-webui",
+        "ghcr\\.io/alexmickelson/",
+        "alexmickelson/"
+      ],
+      "pinDigests": true
+    },
+    {
+      "description": "Disable updates for custom development images with low version numbers",
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": [
+        "alexmickelson/hermes-agent",
+        "ghcr\\.io/snowse/discordadminbot"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Require manual approval for Helm chart major updates",
+      "matchDatasources": ["helm"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    }
+  ]
+}
