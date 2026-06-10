@@ -1,0 +1,27 @@
+---
+# yamllint configuration for ai-office-server
+extends: default
+
+rules:
+  line-length:
+    max: 120
+    level: warning
+
+  indentation:
+    spaces: 2
+    indent-sequences: true
+
+  comments:
+    min-spaces-from-content: 1
+
+  document-start:
+    present: false # ArgoCD manifests often don't start with ---
+
+  truthy:
+    allowed-values: ["true", "false", "yes", "no"]
+    check-keys: false # Allow on/off in keys
+
+ignore: |
+  **/node_modules/
+  **/.terraform/
+  **/backups/

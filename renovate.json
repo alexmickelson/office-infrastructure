@@ -2,11 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended", ":dependencyDashboard"],
   "timezone": "America/Denver",
-  "schedule": [
-    "after 10pm every weekday",
-    "before 5am every weekday",
-    "every weekend"
-  ],
   "labels": ["dependencies"],
   "commitMessagePrefix": "⬆️",
   "prConcurrentLimit": 5,
@@ -56,28 +51,15 @@
   ],
   "packageRules": [
     {
-      "description": "Group all Istio updates together",
-      "groupName": "Istio",
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["istio", "^base$", "^istiod$", "^cni$"]
-    },
-    {
-      "description": "Group ArgoCD related updates",
-      "groupName": "ArgoCD",
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["argo.*cd"]
-    },
-    {
-      "description": "Group monitoring stack updates",
-      "groupName": "Monitoring Stack",
-      "matchDatasources": ["helm"],
-      "matchPackagePatterns": ["prometheus", "grafana", "kiali", "jaeger"]
-    },
-    {
-      "description": "Group all llama.cpp images together",
-      "groupName": "llama.cpp",
+      "description": "Group all Docker images together",
+      "groupName": "Docker Images",
       "matchDatasources": ["docker"],
-      "matchPackagePatterns": ["llama\\.cpp"]
+      "excludePackagePatterns": ["^postgres$", "^nginx$"]
+    },
+    {
+      "description": "Group all Helm charts together",
+      "groupName": "Helm Charts",
+      "matchDatasources": ["helm"]
     },
     {
       "description": "Auto-merge minor and patch updates for stable packages",
@@ -105,15 +87,7 @@
       ],
       "pinDigests": true
     },
-    {
-      "description": "Disable updates for custom development images with low version numbers",
-      "matchDatasources": ["docker"],
-      "matchPackagePatterns": [
-        "alexmickelson/hermes-agent",
-        "ghcr\\.io/snowse/discordadminbot"
-      ],
-      "enabled": false
-    },
+
     {
       "description": "Require manual approval for Helm chart major updates",
       "matchDatasources": ["helm"],
