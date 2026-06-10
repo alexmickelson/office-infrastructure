@@ -27,28 +27,10 @@
     "enabled": true,
     "fileMatch": ["ai-office-server/.*\\.ya?ml$"]
   },
-  "regexManagers": [
-    {
-      "description": "Update Helm chart versions in ArgoCD Applications",
-      "fileMatch": ["ai-office-server/kubernetes/argocd/.*\\.ya?ml$"],
-      "matchStrings": [
-        "chart:\\s+(?<depName>[^\\s]+)\\s+targetRevision:\\s+[\"']?(?<currentValue>[^\"'\\s]+)[\"']?"
-      ],
-      "datasourceTemplate": "helm"
-    },
-    {
-      "description": "Update container images in Kustomization patches",
-      "fileMatch": ["ai-office-server/.*kustomization\\.ya?ml$"],
-      "matchStrings": ["image:\\s+(?<depName>[^:]+):(?<currentValue>[^\\s]+)"],
-      "datasourceTemplate": "docker"
-    },
-    {
-      "description": "Update container images in regular Kubernetes deployments",
-      "fileMatch": ["ai-office-server/kubernetes/.*\\.ya?ml$"],
-      "matchStrings": ["image:\\s+(?<depName>[^:]+):(?<currentValue>[^\\s]+)"],
-      "datasourceTemplate": "docker"
-    }
-  ],
+  "argocd": {
+    "enabled": true,
+    "fileMatch": ["ai-office-server/kubernetes/argocd/.*\\.ya?ml$"]
+  },
   "packageRules": [
     {
       "description": "Group all Docker images together",
