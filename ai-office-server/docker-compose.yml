@@ -16,7 +16,7 @@ services:
         condition: service_started
 
   openwebui-db:
-    image: postgres:17
+    image: postgres:18
     container_name: openwebui-db
     environment:
       POSTGRES_USER: openwebui
