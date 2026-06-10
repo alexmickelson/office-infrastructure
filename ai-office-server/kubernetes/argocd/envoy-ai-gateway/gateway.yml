@@ -17,7 +17,7 @@ spec:
   source:
     repoURL: registry-1.docker.io/envoyproxy
     chart: gateway-helm
-    targetRevision: v1.8.0
+    targetRevision: 1.8.1
     helm:
       releaseName: eg
   destination:
@@ -42,7 +42,7 @@ spec:
   source:
     repoURL: registry-1.docker.io/envoyproxy
     chart: ai-gateway-crds-helm
-    targetRevision: v0.6.0
+    targetRevision: 0.7.0
     helm:
       releaseName: aieg-crd
   destination:
@@ -67,7 +67,7 @@ spec:
   source:
     repoURL: registry-1.docker.io/envoyproxy
     chart: ai-gateway-helm
-    targetRevision: v0.6.0
+    targetRevision: 0.7.0
     helm:
       releaseName: aieg
   destination:
