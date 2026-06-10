@@ -41,6 +41,8 @@ spec:
     repoURL: https://github.com/alexmickelson/office-infrastructure
     targetRevision: HEAD
     path: ai-office-server/kubernetes/argocd/yml
+    directory:
+      exclude: argocd-self.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
