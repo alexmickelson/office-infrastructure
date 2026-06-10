@@ -41,8 +41,6 @@ spec:
     repoURL: https://github.com/alexmickelson/office-infrastructure
     targetRevision: HEAD
     path: ai-office-server/kubernetes/argocd/yml
-    directory:
-      exclude: argocd-self.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
@@ -59,5 +57,7 @@ metadata:
   labels:
     app.kubernetes.io/name: argocd-cmd-params-cm
     app.kubernetes.io/part-of: argocd
+  annotations:
+    argocd.argoproj.io/tracking-id: argocd:ConfigMap:argocd/argocd-cmd-params-cm
 data:
   server.insecure: "true"
