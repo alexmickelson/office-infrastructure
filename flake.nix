@@ -1,9 +1,8 @@
-
-# nix run .#yaml-validation
 # nix run .#kubernetes-validation
 # nix run .#kube-security-validation
 # nix run .#helm-validation
 # nix run .#docker-security-scan
+
 {
   description = "Renovate validation tooling";
 
@@ -30,7 +29,6 @@
             gawk
             jq
             yq-go
-            yamllint
             kubeconform
             kube-linter
             kubernetes-helm
@@ -38,34 +36,24 @@
           ];
         in
         {
-          yaml-validation =
-            pkgs.writeShellApplication {
-              name = "yaml-validation";
-              runtimeInputs = commonInputs;
-
-              text = ''
-                yamllint -f parsable ai-office-server/ || true
-                echo "YAML linting complete"
-              '';
-            };
-
           kubernetes-validation =
             pkgs.writeShellApplication {
               name = "kubernetes-validation";
               runtimeInputs = commonInputs;
 
               text = ''
-                find ai-office-server/kubernetes \
-                  \( -name "*.yml" -o -name "*.yaml" \) \
-                  | while read -r file; do
+                KUBE_FILES=$(find ai-office-server/kubernetes \
+                  -name "*.yml" -o -name "*.yaml" | grep -v docker-compose)
+
+                for file in $KUBE_FILES; do
 
                   echo "Checking: $file"
 
                   kubeconform \
                     -summary \
                     -output text \
-                    -skip CustomResourceDefinition,Application,Gateway,HTTPRoute \
-                    "$file" || true
+                    -skip CustomResourceDefinition,Application,Gateway,HTTPRoute,PeerAuthentication,ReferenceGrant,AuthorizationPolicy,ServiceMonitor,Kustomization,ClusterSecretStore,SecretStore,ExternalSecret,ProxyClass,SealedSecret \
+                    "$file"
                 done
               '';
             };
@@ -78,36 +66,72 @@
               text = ''
                 kube-linter lint \
                   ai-office-server/kubernetes \
-                  --config .github/kube-linter-config.yaml \
-                  || true
+                  --config .github/kube-linter-config.yaml
               '';
             };
 
-          helm-validation =
+         helm-validation =
             pkgs.writeShellApplication {
               name = "helm-validation";
               runtimeInputs = commonInputs;
 
               text = ''
+                VALUES_FILE=$(mktemp)
+                trap 'rm -f "$VALUES_FILE"' EXIT
+
                 for file in ai-office-server/kubernetes/argocd/yml/*.yml; do
-                  REPO_URL=$(yq eval '.spec.source.repoURL // ""' "$file")
-                  CHART=$(yq eval '.spec.source.chart // ""' "$file")
-                  VERSION=$(yq eval '.spec.source.targetRevision // ""' "$file")
+                  REPO_URL=$(yq eval '.spec.source.repoURL // ""' "$file" | grep -v '^---$' | sed '/^$/d' | tail -1)
+                  CHART=$(yq eval '.spec.source.chart // ""' "$file" | grep -v '^---$' | sed '/^$/d' | tail -1)
+                  VERSION=$(yq eval '.spec.source.targetRevision // ""' "$file" | grep -v '^---$' | sed '/^$/d' | tail -1)
 
                   [ -z "$CHART" ] && continue
                   [ "$CHART" = "null" ] && continue
+
+                  if [ "$VERSION" = "*" ]; then
+                    echo "ERROR: $file uses wildcard version '*' — pin to a specific version"
+                    exit 1
+                  fi
+
+                  echo ""
+                  echo ""
+                  echo ""
+                  echo "$CHART - $VERSION - $REPO_URL"
 
                   REPO_NAME=$(echo "$REPO_URL" | md5sum | cut -d' ' -f1)
 
                   helm repo add "$REPO_NAME" "$REPO_URL" 2>/dev/null || true
                   helm repo update "$REPO_NAME" 2>/dev/null || true
 
-                  helm search repo "$REPO_NAME/$CHART" \
+                  if helm search repo "$REPO_NAME/$CHART" \
                     --version "$VERSION" \
-                    | grep -q "$VERSION"
+                    | grep -q "$VERSION"; then
+
+                    echo "Version exists"
+
+                    VALUES=$(yq eval '.spec.source.helm.values // ""' "$file")
+
+                    if [ -n "$VALUES" ] && [ "$VALUES" != "null" ]; then
+                      echo "$VALUES" > "$VALUES_FILE"
+
+                      helm template test "$REPO_NAME/$CHART" \
+                        --version "$VERSION" \
+                        --values "$VALUES_FILE" \
+                        --dry-run > /dev/null
+                    else
+                      helm template test "$REPO_NAME/$CHART" \
+                        --version "$VERSION" \
+                        --dry-run > /dev/null
+                    fi
+
+                    echo "Template renders successfully"
+                  else
+                    echo "Version $VERSION not found in repository"
+                    exit 1
+                  fi
                 done
               '';
             };
+
 
           docker-security-scan =
             pkgs.writeShellApplication {
@@ -123,9 +147,10 @@
                     | grep -v null >> "$IMAGES" || true
                 fi
 
-                find ai-office-server/kubernetes \
-                  \( -name "*.yml" -o -name "*.yaml" \) \
-                  | while read -r file; do
+                KUBE_FILES=$(find ai-office-server/kubernetes \
+                  -name "*.yml" -o -name "*.yaml" | grep -v docker-compose)
+
+                for file in $KUBE_FILES; do
                       yq eval '.. | select(has("image")) | .image' "$file" \
                         2>/dev/null \
                         | grep -v null >> "$IMAGES" || true
@@ -133,9 +158,15 @@
 
                 sort -u "$IMAGES" > "$IMAGES.sorted"
 
+                if [ ! -s "$IMAGES.sorted" ]; then
+                  echo "No images found"
+                  exit 0
+                fi
+
                 while read -r image; do
                   [ -z "$image" ] && continue
 
+                  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
                   echo "Scanning $image"
 
                   trivy image \
@@ -152,7 +183,6 @@
               name = "renovate-validation-tools";
 
               paths = [
-                self.packages.${pkgs.system}.yaml-validation
                 self.packages.${pkgs.system}.kubernetes-validation
                 self.packages.${pkgs.system}.kube-security-validation
                 self.packages.${pkgs.system}.helm-validation
