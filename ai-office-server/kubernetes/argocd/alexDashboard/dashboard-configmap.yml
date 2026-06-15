@@ -1,0 +1,246 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboard-html
+  namespace: alex-dashboard
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Alex's Dashboard - SnowSE</title>
+      <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+          background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+          min-height: 100vh;
+          color: #e0e0e0;
+          padding: 2rem;
+        }
+
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        header {
+          text-align: center;
+          margin-bottom: 3rem;
+          padding: 2rem;
+        }
+
+        header h1 {
+          font-size: 2.5rem;
+          font-weight: 700;
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 0.5rem;
+        }
+
+        header p {
+          color: #a0a0b8;
+          font-size: 1.1rem;
+        }
+
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 1.5rem;
+        }
+
+        .card {
+          background: rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 16px;
+          padding: 1.5rem;
+          transition: all 0.3s ease;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #667eea, #764ba2);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+          transform: translateY(-4px);
+          border-color: rgba(102, 126, 234, 0.4);
+          box-shadow: 0 8px 32px rgba(102, 126, 234, 0.15);
+          background: rgba(255, 255, 255, 0.08);
+        }
+
+        .card:hover::before {
+          opacity: 1;
+        }
+
+        .card-icon {
+          font-size: 2rem;
+          margin-bottom: 1rem;
+        }
+
+        .card h3 {
+          font-size: 1.2rem;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+          color: #ffffff;
+        }
+
+        .card p {
+          font-size: 0.85rem;
+          color: #a0a0b8;
+          margin-bottom: 1rem;
+        }
+
+        .card .url {
+          font-size: 0.75rem;
+          color: #667eea;
+          font-family: 'SF Mono', 'Fira Code', monospace;
+          word-break: break-all;
+          opacity: 0.7;
+        }
+
+        .card .badge {
+          display: inline-block;
+          padding: 0.2rem 0.6rem;
+          border-radius: 6px;
+          font-size: 0.7rem;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-top: 0.5rem;
+        }
+
+        .badge-ai {
+          background: rgba(102, 126, 234, 0.2);
+          color: #667eea;
+        }
+
+        .badge-infra {
+          background: rgba(118, 75, 162, 0.2);
+          color: #a78bfa;
+        }
+
+        .badge-monitoring {
+          background: rgba(16, 185, 129, 0.2);
+          color: #34d399;
+        }
+
+        .badge-tools {
+          background: rgba(245, 158, 11, 0.2);
+          color: #fbbf24;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <header>
+          <h1>🚀 SnowSE Dashboard</h1>
+          <p>Internal tools & services — Alex's Home Lab</p>
+        </header>
+
+        <div class="grid">
+
+          <div class="card" onclick="window.open('https://alexagent.snowse.io', '_blank')">
+            <div class="card-icon">🤖</div>
+            <h3>AI Agent</h3>
+            <p>Elixir-based AI agent with HA setup</p>
+            <span class="badge badge-ai">AI</span>
+            <div class="url">alexagent.snowse.io</div>
+          </div>
+
+          <div class="card" onclick="window.open('https://alexargocd.snowse.io', '_blank')">
+            <div class="card-icon">🔄</div>
+            <h3>ArgoCD</h3>
+            <p>GitOps continuous delivery dashboard</p>
+            <span class="badge badge-infra">Infra</span>
+            <div class="url">alexargocd.snowse.io</div>
+          </div>
+
+          <div class="card" onclick="window.open('https://alexmonitoring.snowse.io', '_blank')">
+            <div class="card-icon">📊</div>
+            <h3>Monitoring</h3>
+            <p>Grafana, Prometheus, Jaeger & Kiali</p>
+            <span class="badge badge-monitoring">Monitoring</span>
+            <div class="url">alexmonitoring.snowse.io</div>
+          </div>
+
+          <div class="card" onclick="window.open('https://alexopencost.snowse.io', '_blank')">
+            <div class="card-icon">💰</div>
+            <h3>OpenCost</h3>
+            <p>Kubernetes cost monitoring & optimization</p>
+            <span class="badge badge-monitoring">Monitoring</span>
+            <div class="url">alexopencost.snowse.io</div>
+          </div>
+
+          <div class="card" onclick="window.open('https://discordadmin.snowse.io', '_blank')">
+            <div class="card-icon">💬</div>
+            <h3>Discord Admin</h3>
+            <p>Discord bot for server administration</p>
+            <span class="badge badge-tools">Tools</span>
+            <div class="url">discordadmin.snowse.io</div>
+          </div>
+
+          <div class="card" onclick="window.open('https://alexhermes-dashboard.snowse.io', '_blank')">
+            <div class="card-icon">📨</div>
+            <h3>Hermes Dashboard</h3>
+            <p>Message queue & event management</p>
+            <span class="badge badge-tools">Tools</span>
+            <div class="url">alexhermes-dashboard.snowse.io</div>
+          </div>
+
+          <div class="card" onclick="window.open('https://alexpantheon.snowse.io', '_blank')">
+            <div class="card-icon">📚</div>
+            <h3>Pantheon</h3>
+            <p>Knowledge base & documentation</p>
+            <span class="badge badge-tools">Tools</span>
+            <div class="url">alexpantheon.snowse.io</div>
+          </div>
+
+          <div class="card" onclick="window.open('https://simplesyllabuscheck.snowse.io', '_blank')">
+            <div class="card-icon">📝</div>
+            <h3>Simple Syllabus Check</h3>
+            <p>Syllabus validation & checking tool</p>
+            <span class="badge badge-tools">Tools</span>
+            <div class="url">simplesyllabuscheck.snowse.io</div>
+          </div>
+
+          <div class="card" onclick="window.open('https://alexvault.snowse.io', '_blank')">
+            <div class="card-icon">🔐</div>
+            <h3>Vault</h3>
+            <p>Secret management & encryption</p>
+            <span class="badge badge-infra">Infra</span>
+            <div class="url">alexvault.snowse.io</div>
+          </div>
+
+          <div class="card" onclick="window.open('https://alexdashboard.snowse.io', '_blank')">
+            <div class="card-icon">🏠</div>
+            <h3>Dashboard</h3>
+            <p>You are here — service overview</p>
+            <span class="badge badge-infra">Infra</span>
+            <div class="url">alexdashboard.snowse.io</div>
+          </div>
+
+        </div>
+      </div>
+    </body>
+    </html>
