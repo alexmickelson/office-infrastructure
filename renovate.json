@@ -3,6 +3,8 @@
   "extends": ["config:recommended", ":dependencyDashboard"],
   "timezone": "America/Denver",
   "labels": ["dependencies"],
+  "minimumReleaseAge": "2 days",
+  "platformAutomerge": true,
   "commitMessagePrefix": "⬆️",
   "prConcurrentLimit": 5,
   "prHourlyLimit": 2,
@@ -32,6 +34,11 @@
     "fileMatch": ["ai-office-server/kubernetes/argocd/.*\\.ya?ml$"]
   },
   "packageRules": [
+    {
+      "description": "Skip minimum release age for pantheon and discord-bot",
+      "matchPackagePatterns": ["pantheon", "discord-bot"],
+      "minimumReleaseAge": null
+    },
     {
       "description": "Group all Docker images together",
       "groupName": "Docker Images",
