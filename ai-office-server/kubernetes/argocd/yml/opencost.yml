@@ -39,8 +39,11 @@ spec:
             extraEnv:
               LOG_LEVEL: debug
           customPricing:
-            enabled: true
+            enabled: true  
             configmapName: custom-pricing-model
+            configPath: /tmp/custom-config
+            createConfigmap: true
+            provider: custom
             costModel:
               description: On-prem bare-metal k3s pricing
               CPU: 0.031611
