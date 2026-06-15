@@ -30,25 +30,6 @@ spec:
     syncOptions:
       - ServerSideApply=true
 ---
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: argocd-other-apps
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/alexmickelson/office-infrastructure
-    targetRevision: HEAD
-    path: ai-office-server/kubernetes/argocd/yml
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: argocd
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
----
 apiVersion: v1
 kind: ConfigMap
 metadata:
