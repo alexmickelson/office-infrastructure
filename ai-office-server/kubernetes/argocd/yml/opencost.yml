@@ -38,28 +38,44 @@ spec:
           exporter:
             extraEnv:
               LOG_LEVEL: debug
-          customPricing:
-            enabled: true  
-            configmapName: custom-pricing-model
-            configPath: /tmp/custom-config
-            createConfigmap: true
-            provider: custom
-            costModel:
-              description: On-prem bare-metal k3s pricing
-              CPU: 0.031611
-              spotCPU: 0.006655
-              RAM: 0.004237
-              spotRAM: 0.000892
-              GPU: 0.95
-              storage: 0.00005479452
-              zoneNetworkEgress: 0.01
-              regionNetworkEgress: 0.01
-              internetNetworkEgress: 0.12
-              natGatewayEgress: 0.045
-              natGatewayIngress: 0.045
-              firstFiveForwardingRulesCost: 0.025
-              additionalForwardingRuleCost: 0.010
-              LBIngressDataCost: 0.008
+            extraVolumeMounts:
+              - name: custom-pricing
+                mountPath: /tmp/custom-config
+                readOnly: true
+        extraVolumes:
+          - name: custom-pricing
+            configMap:
+              name: opencost-custom-pricing
+        extraObjects:
+            - apiVersion: v1
+              kind: ConfigMap
+              metadata:
+                name: opencost-custom-pricing
+                namespace: opencost
+                labels:
+                  app.kubernetes.io/name: opencost
+                  app.kubernetes.io/instance: opencost
+              data:
+                default.json: |
+                  {
+                    "provider": "custom",
+                    "description": "On-prem bare-metal k3s pricing",
+                    "CPU": "0.031611",
+                    "spotCPU": "0.006655",
+                    "RAM": "0.004237",
+                    "spotRAM": "0.000892",
+                    "GPU": "0.95",
+                    "storage": "0.00005479452",
+                    "zoneNetworkEgress": "0.01",
+                    "regionNetworkEgress": "0.01",
+                    "internetNetworkEgress": "0.12",
+                    "natGatewayEgress": "0.045",
+                    "natGatewayIngress": "0.045",
+                    "firstFiveForwardingRulesCost": "0.025",
+                    "additionalForwardingRuleCost": "0.010",
+                    "LBIngressDataCost": "0.008",
+                    "customPricesEnabled": "true"
+                  }
   destination:
     server: https://kubernetes.default.svc
     namespace: opencost
@@ -67,8 +83,6 @@ spec:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
 ---
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: ReferenceGrant
