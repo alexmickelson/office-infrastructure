@@ -1,125 +1,125 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: opencost
-  annotations:
-    repo: "https://github.com/alexmickelson/office-infrastructure"
-    path: "ai-office-server/kubernetes/argocd/yml/opencost.yml"
-  labels:
-    istio-injection: enabled
----
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: opencost
+#   annotations:
+#     repo: "https://github.com/alexmickelson/office-infrastructure"
+#     path: "ai-office-server/kubernetes/argocd/yml/opencost.yml"
+#   labels:
+#     istio-injection: enabled
+# ---
+# # apiVersion: argoproj.io/v1alpha1
+# # kind: Application
+# # metadata:
+# #   name: opencost
+# #   namespace: argocd
+# # spec:
+# #   project: default
+# #   source:
+# #     repoURL: https://opencost.github.io/opencost-helm-chart
+# #     chart: opencost
+# #     targetRevision: "2.5.23"
+# #     helm:
+# #       releaseName: opencost
+# #       values: |
+# #         opencost:
+# #           prometheus:
+# #             internal:
+# #               enabled: false
+# #             external:
+# #               enabled: true
+# #               url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+# #           metrics:
+# #             kubeStateMetrics:
+# #               emitKsmV1Metrics: false
+# #               emitKsmV1MetricsOnly: false
+# #           ui:
+# #             enabled: true
+# #           exporter:
+# #             defaultClusterId: "default-cluster"
+# #           cloudCost:
+# #             enabled: false
+# #           customPricing:
+# #             enabled: true
+# #             configmapName: opencost-onprem-pricing
+# #             configPath: /tmp/onprem-pricing
+# #         extraVolumes:
+# #           - name: onprem-pricing-volume
+# #             configMap:
+# #               name: opencost-onprem-pricing
+# #         extraObjects:
+# #           - apiVersion: v1
+# #             kind: ConfigMap
+# #             metadata:
+# #               name: opencost-onprem-pricing
+# #               namespace: opencost
+# #             data:
+# #               provider: "custom"
+# #               description: "On-prem bare-metal k3s pricing"
+# #               CPU: "0.031611"
+# #               spotCPU: "0.006655"
+# #               RAM: "0.004237"
+# #               spotRAM: "0.000892"
+# #               GPU: "0.95"
+# #               storage: "0.00005479452"
+# #               zoneNetworkEgress: "0.01"
+# #               regionNetworkEgress: "0.01"
+# #               internetNetworkEgress: "0.12"
+# #               customPricesEnabled: "true"
+# #   destination:
+# #     server: https://kubernetes.default.svc
+# #     namespace: opencost
+# #   syncPolicy:
+# #     automated:
+# #       prune: true
+# #       selfHeal: true
+# # ---
+# apiVersion: gateway.networking.k8s.io/v1beta1
+# kind: ReferenceGrant
+# metadata:
+#   name: argocd-gateway-to-opencost
+#   namespace: opencost
+# spec:
+#   from:
+#     - group: gateway.networking.k8s.io
+#       kind: HTTPRoute
+#       namespace: argocd
+#   to:
+#     - group: ""
+#       kind: Service
+# ---
+# apiVersion: gateway.networking.k8s.io/v1
+# kind: HTTPRoute
 # metadata:
 #   name: opencost
 #   namespace: argocd
 # spec:
-#   project: default
-#   source:
-#     repoURL: https://opencost.github.io/opencost-helm-chart
-#     chart: opencost
-#     targetRevision: "2.5.23"
-#     helm:
-#       releaseName: opencost
-#       values: |
-#         opencost:
-#           prometheus:
-#             internal:
-#               enabled: false
-#             external:
-#               enabled: true
-#               url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
-#           metrics:
-#             kubeStateMetrics:
-#               emitKsmV1Metrics: false
-#               emitKsmV1MetricsOnly: false
-#           ui:
-#             enabled: true
-#           exporter:
-#             defaultClusterId: "default-cluster"
-#           cloudCost:
-#             enabled: false
-#           customPricing:
-#             enabled: true
-#             configmapName: opencost-onprem-pricing
-#             configPath: /tmp/onprem-pricing
-#         extraVolumes:
-#           - name: onprem-pricing-volume
-#             configMap:
-#               name: opencost-onprem-pricing
-#         extraObjects:
-#           - apiVersion: v1
-#             kind: ConfigMap
-#             metadata:
-#               name: opencost-onprem-pricing
-#               namespace: opencost
-#             data:
-#               provider: "custom"
-#               description: "On-prem bare-metal k3s pricing"
-#               CPU: "0.031611"
-#               spotCPU: "0.006655"
-#               RAM: "0.004237"
-#               spotRAM: "0.000892"
-#               GPU: "0.95"
-#               storage: "0.00005479452"
-#               zoneNetworkEgress: "0.01"
-#               regionNetworkEgress: "0.01"
-#               internetNetworkEgress: "0.12"
-#               customPricesEnabled: "true"
-#   destination:
-#     server: https://kubernetes.default.svc
-#     namespace: opencost
-#   syncPolicy:
-#     automated:
-#       prune: true
-#       selfHeal: true
+#   parentRefs:
+#     - name: main-gateway
+#       namespace: istio-system
+#   hostnames:
+#     - "alexopencost.snowse.io"
+#   rules:
+#     - matches:
+#         - path:
+#             type: PathPrefix
+#             value: /
+#       backendRefs:
+#         - name: opencost
+#           namespace: opencost
+#           port: 9090
 # ---
-apiVersion: gateway.networking.k8s.io/v1beta1
-kind: ReferenceGrant
-metadata:
-  name: argocd-gateway-to-opencost
-  namespace: opencost
-spec:
-  from:
-    - group: gateway.networking.k8s.io
-      kind: HTTPRoute
-      namespace: argocd
-  to:
-    - group: ""
-      kind: Service
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: opencost
-  namespace: argocd
-spec:
-  parentRefs:
-    - name: main-gateway
-      namespace: istio-system
-  hostnames:
-    - "alexopencost.snowse.io"
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: opencost
-          namespace: opencost
-          port: 9090
----
-apiVersion: security.istio.io/v1beta1
-kind: AuthorizationPolicy
-metadata:
-  name: opencost-policy
-  namespace: opencost
-spec:
-  selector:
-    matchLabels:
-      app: opencost
-  action: ALLOW
-  rules:
-    - from:
-        - source:
-            namespaces: ["argocd", "istio-system", "monitoring"]
+# apiVersion: security.istio.io/v1beta1
+# kind: AuthorizationPolicy
+# metadata:
+#   name: opencost-policy
+#   namespace: opencost
+# spec:
+#   selector:
+#     matchLabels:
+#       app: opencost
+#   action: ALLOW
+#   rules:
+#     - from:
+#         - source:
+#             namespaces: ["argocd", "istio-system", "monitoring"]
