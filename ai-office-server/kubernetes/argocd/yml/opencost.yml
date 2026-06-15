@@ -38,31 +38,25 @@ spec:
           exporter:
             extraEnv:
               LOG_LEVEL: debug
-          extraObjects:
-            - apiVersion: v1
-              kind: ConfigMap
-              metadata:
-                name: opencost-pricing
-                namespace: opencost
-              data:
-                default.json: |
-                  {
-                    "provider": "custom",
-                    "description": "Default pricing for bare-metal k3s cluster",
-                    "CPU": "0.031611",
-                    "RAM": "0.004237",
-                    "GPU": "0.95",
-                    "storage": "0.00005479452",
-                    "zoneNetworkEgress": "0.01",
-                    "regionNetworkEgress": "0.01",
-                    "internetNetworkEgress": "0.12",
-                    "network": "0.01",
-                    "loadBalancer": "0.025",
-                    "customPricesEnabled": "true",
-                    "defaultIdle": "true",
-                    "currencyCode": "USD",
-                    "discount": "0"
-                  }
+          customPricing:
+            enabled: true
+            configmapName: custom-pricing-model
+            costModel:
+              description: On-prem bare-metal k3s pricing
+              CPU: 0.031611
+              spotCPU: 0.006655
+              RAM: 0.004237
+              spotRAM: 0.000892
+              GPU: 0.95
+              storage: 0.00005479452
+              zoneNetworkEgress: 0.01
+              regionNetworkEgress: 0.01
+              internetNetworkEgress: 0.12
+              natGatewayEgress: 0.045
+              natGatewayIngress: 0.045
+              firstFiveForwardingRulesCost: 0.025
+              additionalForwardingRuleCost: 0.010
+              LBIngressDataCost: 0.008
   destination:
     server: https://kubernetes.default.svc
     namespace: opencost
