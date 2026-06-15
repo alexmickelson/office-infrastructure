@@ -8,82 +8,72 @@ metadata:
   labels:
     istio-injection: enabled
 ---
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: opencost
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://opencost.github.io/opencost-helm-chart
-    chart: opencost
-    targetRevision: "2.5.23"
-    helm:
-      releaseName: opencost
-      values: |
-        opencost:
-          prometheus:
-            internal:
-              enabled: false
-            external:
-              enabled: true
-              url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
-          metrics:
-            kubeStateMetrics:
-              emitKsmV1Metrics: false
-              emitKsmV1MetricsOnly: false
-          ui:
-            enabled: true
-          exporter:
-            extraEnv:
-              LOG_LEVEL: debug
-            extraVolumeMounts:
-              - name: custom-pricing
-                mountPath: /tmp/custom-config
-                readOnly: true
-        extraVolumes:
-          - name: custom-pricing
-            configMap:
-              name: opencost-custom-pricing
-        extraObjects:
-            - apiVersion: v1
-              kind: ConfigMap
-              metadata:
-                name: opencost-custom-pricing
-                namespace: opencost
-                labels:
-                  app.kubernetes.io/name: opencost
-                  app.kubernetes.io/instance: opencost
-              data:
-                default.json: |
-                  {
-                    "provider": "custom",
-                    "description": "On-prem bare-metal k3s pricing",
-                    "CPU": "0.031611",
-                    "spotCPU": "0.006655",
-                    "RAM": "0.004237",
-                    "spotRAM": "0.000892",
-                    "GPU": "0.95",
-                    "storage": "0.00005479452",
-                    "zoneNetworkEgress": "0.01",
-                    "regionNetworkEgress": "0.01",
-                    "internetNetworkEgress": "0.12",
-                    "natGatewayEgress": "0.045",
-                    "natGatewayIngress": "0.045",
-                    "firstFiveForwardingRulesCost": "0.025",
-                    "additionalForwardingRuleCost": "0.010",
-                    "LBIngressDataCost": "0.008",
-                    "customPricesEnabled": "true"
-                  }
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: opencost
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
----
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: opencost
+#   namespace: argocd
+# spec:
+#   project: default
+#   source:
+#     repoURL: https://opencost.github.io/opencost-helm-chart
+#     chart: opencost
+#     targetRevision: "2.5.23"
+#     helm:
+#       releaseName: opencost
+#       values: |
+#         opencost:
+#           prometheus:
+#             internal:
+#               enabled: false
+#             external:
+#               enabled: true
+#               url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+#           metrics:
+#             kubeStateMetrics:
+#               emitKsmV1Metrics: false
+#               emitKsmV1MetricsOnly: false
+#           ui:
+#             enabled: true
+#           exporter:
+#             defaultClusterId: "default-cluster"
+#           cloudCost:
+#             enabled: false
+#           customPricing:
+#             enabled: true
+#             configmapName: opencost-onprem-pricing
+#             configPath: /tmp/onprem-pricing
+#         extraVolumes:
+#           - name: onprem-pricing-volume
+#             configMap:
+#               name: opencost-onprem-pricing
+#         extraObjects:
+#           - apiVersion: v1
+#             kind: ConfigMap
+#             metadata:
+#               name: opencost-onprem-pricing
+#               namespace: opencost
+#             data:
+#               provider: "custom"
+#               description: "On-prem bare-metal k3s pricing"
+#               CPU: "0.031611"
+#               spotCPU: "0.006655"
+#               RAM: "0.004237"
+#               spotRAM: "0.000892"
+#               GPU: "0.95"
+#               storage: "0.00005479452"
+#               zoneNetworkEgress: "0.01"
+#               regionNetworkEgress: "0.01"
+#               internetNetworkEgress: "0.12"
+#               customPricesEnabled: "true"
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: opencost
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+# ---
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: ReferenceGrant
 metadata:
