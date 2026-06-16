@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: snow-se-tools
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/alexmickelson/office-infrastructure.git
+    targetRevision: main
+    path: ai-office-server/kubernetes/argocd/snow-se-tools
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: snow-se-tools
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
