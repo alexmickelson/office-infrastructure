@@ -38,9 +38,9 @@ spec:
             - containerPort: 4000
           env:
             - name: PHX_HOST
-              value: alexsnowsetools.snowse.io
+              value: simplesyllabuscheck.snowse.io
             - name: OIDC_REDIRECT_URI
-              value: https://alexsnowsetools.snowse.io/auth/callback
+              value: https://simplesyllabuscheck.snowse.io/auth/callback
             - name: AI_MODEL
               value: "qwen3-6-35b-q6"
             - name: DATABASE_URL
