@@ -23,29 +23,42 @@
   "includePaths": ["ai-office-server/**"],
   "docker-compose": {
     "enabled": true,
-    "fileMatch": ["ai-office-server/docker-compose\\.yml$"]
+    "managerFilePatterns": [
+      "/ai-office-server/docker-compose\\.yml$/"
+    ]
   },
   "kubernetes": {
     "enabled": true,
-    "fileMatch": ["ai-office-server/.*\\.ya?ml$"]
+    "managerFilePatterns": [
+      "/ai-office-server/.*\\.ya?ml$/"
+    ]
   },
   "argocd": {
     "enabled": true,
-    "fileMatch": ["ai-office-server/kubernetes/argocd/.*\\.ya?ml$"]
+    "managerFilePatterns": [
+      "/ai-office-server/kubernetes/argocd/.*\\.ya?ml$/"
+    ]
   },
   "packageRules": [
     {
       "description": "Skip minimum release age for pantheon and discord-bot",
-      "matchPackagePatterns": ["pantheon", "discord-bot", "snow-se-tools"],
       "minimumReleaseAge": null,
       "platformAutomerge": true,
-      "automerge": true
+      "automerge": true,
+      "matchPackageNames": [
+        "/pantheon/",
+        "/discord-bot/",
+        "/snow-se-tools/"
+      ]
     },
     {
       "description": "Group all Docker images together",
       "groupName": "Docker Images",
       "matchDatasources": ["docker"],
-      "excludePackagePatterns": ["^postgres$", "^nginx$"]
+      "matchPackageNames": [
+        "!/^postgres$/",
+        "!/^nginx$/"
+      ]
     },
     {
       "description": "Group all Helm charts together",
@@ -55,13 +68,13 @@
     {
       "description": "Auto-merge minor and patch updates for stable packages",
       "matchDatasources": ["docker"],
-      "matchPackagePatterns": [
-        "^postgres$",
-        "^nginx$",
-        "^cloudflare/cloudflared$"
-      ],
       "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true
+      "automerge": true,
+      "matchPackageNames": [
+        "/^postgres$/",
+        "/^nginx$/",
+        "/^cloudflare/cloudflared$/"
+      ]
     },
     {
       "description": "Separate PRs for major updates",
@@ -71,12 +84,12 @@
     {
       "description": "Pin digest for production images",
       "matchDatasources": ["docker"],
-      "matchPackagePatterns": [
-        "ghcr\\.io/open-webui/open-webui",
-        "ghcr\\.io/alexmickelson/",
-        "alexmickelson/"
-      ],
-      "pinDigests": true
+      "pinDigests": true,
+      "matchPackageNames": [
+        "/ghcr\\.io/open-webui/open-webui/",
+        "/ghcr\\.io/alexmickelson//",
+        "/alexmickelson//"
+      ]
     },
 
     {
