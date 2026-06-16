@@ -2,7 +2,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - https://raw.githubusercontent.com/alexmickelson/ai_pantheon/main/kube/base.yaml
   - https://raw.githubusercontent.com/alexmickelson/ai_pantheon/main/kube/postgres.yaml
   - https://raw.githubusercontent.com/alexmickelson/ai_pantheon/main/kube/app.yaml
 
@@ -35,7 +34,7 @@ patches:
           spec:
             containers:
               - name: pantheon
-                image: ghcr.io/alexmickelson/pantheon-gateway:28
+                image: ghcr.io/alexmickelson/pantheon-gateway:33@sha256:f62b98b6c36086dcf0748a4137165aa7f40285a98898488295f118f5ea287160
   - patch: |-
       apiVersion: gateway.networking.k8s.io/v1
       kind: HTTPRoute

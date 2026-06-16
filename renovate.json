@@ -1,0 +1,89 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":dependencyDashboard"],
+  "timezone": "America/Denver",
+  "labels": ["dependencies"],
+  "minimumReleaseAge": "2 days",
+  "platformAutomerge": true,
+  "commitMessagePrefix": "⬆️",
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "ai-server/**",
+    "ansible/**",
+    "authentication/**",
+    "azure/**",
+    "data/**",
+    "kubernetes/**",
+    "monitoring/**",
+    "tailscale/**"
+  ],
+  "includePaths": ["ai-office-server/**"],
+  "docker-compose": {
+    "enabled": true,
+    "fileMatch": ["ai-office-server/docker-compose\\.yml$"]
+  },
+  "kubernetes": {
+    "enabled": true,
+    "fileMatch": ["ai-office-server/.*\\.ya?ml$"]
+  },
+  "argocd": {
+    "enabled": true,
+    "fileMatch": ["ai-office-server/kubernetes/argocd/.*\\.ya?ml$"]
+  },
+  "packageRules": [
+    {
+      "description": "Skip minimum release age for pantheon and discord-bot",
+      "matchPackagePatterns": ["pantheon", "discord-bot"],
+      "minimumReleaseAge": null,
+      "platformAutomerge": true,
+      "automerge": true
+    },
+    {
+      "description": "Group all Docker images together",
+      "groupName": "Docker Images",
+      "matchDatasources": ["docker"],
+      "excludePackagePatterns": ["^postgres$", "^nginx$"]
+    },
+    {
+      "description": "Group all Helm charts together",
+      "groupName": "Helm Charts",
+      "matchDatasources": ["helm"]
+    },
+    {
+      "description": "Auto-merge minor and patch updates for stable packages",
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": [
+        "^postgres$",
+        "^nginx$",
+        "^cloudflare/cloudflared$"
+      ],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "description": "Separate PRs for major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "Pin digest for production images",
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": [
+        "ghcr\\.io/open-webui/open-webui",
+        "ghcr\\.io/alexmickelson/",
+        "alexmickelson/"
+      ],
+      "pinDigests": true
+    },
+
+    {
+      "description": "Require manual approval for Helm chart major updates",
+      "matchDatasources": ["helm"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    }
+  ]
+}

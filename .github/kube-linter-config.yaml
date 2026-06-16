@@ -1,0 +1,33 @@
+checks:
+  # Disable checks that don't apply to ArgoCD-managed resources
+  doNotAutoAddDefaults: false
+  exclude:
+    - "no-read-only-root-fs" # Many images don't support this
+    - "unset-cpu-requirements" # Handled at cluster level
+    - "unset-memory-requirements" # Handled at cluster level
+    - "no-liveness-probe" # Not all services need these
+    - "no-readiness-probe" # Not all services need these
+
+  # Include important security checks
+  include:
+    - "privilege-escalation-container"
+    - "privileged-container"
+    - "run-as-non-root"
+    - "sensitive-host-mounts"
+    - "unsafe-proc-mount"
+    - "unsafe-sysctls"
+    - "writable-host-mount"
+
+# Custom checks for specific patterns
+customChecks:
+  - name: "istio-injection-label"
+    description: "Ensure namespaces with Istio workloads have injection label"
+    remediation: "Add 'istio-injection: enabled' label to namespace"
+    scope:
+      objectKinds:
+        - Namespace
+    template: |
+      {{- if not .Object.metadata.labels }}
+      {{- else if not (index .Object.metadata.labels "istio-injection") }}
+      Namespace {{ .Object.metadata.name }} should have istio-injection label
+      {{- end }}

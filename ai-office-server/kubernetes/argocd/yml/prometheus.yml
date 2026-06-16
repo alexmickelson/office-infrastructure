@@ -1,3 +1,13 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+  annotations:
+    repo: "https://github.com/alexmickelson/office-infrastructure"
+    path: "ai-office-server/kubernetes/argocd/yml/prometheus.yml"
+  labels:
+    istio-injection: enabled
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -8,7 +18,7 @@ spec:
   source:
     repoURL: https://prometheus-community.github.io/helm-charts
     chart: kube-prometheus-stack
-    targetRevision: "85.0.3"
+    targetRevision: "85.4.0"
     helm:
       releaseName: prometheus
       values: |
