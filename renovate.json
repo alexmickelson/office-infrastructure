@@ -4,7 +4,7 @@
   "timezone": "America/Denver",
   "labels": ["dependencies"],
   "minimumReleaseAge": "2 days",
-  "platformAutomerge": false,
+  "platformAutomerge": true,
   "automerge": true,
   "commitMessagePrefix": "⬆️",
   "prConcurrentLimit": 5,
@@ -38,7 +38,7 @@
     {
       "description": "Skip minimum release age for pantheon and discord-bot",
       "minimumReleaseAge": null,
-      "platformAutomerge": false,
+      "platformAutomerge": true,
       "automerge": true,
       "matchPackageNames": ["/pantheon/", "/discord-bot/", "/snow-se-tools/"]
     },
