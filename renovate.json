@@ -37,7 +37,9 @@
     {
       "description": "Skip minimum release age for pantheon and discord-bot",
       "matchPackagePatterns": ["pantheon", "discord-bot"],
-      "minimumReleaseAge": null
+      "minimumReleaseAge": null,
+      "platformAutomerge": true,
+      "automerge": true
     },
     {
       "description": "Group all Docker images together",
