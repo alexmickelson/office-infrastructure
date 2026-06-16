@@ -36,7 +36,7 @@
   "packageRules": [
     {
       "description": "Skip minimum release age for pantheon and discord-bot",
-      "matchPackagePatterns": ["pantheon", "discord-bot"],
+      "matchPackagePatterns": ["pantheon", "discord-bot", "snow-se-tools"],
       "minimumReleaseAge": null,
       "platformAutomerge": true,
       "automerge": true
