@@ -43,7 +43,7 @@
     {
       "description": "Skip minimum release age for pantheon and discord-bot",
       "minimumReleaseAge": null,
-      "platformAutomerge": true,
+      "platformAutomerge": false,
       "automerge": true,
       "matchPackageNames": [
         "/pantheon/",
