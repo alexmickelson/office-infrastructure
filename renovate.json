@@ -35,7 +35,7 @@
     },
     {
       "description": "Skip minimum release age for internal images",
-      "minimumReleaseAge": null,
+      "minimumReleaseAge": "0 days",
       "matchPackageNames": ["/pantheon/", "/discord-bot/", "/snow-se-tools/"]
     },
     {
