@@ -4,7 +4,8 @@
   "timezone": "America/Denver",
   "labels": ["dependencies"],
   "minimumReleaseAge": "2 days",
-  "platformAutomerge": true,
+  "platformAutomerge": false,
+  "automerge": true,
   "commitMessagePrefix": "⬆️",
   "prConcurrentLimit": 5,
   "prHourlyLimit": 2,
@@ -23,21 +24,15 @@
   "includePaths": ["ai-office-server/**"],
   "docker-compose": {
     "enabled": true,
-    "managerFilePatterns": [
-      "/ai-office-server/docker-compose\\.yml$/"
-    ]
+    "managerFilePatterns": ["/ai-office-server/docker-compose\\.yml$/"]
   },
   "kubernetes": {
     "enabled": true,
-    "managerFilePatterns": [
-      "/ai-office-server/.*\\.ya?ml$/"
-    ]
+    "managerFilePatterns": ["/ai-office-server/.*\\.ya?ml$/"]
   },
   "argocd": {
     "enabled": true,
-    "managerFilePatterns": [
-      "/ai-office-server/kubernetes/argocd/.*\\.ya?ml$/"
-    ]
+    "managerFilePatterns": ["/ai-office-server/kubernetes/argocd/.*\\.ya?ml$/"]
   },
   "packageRules": [
     {
@@ -45,20 +40,13 @@
       "minimumReleaseAge": null,
       "platformAutomerge": false,
       "automerge": true,
-      "matchPackageNames": [
-        "/pantheon/",
-        "/discord-bot/",
-        "/snow-se-tools/"
-      ]
+      "matchPackageNames": ["/pantheon/", "/discord-bot/", "/snow-se-tools/"]
     },
     {
       "description": "Group all Docker images together",
       "groupName": "Docker Images",
       "matchDatasources": ["docker"],
-      "matchPackageNames": [
-        "!/^postgres$/",
-        "!/^nginx$/"
-      ]
+      "matchPackageNames": ["!/^postgres$/", "!/^nginx$/"]
     },
     {
       "description": "Group all Helm charts together",
