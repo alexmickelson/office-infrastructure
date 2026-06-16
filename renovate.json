@@ -84,6 +84,12 @@
       "matchDatasources": ["helm"],
       "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Ignore sealed-secrets Helm chart (lookup fails)",
+      "matchDatasources": ["helm"],
+      "matchPackageNames": ["sealed-secrets"],
+      "enabled": false
     }
   ]
 }
