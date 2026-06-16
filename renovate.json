@@ -50,7 +50,8 @@
     {
       "description": "Group all Helm charts together",
       "groupName": "Helm Charts",
-      "matchDatasources": ["helm"]
+      "matchDatasources": ["helm"],
+      "automerge": true
     },
     {
       "description": "Auto-merge minor and patch updates for stable packages",
