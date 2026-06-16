@@ -8,18 +8,6 @@
   "commitMessagePrefix": "⬆️",
   "prConcurrentLimit": 5,
   "prHourlyLimit": 2,
-  "ignorePaths": [
-    "**/node_modules/**",
-    "**/bower_components/**",
-    "ai-server/**",
-    "ansible/**",
-    "authentication/**",
-    "azure/**",
-    "data/**",
-    "kubernetes/**",
-    "monitoring/**",
-    "tailscale/**"
-  ],
   "includePaths": ["ai-office-server/**"],
   "docker-compose": {
     "enabled": true,
@@ -35,38 +23,20 @@
   },
   "packageRules": [
     {
-      "description": "Skip minimum release age for pantheon and discord-bot",
-      "minimumReleaseAge": null,
-      "automerge": true,
-      "matchPackageNames": ["/pantheon/", "/discord-bot/", "/snow-se-tools/"]
-    },
-    {
       "description": "Group all Docker images together",
       "groupName": "Docker Images",
       "matchDatasources": ["docker"],
-      "matchPackageNames": ["!/^postgres$/", "!/^nginx$/"]
+      "automerge": true
     },
     {
       "description": "Group all Helm charts together",
       "groupName": "Helm Charts",
-      "matchDatasources": ["helm"],
-      "automerge": true
+      "matchDatasources": ["helm"]
     },
     {
-      "description": "Auto-merge minor and patch updates for stable packages",
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true,
-      "matchPackageNames": [
-        "/^postgres$/",
-        "/^nginx$/",
-        "/^cloudflare/cloudflared$/"
-      ]
-    },
-    {
-      "description": "Separate PRs for major updates",
-      "matchUpdateTypes": ["major"],
-      "automerge": false
+      "description": "Skip minimum release age for internal images",
+      "minimumReleaseAge": null,
+      "matchPackageNames": ["/pantheon/", "/discord-bot/", "/snow-se-tools/"]
     },
     {
       "description": "Pin digest for production images",
@@ -78,7 +48,11 @@
         "/alexmickelson//"
       ]
     },
-
+    {
+      "description": "No automerge for major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
     {
       "description": "Require manual approval for Helm chart major updates",
       "matchDatasources": ["helm"],
