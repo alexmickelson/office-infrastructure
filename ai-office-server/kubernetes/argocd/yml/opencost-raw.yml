@@ -219,22 +219,22 @@ spec:
       targetPort: 9090
   type: ClusterIP
 ---
-# apiVersion: gateway.networking.k8s.io/v1
-# kind: HTTPRoute
-# metadata:
-#   name: opencost
-#   namespace: opencost
-# spec:
-#   parentRefs:
-#     - name: istio-gateway
-#       namespace: istio-ingress
-#   hostnames:
-#     - "alexopencost.snowse.io"
-#   rules:
-#     - matches:
-#         - path:
-#             type: PathPrefix
-#             value: /
-#       backendRefs:
-#         - name: opencost
-#           port: 9090
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: opencost
+  namespace: opencost
+spec:
+  parentRefs:
+    - name: main-gateway
+      namespace: istio-system
+  hostnames:
+    - "alexopencost.snowse.io"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: opencost
+          port: 9090
