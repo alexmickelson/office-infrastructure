@@ -36,11 +36,6 @@ spec:
           image: ghcr.io/alexmickelson/snow-se-tools:1.58
           ports:
             - containerPort: 4000
-          envFrom:
-            - secretRef:
-                name: app-secrets
-            - secretRef:
-                name: db-secrets
           env:
             - name: PHX_HOST
               value: alexsnowsetools.snowse.io
