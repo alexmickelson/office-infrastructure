@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         app: cloudflared
+        version: v1
     spec:
       containers:
         - name: cloudflared
