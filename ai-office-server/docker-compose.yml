@@ -38,7 +38,7 @@ services:
       --port 8081
       --models-preset /models/config.ini
       --models-max 1
-      # --ui
+    # --ui
     # --model-dir /models
     volumes:
       - /data/models:/models
