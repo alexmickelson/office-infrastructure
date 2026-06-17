@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: alex-dashboard
+
+resources:
+  - deployment.yml
+  - httproute.yml
+
+configMapGenerator:
+  - name: dashboard-html
+    files:
+      - index.html=dashboard-files/index.html
+      - styles.css=dashboard-files/styles.css
+      - scripts.js=dashboard-files/scripts.js
