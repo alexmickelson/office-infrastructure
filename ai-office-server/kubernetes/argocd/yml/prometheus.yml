@@ -37,8 +37,8 @@ spec:
               #         - opencost.opencost
               #       type: A
               #       port: 9003
-              # Recommended by istio.io/docs/ops/integrations/prometheus:
-              # Discovers all ports named *-envoy-prom across sidecars and gateways
+              # Scrape Istio's merged metrics endpoint. Scraping pod IP:15090 over
+              # the network misses workload request counters on current Istio.
               - job_name: 'envoy-stats'
                 metrics_path: /stats/prometheus
                 kubernetes_sd_configs:
@@ -47,6 +47,14 @@ spec:
                   - source_labels: [__meta_kubernetes_pod_container_port_name]
                     action: keep
                     regex: '.*-envoy-prom'
+                  - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_port]
+                    action: keep
+                    regex: '15020'
+                  - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+                    action: replace
+                    regex: '([^:]+)(?::\d+)?;(\d+)'
+                    replacement: '$1:$2'
+                    target_label: __address__
               # Istiod control plane metrics
               - job_name: 'istiod'
                 kubernetes_sd_configs:
