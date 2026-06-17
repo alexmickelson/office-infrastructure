@@ -38,11 +38,14 @@ services:
       --port 8081
       --models-preset /models/config.ini
       --models-max 1
+      --ui
     # --model-dir /models
     volumes:
       - /data/models:/models
       - /data/huggingface-cache:/root/.cache/huggingface/huggingface
       - ./config.ini:/models/config.ini:ro
+    group_add:
+      - video
     ports:
       - 100.112.73.80:8081:8081
     restart: unless-stopped
