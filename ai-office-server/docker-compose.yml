@@ -1,44 +1,47 @@
 services:
-  openwebui:
-    image: ghcr.io/open-webui/open-webui:latest@sha256:7f1b0a1a50cfbac23da3b16f96bc968fd757b26dc9e54e93813d61768ea9184e
-    container_name: openwebui
-    ports:
-      - 100.112.73.80:8080:8080
-    environment:
-      - WEBUI_PORT=8080
-      - DATABASE_URL=postgresql://openwebui:9hb02121-9br@openwebui-db:5432/openwebui_db
-      - MCP_ENABLED=true
-    volumes:
-      - /data/openwebui:/app/backend/data
-    restart: unless-stopped
-    depends_on:
-      openwebui-db:
-        condition: service_started
+  # openwebui:
+  #   image: ghcr.io/open-webui/open-webui:latest@sha256:7f1b0a1a50cfbac23da3b16f96bc968fd757b26dc9e54e93813d61768ea9184e
+  #   container_name: openwebui
+  #   ports:
+  #     - 100.112.73.80:8080:8080
+  #   environment:
+  #     - WEBUI_PORT=8080
+  #     - DATABASE_URL=postgresql://openwebui:9hb02121-9br@openwebui-db:5432/openwebui_db
+  #     - MCP_ENABLED=true
+  #   volumes:
+  #     - /data/openwebui:/app/backend/data
+  #   restart: unless-stopped
+  #   depends_on:
+  #     openwebui-db:
+  #       condition: service_started
 
-  openwebui-db:
-    image: postgres:18
-    container_name: openwebui-db
-    environment:
-      POSTGRES_USER: openwebui
-      POSTGRES_PASSWORD: 9hb02121-9br
-      POSTGRES_DB: openwebui_db
-    volumes:
-      - /data/openwebui-pg:/var/lib/postgresql/data
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U openwebui"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+  # openwebui-db:
+  #   image: postgres:18
+  #   container_name: openwebui-db
+  #   environment:
+  #     POSTGRES_USER: openwebui
+  #     POSTGRES_PASSWORD: 9hb02121-9br
+  #     POSTGRES_DB: openwebui_db
+  #   volumes:
+  #     - /data/openwebui-pg:/var/lib/postgresql/data
+  #   restart: always
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U openwebui"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
 
   llama-server:
     image: ghcr.io/ggml-org/llama.cpp:server-vulkan
     container_name: llama-server
-    command: >
-      --port 8081
-      --models-preset /models/config.ini
-      --models-max 1
-    # --ui
+    command:
+      - --port
+      - "8081"
+      - --models-preset
+      - /models/config.ini
+      - --models-max
+      - "1"
+      - --ui
     # --model-dir /models
     volumes:
       - /data/models:/models
