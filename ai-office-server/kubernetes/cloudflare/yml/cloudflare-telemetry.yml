@@ -1,0 +1,15 @@
+apiVersion: telemetry.istio.io/v1
+kind: Telemetry
+metadata:
+  name: cloudflare-tags
+  namespace: istio-system
+spec:
+  metrics:
+  - providers:
+    - name: prometheus
+    overrides:
+    - tagOverrides:
+        cf_user:
+          value: request.headers["cf-access-authenticated-user-email"]
+        cf_country:
+          value: request.headers["cf-ipcountry"]
