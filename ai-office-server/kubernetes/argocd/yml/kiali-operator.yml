@@ -79,3 +79,8 @@ spec:
         - name: kiali
           namespace: istio-system
           port: 20001
+
+
+
+# queries
+# istio_requests_total{__meta_kubernetes_pod_label_app="pantheon"}

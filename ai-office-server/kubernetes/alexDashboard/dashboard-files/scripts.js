@@ -5,7 +5,9 @@
 const DASHBOARD_LINKS = [
   { label: "AI Agent", url: "https://alexagent.snowse.io" },
   { label: "ArgoCD", url: "https://alexargocd.snowse.io" },
-  { label: "Monitoring", url: "https://alexmonitoring.snowse.io" },
+  { label: "Kiali", url: "https://alexmonitoring.snowse.io/kiali" },
+  { label: "Grafana", url: "https://alexmonitoring.snowse.io/grafana" },
+  { label: "Prometheus", url: "https://alexmonitoring.snowse.io/prometheus" },
   { label: "OpenCost", url: "https://alexopencost.snowse.io" },
   { label: "Discord Admin", url: "https://discordadmin.snowse.io" },
   { label: "Hermes Dashboard", url: "https://alexhermes-dashboard.snowse.io" },
