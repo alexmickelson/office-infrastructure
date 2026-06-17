@@ -73,7 +73,7 @@ services:
       - "8082"
       - --ui
       - --models-max
-      - "2"
+      - "1"
       - --models-preset
       - /config/config.ini
       - --metrics
