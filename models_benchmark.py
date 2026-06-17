@@ -494,6 +494,10 @@ def main() -> None:
     else:
         context_messages = None
 
+
+    # disable long prompt for now
+    context_messages = [{"role": "user", "content": BENCHMARK_PROMPT}]
+
     worker = threading.Thread(
         target=run_benchmarks,
         args=(base_url, models, context_messages),
