@@ -17,7 +17,7 @@ metadata:
   namespace: snow-se-tools
 spec:
   replicas: 1
-  revisionHistoryLimit: 4
+  revisionHistoryLimit: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
