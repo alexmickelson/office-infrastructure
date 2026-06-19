@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
         - name: webapp
-          image: ghcr.io/alexmickelson/snow-se-tools:1.82@sha256:c64e7139bd326c4a4e2978e80ee12a46e3dac20870bef072f794049cc851afc2
+          image: ghcr.io/alexmickelson/snow-se-tools:1.86@sha256:efc01fa91332cbeac3e3306da636924617a0e26fc5cb03d883809b4182602435
           ports:
             - containerPort: 4000
           env:
