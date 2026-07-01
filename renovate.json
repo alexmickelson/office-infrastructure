@@ -51,11 +51,17 @@
       ],
       "minimumReleaseAge": "0 days",
       "pinDigests": true
-    }
+    },
     // {
     //   "description": "No automerge for major updates",
     //   "matchUpdateTypes": ["major"],
     //   "automerge": false
-    // }
+    // },
+    {
+      "description": "Ignore sealed-secrets Helm chart (lookup fails)",
+      "matchDatasources": ["helm"],
+      "matchPackageNames": ["sealed-secrets"],
+      "enabled": false
+    }
   ]
 }
