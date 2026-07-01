@@ -127,6 +127,7 @@ services:
       - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}
       - VLLM_USE_DEEP_GEMM=0
       - VLLM_DEEP_GEMM_WARMUP=skip
+      - HF_HUB_OFFLINE=1
     volumes:
       - /data/huggingface-cache:/root/.cache/huggingface
     ipc: host
