@@ -4,8 +4,8 @@
   "timezone": "America/Denver",
   "labels": ["dependencies"],
   "minimumReleaseAge": "2 days",
-  "minimumReleaseAgeBehaviour": "timestamp-optional",
-  "internalChecksFilter": "flexible",
+  "minimumReleaseAgeBehaviour": "timestamp-required",
+  "internalChecksFilter": "strict",
   "prCreation": "immediate",
   "recreateWhen": "always",
   "automerge": true,
@@ -36,7 +36,6 @@
         "!ghcr.io/snowse/discordadminbot",
         "!ghcr.io/alexmickelson/snow-se-tools"
       ],
-      "minimumReleaseAge": null,
       "pinDigests": true,
       "automerge": true
     },
@@ -52,7 +51,6 @@
         "!ghcr.io/snowse/discordadminbot",
         "!ghcr.io/alexmickelson/snow-se-tools"
       ],
-      "minimumReleaseAge": null,
       "pinDigests": true,
       "automerge": true
     },
@@ -71,7 +69,7 @@
         "ghcr.io/snowse/discordadminbot",
         "ghcr.io/alexmickelson/snow-se-tools"
       ],
-      "minimumReleaseAge": "0 days",
+      "minimumReleaseAge": null,
       "pinDigests": true
     },
     {
