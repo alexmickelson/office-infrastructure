@@ -26,6 +26,7 @@
       "description": "Group all Docker images together",
       "groupName": "Docker Images",
       "matchDatasources": ["docker"],
+      "excludePackageNames": ["/ghcr\\.io\/alexmickelson\/.*/"],
       "automerge": true
     },
     {
