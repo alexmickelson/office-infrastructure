@@ -10,6 +10,7 @@
   "recreateWhen": "always",
   "automerge": true,
   "commitMessagePrefix": "⬆️",
+  "branchConcurrentLimit": 1,
   "includePaths": ["ai-office-server/**"],
   "docker-compose": {
     "enabled": true,
