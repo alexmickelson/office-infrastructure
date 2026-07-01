@@ -39,8 +39,6 @@
       "description": "Skip minimum release age for internal images",
       "matchDatasources": ["docker"],
       "minimumReleaseAge": "0 days",
-      "groupName": "Internal Docker Images",
-      "groupSlug": "internal-docker-images",
       "matchPackageNames": [
         "ghcr.io/alexmickelson/pantheon-gateway",
         "ghcr.io/alexmickelson/discord-bot",
