@@ -21,19 +21,6 @@
     "enabled": true,
     "managerFilePatterns": ["/ai-office-server/kubernetes/argocd/.*\\.ya?ml$/"]
   },
-  "customManagers": [
-    {
-      "customType": "regex",
-      "description": "Update container images embedded in Argo CD kustomization patches",
-      "managerFilePatterns": [
-        "/ai-office-server/kubernetes/argocd/.*/kustomization\\.ya?ml$/"
-      ],
-      "matchStrings": [
-        "image:\\s+(?<depName>[^:@\\s]+(?:/[^:@\\s]+)+):(?<currentValue>[^@\\s]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
-      ],
-      "datasourceTemplate": "docker"
-    }
-  ],
   "packageRules": [
     {
       "description": "Group all Docker images together",
