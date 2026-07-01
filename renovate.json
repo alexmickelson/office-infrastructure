@@ -3,7 +3,7 @@
   "extends": ["config:recommended", ":dependencyDashboard"],
   "timezone": "America/Denver",
   "labels": ["dependencies"],
-  "minimumReleaseAge": "2 days",
+  // "minimumReleaseAge": "2 days",
   "prCreation": "immediate",
   "recreateWhen": "always",
   "automerge": true,
