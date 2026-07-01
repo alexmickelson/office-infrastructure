@@ -98,6 +98,49 @@ services:
               count: 1
               capabilities:
                 - gpu
+
+  qwen-vllm:
+    image: vllm/vllm-openai:latest
+    container_name: qwen-vllm
+    ports:
+      - 100.114.68.27:8000:8000
+    command:
+      - Qwen/Qwen3.6-27B
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --served-model-name
+      - qwen3.6-27b
+      - --max-model-len
+      - "262144"
+      - --tensor-parallel-size
+      - "1"
+      - --reasoning-parser
+      - qwen3
+      - --speculative-config
+      - '{"method":"qwen3_next_mtp","num_speculative_tokens":2}'
+      - --enable-prefix-caching
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}
+    volumes:
+      - /data/huggingface-cache:/root/.cache/huggingface
+    ipc: host
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
   hfdownloader:
     image: ghcr.io/bodaay/huggingfacemodeldownloader:latest
     container_name: hfdownloader
@@ -112,7 +155,7 @@ services:
       - "8083"
 
     restart: unless-stopped
-    
+
   whisper:
     image: ghcr.io/ggml-org/whisper.cpp:main-cuda
     container_name: whisper
