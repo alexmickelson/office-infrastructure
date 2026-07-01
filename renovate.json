@@ -26,6 +26,7 @@
     {
       "description": "Group all Docker images together",
       "groupName": "Docker Images",
+      "matchManagers": ["docker-compose", "dockerfile", "kubernetes"],
       "matchDatasources": ["docker"],
       "excludePackageNames": [
         "ghcr.io/alexmickelson/pantheon-gateway",
@@ -36,13 +37,14 @@
       "automerge": true
     },
     {
-      "description": "Group all Helm charts together",
-      "groupName": "Helm Charts",
-      "matchDatasources": ["helm"]
+      "description": "Group all Argo CD chart updates together",
+      "groupName": "Argo CD Charts",
+      "matchManagers": ["argocd"]
     },
     {
       "description": "Skip minimum release age for internal images",
       "groupName": "Internal Stuff",
+      "matchManagers": ["kubernetes"],
       "matchDatasources": ["docker"],
       "matchPackageNames": [
         "ghcr.io/alexmickelson/pantheon-gateway",
