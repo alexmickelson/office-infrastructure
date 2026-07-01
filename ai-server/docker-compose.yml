@@ -114,12 +114,14 @@ services:
       - qwen3.6-27b-fp8
       - --max-model-len
       - "262144"
+      - --max-num-seqs
+      - "900"
       - --tensor-parallel-size
       - "1"
       - --reasoning-parser
       - qwen3
       - --speculative-config
-      - '{"method":"qwen3_next_mtp","num_speculative_tokens":2}'
+      - '{"method":"mtp","num_speculative_tokens":2}'
       - --enable-prefix-caching
     environment:
       - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}
