@@ -113,7 +113,7 @@ services:
       - --served-model-name
       - qwen3.6-27b-fp8
       - --max-model-len
-      - "262144"
+      - "128000"
       - --max-num-seqs
       - "900"
       - --tensor-parallel-size
