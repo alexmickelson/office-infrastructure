@@ -34,7 +34,7 @@ patches:
           spec:
             containers:
               - name: pantheon
-                image: ghcr.io/alexmickelson/pantheon-gateway:33.37
+                image: ghcr.io/alexmickelson/pantheon-gateway:33.40@sha256:1c22f15f3fa26dc5d33e541caa9a9598b1cfbe0353b7b95809c9ab6995cb391a
   - patch: |-
       apiVersion: gateway.networking.k8s.io/v1
       kind: HTTPRoute
