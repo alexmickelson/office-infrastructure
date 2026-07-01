@@ -4,7 +4,6 @@
   "timezone": "America/Denver",
   "labels": ["dependencies"],
   "minimumReleaseAge": "2 days",
-  "automerge": true,
   "recreateClosed": true,
   "commitMessagePrefix": "⬆️",
   "prConcurrentLimit": 5,
