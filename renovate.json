@@ -40,21 +40,6 @@
       "automerge": true
     },
     {
-      "description": "Group Docker image digest pinning separately from version updates",
-      "groupName": "Docker Image Digests",
-      "branchTopic": "docker-image-digests",
-      "matchManagers": ["docker-compose", "dockerfile", "kubernetes"],
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["pinDigest"],
-      "matchPackageNames": [
-        "!ghcr.io/alexmickelson/pantheon-gateway",
-        "!ghcr.io/snowse/discordadminbot",
-        "!ghcr.io/alexmickelson/snow-se-tools"
-      ],
-      "pinDigests": true,
-      "automerge": true
-    },
-    {
       "description": "Group all Argo CD chart updates together",
       "groupName": "Argo CD Charts",
       "matchManagers": ["argocd"]
@@ -69,7 +54,7 @@
         "ghcr.io/snowse/discordadminbot",
         "ghcr.io/alexmickelson/snow-se-tools"
       ],
-      "minimumReleaseAge": null,
+      "minimumReleaseAge": "0 days",
       "pinDigests": true
     },
     {
