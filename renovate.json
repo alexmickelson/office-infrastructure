@@ -8,6 +8,7 @@
   "recreateWhen": "always",
   "automerge": true,
   "commitMessagePrefix": "⬆️",
+  "pinDigests": true,
   "includePaths": ["ai-office-server/**"],
   "docker-compose": {
     "enabled": true,
@@ -22,25 +23,6 @@
     "managerFilePatterns": ["/ai-office-server/kubernetes/argocd/.*\\.ya?ml$/"]
   },
   "packageRules": [
-    // {
-    //   "description": "Group Docker image version updates together",
-    //   "groupName": "Docker Images",
-    //   "matchManagers": ["docker-compose", "dockerfile", "kubernetes"],
-    //   "matchDatasources": ["docker"],
-    //   "matchUpdateTypes": ["major", "minor", "patch"],
-    //   "matchPackageNames": [
-    //     "!ghcr.io/alexmickelson/pantheon-gateway",
-    //     "!ghcr.io/snowse/discordadminbot",
-    //     "!ghcr.io/alexmickelson/snow-se-tools"
-    //   ],
-    //   "pinDigests": true,
-    //   "automerge": true
-    // },
-    // {
-    //   "description": "Group all Argo CD chart updates together",
-    //   "groupName": "Argo CD Charts",
-    //   "matchManagers": ["argocd"]
-    // },
     {
       "description": "Skip minimum release age for internal images",
       "groupName": "Internal Stuff",
@@ -49,14 +31,13 @@
         "ghcr.io/snowse/discordadminbot",
         "ghcr.io/alexmickelson/snow-se-tools"
       ],
-      "minimumReleaseAge": "0 days",
-      "pinDigests": true
+      "minimumReleaseAge": "0 days"
     },
-    // {
-    //   "description": "No automerge for major updates",
-    //   "matchUpdateTypes": ["major"],
-    //   "automerge": false
-    // },
+    {
+      "description": "No automerge for major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
     {
       "description": "Ignore sealed-secrets Helm chart (lookup fails)",
       "matchDatasources": ["helm"],
