@@ -11,16 +11,13 @@
   "pinDigests": true,
   "includePaths": ["ai-office-server/**"],
   "docker-compose": {
-    "enabled": true,
-    "managerFilePatterns": ["/ai-office-server/docker-compose\\.yml$/"]
+    "fileMatch": ["ai-office-server/docker-compose\\.yml$"]
   },
   "kubernetes": {
-    "enabled": true,
-    "managerFilePatterns": ["/ai-office-server/.*\\.ya?ml$/"]
+    "fileMatch": ["ai-office-server/.*\\.ya?ml$"]
   },
   "argocd": {
-    "enabled": true,
-    "managerFilePatterns": ["/ai-office-server/kubernetes/argocd/.*\\.ya?ml$/"]
+    "fileMatch": ["ai-office-server/kubernetes/argocd/.*\\.ya?ml$"]
   },
   "customManagers": [
     {
