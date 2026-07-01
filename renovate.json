@@ -35,8 +35,18 @@
     },
     {
       "description": "Skip minimum release age for internal images",
+      "matchDatasources": ["docker"],
       "minimumReleaseAge": "0 days",
-      "matchPackageNames": ["/pantheon/", "/discord-bot/", "/snow-se-tools/"]
+      "groupName": "Internal Docker Images",
+      "groupSlug": "internal-docker-images",
+      "matchPackageNames": [
+        "ghcr.io/alexmickelson/pantheon-gateway",
+        "ghcr.io/alexmickelson/discord-bot",
+        "ghcr.io/alexmickelson/snow-se-tools",
+        "/(^|\\/)pantheon-gateway$/",
+        "/(^|\\/)discord-bot$/",
+        "/(^|\\/)snow-se-tools$/"
+      ]
     },
     {
       "description": "Pin digest for production images",
