@@ -22,6 +22,19 @@
     "enabled": true,
     "managerFilePatterns": ["/ai-office-server/kubernetes/argocd/.*\\.ya?ml$/"]
   },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update container images embedded in Kustomize patch blocks",
+      "managerFilePatterns": [
+        "/ai-office-server/kubernetes/argocd/pantheon/kustomization\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "\\s+image:\\s+(?<depName>[^\\s:@]+(?:/[^\\s:@]+)*):(?<currentValue>[^\\s@]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ],
   "packageRules": [
     {
       "description": "Skip minimum release age for internal images",
