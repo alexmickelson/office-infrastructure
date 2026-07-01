@@ -27,7 +27,12 @@
       "description": "Group all Docker images together",
       "groupName": "Docker Images",
       "matchDatasources": ["docker"],
-      "excludePackageNames": ["/ghcr\\.io\/alexmickelson\/.*/"],
+      "excludePackageNames": [
+        "ghcr.io/alexmickelson/pantheon-gateway",
+        "ghcr.io/snowse/discordadminbot",
+        "ghcr.io/alexmickelson/snow-se-tools"
+      ],
+      "pinDigests": true,
       "automerge": true
     },
     {
@@ -37,43 +42,16 @@
     },
     {
       "description": "Skip minimum release age for internal images",
+      "groupName": "Internal Stuff",
       "matchDatasources": ["docker"],
       "minimumReleaseAge": "0 days",
-      "matchPackageNames": [
-        "ghcr.io/alexmickelson/pantheon-gateway",
-        "ghcr.io/alexmickelson/discord-bot",
-        "ghcr.io/alexmickelson/snow-se-tools",
-        "/(^|\\/)pantheon-gateway$/",
-        "/(^|\\/)discord-bot$/",
-        "/(^|\\/)snow-se-tools$/"
-      ]
-    },
-    {
-      "description": "Pin digest for production images",
-      "matchDatasources": ["docker"],
       "pinDigests": true,
-      "matchPackageNames": [
-        "/ghcr\\.io/open-webui/open-webui/",
-        "/ghcr\\.io/alexmickelson//",
-        "/alexmickelson//"
-      ]
+      "managerFilePatterns": ["/ai-office-server/.*\\.ya?ml$/"]
     },
     {
       "description": "No automerge for major updates",
       "matchUpdateTypes": ["major"],
       "automerge": false
-    },
-    {
-      "description": "Require manual approval for Helm chart major updates",
-      "matchDatasources": ["helm"],
-      "matchUpdateTypes": ["major"],
-      "dependencyDashboardApproval": true
-    },
-    {
-      "description": "Ignore sealed-secrets Helm chart (lookup fails)",
-      "matchDatasources": ["helm"],
-      "matchPackageNames": ["sealed-secrets"],
-      "enabled": false
     }
   ]
 }
