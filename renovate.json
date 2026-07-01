@@ -44,9 +44,13 @@
       "description": "Skip minimum release age for internal images",
       "groupName": "Internal Stuff",
       "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "ghcr.io/alexmickelson/pantheon-gateway",
+        "ghcr.io/snowse/discordadminbot",
+        "ghcr.io/alexmickelson/snow-se-tools"
+      ],
       "minimumReleaseAge": "0 days",
-      "pinDigests": true,
-      "managerFilePatterns": ["/ai-office-server/.*\\.ya?ml$/"]
+      "pinDigests": true
     },
     {
       "description": "No automerge for major updates",
