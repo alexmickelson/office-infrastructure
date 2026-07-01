@@ -27,7 +27,7 @@
       "customType": "regex",
       "description": "Update container images embedded in Kustomize patch blocks",
       "managerFilePatterns": [
-        "/ai-office-server/kubernetes/argocd/.*kustomization\\.ya?ml$/"
+        "ai-office-server/kubernetes/argocd/.*kustomization\\.ya?ml$"
       ],
       "matchStrings": [
         "\\s+image:\\s+(?<depName>[^\\s:@]+(?:/[^\\s:@]+)*):(?<currentValue>[^\\s@]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
