@@ -36,6 +36,7 @@
         "!ghcr.io/snowse/discordadminbot",
         "!ghcr.io/alexmickelson/snow-se-tools"
       ],
+      "minimumReleaseAge": null,
       "pinDigests": true,
       "automerge": true
     },
@@ -51,6 +52,7 @@
         "!ghcr.io/snowse/discordadminbot",
         "!ghcr.io/alexmickelson/snow-se-tools"
       ],
+      "minimumReleaseAge": null,
       "pinDigests": true,
       "automerge": true
     },
