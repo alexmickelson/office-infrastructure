@@ -4,13 +4,10 @@
   "timezone": "America/Denver",
   "labels": ["dependencies"],
   "minimumReleaseAge": "2 days",
-  "minimumReleaseAgeBehaviour": "timestamp-required",
-  "internalChecksFilter": "strict",
   "prCreation": "immediate",
   "recreateWhen": "always",
   "automerge": true,
   "commitMessagePrefix": "⬆️",
-  "branchConcurrentLimit": 1,
   "includePaths": ["ai-office-server/**"],
   "docker-compose": {
     "enabled": true,
@@ -24,39 +21,26 @@
     "enabled": true,
     "managerFilePatterns": ["/ai-office-server/kubernetes/argocd/.*\\.ya?ml$/"]
   },
-  "customManagers": [
-    {
-      "customType": "regex",
-      "description": "Update Docker images embedded in Kustomize patch strings",
-      "managerFilePatterns": [
-        "/ai-office-server/kubernetes/argocd/pantheon/kustomization\\.yaml$/"
-      ],
-      "matchStrings": [
-        "image:\\s+(?<depName>ghcr\\.io\\/alexmickelson\\/pantheon-gateway):(?<currentValue>[^@\\s]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
-      ],
-      "datasourceTemplate": "docker"
-    }
-  ],
   "packageRules": [
-    {
-      "description": "Group Docker image version updates together",
-      "groupName": "Docker Images",
-      "matchManagers": ["docker-compose", "dockerfile", "kubernetes"],
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["major", "minor", "patch"],
-      "matchPackageNames": [
-        "!ghcr.io/alexmickelson/pantheon-gateway",
-        "!ghcr.io/snowse/discordadminbot",
-        "!ghcr.io/alexmickelson/snow-se-tools"
-      ],
-      "pinDigests": true,
-      "automerge": true
-    },
-    {
-      "description": "Group all Argo CD chart updates together",
-      "groupName": "Argo CD Charts",
-      "matchManagers": ["argocd"]
-    },
+    // {
+    //   "description": "Group Docker image version updates together",
+    //   "groupName": "Docker Images",
+    //   "matchManagers": ["docker-compose", "dockerfile", "kubernetes"],
+    //   "matchDatasources": ["docker"],
+    //   "matchUpdateTypes": ["major", "minor", "patch"],
+    //   "matchPackageNames": [
+    //     "!ghcr.io/alexmickelson/pantheon-gateway",
+    //     "!ghcr.io/snowse/discordadminbot",
+    //     "!ghcr.io/alexmickelson/snow-se-tools"
+    //   ],
+    //   "pinDigests": true,
+    //   "automerge": true
+    // },
+    // {
+    //   "description": "Group all Argo CD chart updates together",
+    //   "groupName": "Argo CD Charts",
+    //   "matchManagers": ["argocd"]
+    // },
     {
       "description": "Skip minimum release age for internal images",
       "groupName": "Internal Stuff",
@@ -67,11 +51,11 @@
       ],
       "minimumReleaseAge": "0 days",
       "pinDigests": true
-    },
-    {
-      "description": "No automerge for major updates",
-      "matchUpdateTypes": ["major"],
-      "automerge": false
     }
+    // {
+    //   "description": "No automerge for major updates",
+    //   "matchUpdateTypes": ["major"],
+    //   "automerge": false
+    // }
   ]
 }
