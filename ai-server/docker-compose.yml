@@ -121,7 +121,7 @@ services:
       - --reasoning-parser
       - qwen3
       - --speculative-config
-      - '{"method":"mtp","num_speculative_tokens":2}'
+      - '{"method":"mtp","num_speculative_tokens":1}'
       - --enable-prefix-caching
     environment:
       - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}
