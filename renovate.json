@@ -24,6 +24,19 @@
     "enabled": true,
     "managerFilePatterns": ["/ai-office-server/kubernetes/argocd/.*\\.ya?ml$/"]
   },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update Docker images embedded in Kustomize patch strings",
+      "managerFilePatterns": [
+        "/ai-office-server/kubernetes/argocd/pantheon/kustomization\\.yaml$/"
+      ],
+      "matchStrings": [
+        "image:\\s+(?<depName>ghcr\\.io\\/alexmickelson\\/pantheon-gateway):(?<currentValue>[^@\\s]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ],
   "packageRules": [
     {
       "description": "Group Docker image version updates together",
@@ -47,8 +60,6 @@
     {
       "description": "Skip minimum release age for internal images",
       "groupName": "Internal Stuff",
-      "matchManagers": ["kubernetes"],
-      "matchDatasources": ["docker"],
       "matchPackageNames": [
         "ghcr.io/alexmickelson/pantheon-gateway",
         "ghcr.io/snowse/discordadminbot",
