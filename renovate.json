@@ -4,7 +4,8 @@
   "timezone": "America/Denver",
   "labels": ["dependencies"],
   "minimumReleaseAge": "2 days",
-  "recreateClosed": true,
+  "recreateWhen": "always",
+  "automerge": true,
   "commitMessagePrefix": "⬆️",
   "prConcurrentLimit": 5,
   "prHourlyLimit": 2,
@@ -28,10 +29,10 @@
       "matchManagers": ["docker-compose", "dockerfile", "kubernetes"],
       "matchDatasources": ["docker"],
       "matchUpdateTypes": ["major", "minor", "patch"],
-      "excludePackageNames": [
-        "ghcr.io/alexmickelson/pantheon-gateway",
-        "ghcr.io/snowse/discordadminbot",
-        "ghcr.io/alexmickelson/snow-se-tools"
+      "matchPackageNames": [
+        "!ghcr.io/alexmickelson/pantheon-gateway",
+        "!ghcr.io/snowse/discordadminbot",
+        "!ghcr.io/alexmickelson/snow-se-tools"
       ],
       "pinDigests": true,
       "automerge": true
@@ -43,10 +44,10 @@
       "matchManagers": ["docker-compose", "dockerfile", "kubernetes"],
       "matchDatasources": ["docker"],
       "matchUpdateTypes": ["pinDigest"],
-      "excludePackageNames": [
-        "ghcr.io/alexmickelson/pantheon-gateway",
-        "ghcr.io/snowse/discordadminbot",
-        "ghcr.io/alexmickelson/snow-se-tools"
+      "matchPackageNames": [
+        "!ghcr.io/alexmickelson/pantheon-gateway",
+        "!ghcr.io/snowse/discordadminbot",
+        "!ghcr.io/alexmickelson/snow-se-tools"
       ],
       "pinDigests": true,
       "automerge": true
